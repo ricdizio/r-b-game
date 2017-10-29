@@ -1,0 +1,25 @@
+{
+  "name": "rbgame",
+  "version": "1.0.0",
+  "description": "Red And Black Game",
+  "main": "main.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "mysql": "^2.15.0",
+    "socket-io": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ricdizio/r-b-game.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ricdizio/r-b-game/issues"
+  },
+  "homepage": "https://github.com/ricdizio/r-b-game#readme"
+}
