@@ -2,17 +2,17 @@ var socket = io.connect('http://localhost:3000');
 var bet = 0;
 
 class Card {
-    constructor(value, number, suit){
-        if(value < 10){
-            this.value = value;
-        }
-        else{
-            this.value = 10;
-        }
-        
-        this.number = number;
-        this.suit = suit;
+  constructor(value, number, suit){
+    if(value < 10){
+      this.value = value;
     }
+    else{
+      this.value = 10;
+    }
+    
+    this.number = number;
+    this.suit = suit;
+  }
 }
 
 
@@ -25,67 +25,67 @@ black.addEventListener('click', sendBlack);
 bet.addEventListener('click', sendBet);
 
 function sendRed(){
-    socket.emit('getPlay', true);
+  socket.emit('getPlay', true);
 }
 
 function sendBlack(){
-    socket.emit('getPlay', false);
+  socket.emit('getPlay', false);
 }
 
 function sendBet(){
-    socket.emit('getBet', money.value);
+  socket.emit('getBet', money.value);
 }
 
 function logCard(card){
-    console.log("Card: " + card.number + " of " + card.suit);
+  console.log("Card: " + card.number + " of " + card.suit);
 }
 
 socket.on('bettedMoney', function(money, playerIndex){
-    console.log("Jugador " + (playerIndex + 1) + " aposto " + money);
+  console.log("Jugador " + (playerIndex + 1) + " aposto " + money);
 });
 
 socket.on('bet', function(betId, playerIndex){
-    if(betId == socket.id){
-        console.log("Te toca apostar");
-    }
-    else{
-        console.log("Jugador " + (playerIndex + 1) + " esta apostando");
-    }
+  if(betId == socket.id){
+    console.log("Te toca apostar");
+  }
+  else{
+    console.log("Jugador " + (playerIndex + 1) + " esta apostando");
+  }
 });
 
 socket.on('play', function(betId, playerIndex){
-    if(betId == socket.id){
-        console.log("Te toca elegir");
-    }
-    else{
-        console.log("Jugador " + (playerIndex + 1) + " esta eligiendo");
-    }
+  if(betId == socket.id){
+    console.log("Te toca elegir");
+  }
+  else{
+    console.log("Jugador " + (playerIndex + 1) + " esta eligiendo");
+  }
 });
 
 socket.on('bettedColor', function(color, playerIndex){
-    if(color){
-        color = "rojo";
-    }
-    else{
-        color = "negro";
-    }
+  if(color){
+    color = "rojo";
+  }
+  else{
+    color = "negro";
+  }
 
-    console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
-    
+  console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
+  
 });
 
 socket.on('deal', function(card){
-    logCard(card);
+  logCard(card);
 });
 
 socket.on('reward', function(playerIndex, prize, houseWon){
-    if(!houseWon){
-        console.log("Jugador " + (playerIndex + 1) + " gano " + prize);
-    }
-    else{
-        console.log("Gana la casa");
-    }
-    
+  if(!houseWon){
+    console.log("Jugador " + (playerIndex + 1) + " gano " + prize);
+  }
+  else{
+    console.log("Gana la casa");
+  }
+  
 });
 
 socket.emit('join', "room1");
