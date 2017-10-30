@@ -100,7 +100,6 @@ class Table {
     }
 
     var playCounter = 0;
-    var colorBets = new Array();
     this.play(previousBetTurn, playCounter);
   }
 
