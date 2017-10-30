@@ -37,6 +37,13 @@ class Card {
         
         this.number = number;
         this.suit = suit;
+
+        if(this.suit == "Hearts" || this.suit == "Diamonds"){
+            this.color = true;
+        }
+        else{
+            this.color = false;
+        }
     }
 }
 
@@ -80,38 +87,84 @@ class Table {
     }
 
     start(){
-        this.bet();
-    }
-
-    bet(){
-        var currentSocketId = this.players[this.betTurn];
-
-        io.sockets.sockets[currentSocketId].on('getBet', function(money){
-            // Revisar el dinero de currentSocket.
-            console.log(money);
-            io.sockets.to(this.socketRoom).emit('bettedMoney', money, this.betTurn);
-            if((this.betTurn + 1) != this.maximumPlayers){
-                this.betTurn++;
-                start();
-            }
-            else{
-                this.betTurn = 0;
-                this.chooseColor();
-            }
-            
-        });
- 
-        io.sockets.to(this.socketRoom).emit('bet', currentSocketId);
+        var betCounter = 0;
+        this.bet(this.betTurn, this.maximumPlayers, this.socketRoom, betCounter);
     }
 
     chooseColor(){
-        io.sockets.to(this.socketRoom).emit('colores');
+        
+        if(++this.betTurn >= this.maximumPlayers){
+            this.betTurn = 0;
+        }
+
+        //io.sockets.to(this.socketRoom).emit('colores');
+        var playCounter = 0;
+        var colorBets = new Array();
+        this.play(--this.betTurn, this.maximumPlayers, this.socketRoom, playCounter, colorBets);
+        //this.bet(this.betTurn, this.maximumPlayers, this.socketRoom, 0);
     }
 
-    nextTurn(){
-        this.playTurn++;
+    reward(colorBets){
+        var card = this.dealCard();
+        for(var i = 0; i < this.maximumPlayers; i++){
+            if(colorBets[i] == card.color){
+                io.sockets.to(this.socketRoom).emit('reward', i);
+            }
+        }
     }
+
+    bet(turn, maximumPlayers, socketRoom, betCounter){
+        var self = this;
+        var currentSocketId = this.players[turn];
+
+        io.sockets.sockets[currentSocketId].on('getBet', betFunction);
+
+        function betFunction(money){
+            io.sockets.sockets[currentSocketId].removeListener('getBet', betFunction);
+            io.sockets.to(socketRoom).emit('bettedMoney', money, turn);
+
+            if(++betCounter < maximumPlayers){
+                if(++turn >= maximumPlayers){
+                    turn = 0;
+                }
+                self.bet(turn, maximumPlayers, socketRoom, betCounter);
+            }
+            else{
+                self.chooseColor();
+            }
+        }
+
+        io.sockets.to(socketRoom).emit('bet', currentSocketId);
+    }
+
+    play(turn, maximumPlayers, socketRoom, playCounter, colorBets){
+        var self = this;
+        var currentSocketId = this.players[turn];
+
+        io.sockets.sockets[currentSocketId].on('getPlay', playFunction);
+
+        function playFunction(color){
+
+            io.sockets.sockets[currentSocketId].removeListener('getPlay', playFunction);
+            io.sockets.to(socketRoom).emit('bettedColor', color, turn);
+            colorBets[turn] = color; // true: red, false: black.
+
+            if(++playCounter < maximumPlayers){
+                if(++turn >= maximumPlayers){
+                    turn = 0;
+                }
+                self.play(turn, maximumPlayers, socketRoom, playCounter, colorBets);
+            }
+            else{
+                self.reward(colorBets);
+            }
+        }
+
+        io.sockets.to(socketRoom).emit('play', currentSocketId);
+    }
+
 }
+
 
 
 function newConnection(socket){
@@ -130,8 +183,6 @@ function newConnection(socket){
 
     socket.on('test', function(){
     });
-
-    console.log("logeado");
 }
 
 console.log("Server on");
