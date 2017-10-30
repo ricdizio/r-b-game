@@ -53,10 +53,12 @@ class Table {
         this.socketRoom = socketRoom;
         this.betTurn = 0;
         this.playTurn = 0;
+
         this.pool = 0;
-        this.maximumPlayers = 3;
+        this.maximumPlayers = 2;
 
         this.deck = new Array();
+        this.colorBets = new Array();
         this.generateDeck();
     }
 
@@ -89,7 +91,7 @@ class Table {
 
     start(){
         var betCounter = 0;
-        this.bet(this.betTurn, this.maximumPlayers, this.socketRoom, betCounter);
+        this.bet(this.betTurn, betCounter);
     }
 
     chooseColor(){
@@ -101,17 +103,17 @@ class Table {
 
         var playCounter = 0;
         var colorBets = new Array();
-        this.play(previousBetTurn, this.maximumPlayers, this.socketRoom, playCounter, colorBets);
+        this.play(previousBetTurn, playCounter);
     }
 
-    reward(colorBets){
+    reward(colorArray){
         var card = this.dealCard();
         var counter = 0;
 
         io.sockets.to(this.socketRoom).emit('deal', card);
 
         for(var i = 0; i < this.maximumPlayers; i++){
-            if(colorBets[i] == card.color){
+            if(colorArray[i] == card.color){
                 counter++;
             }
         }
@@ -122,7 +124,7 @@ class Table {
         }
         else{
             for(var i = 0; i < this.maximumPlayers; i++){
-                if(colorBets[i] == card.color){
+                if(colorArray[i] == card.color){
                     io.sockets.to(this.socketRoom).emit('reward', i, prize, false);
                 }
             }
@@ -131,7 +133,7 @@ class Table {
         this.start();
     }
 
-    bet(turn, maximumPlayers, socketRoom, betCounter){
+    bet(turn, betCounter){
         var self = this;
         var currentSocketId = this.players[turn];
 
@@ -139,23 +141,23 @@ class Table {
 
         function betFunction(money){
             io.sockets.sockets[currentSocketId].removeListener('getBet', betFunction);
-            io.sockets.to(socketRoom).emit('bettedMoney', money, turn);
+            io.sockets.to(self.socketRoom).emit('bettedMoney', money, turn);
 
-            if(++betCounter < maximumPlayers){
-                if(++turn >= maximumPlayers){
+            if(++betCounter < self.maximumPlayers){
+                if(++turn >= self.maximumPlayers){
                     turn = 0;
                 }
-                self.bet(turn, maximumPlayers, socketRoom, betCounter);
+                self.bet(turn, betCounter);
             }
             else{
                 self.chooseColor();
             }
         }
 
-        io.sockets.to(socketRoom).emit('bet', currentSocketId, turn);
+        io.sockets.to(self.socketRoom).emit('bet', currentSocketId, turn);
     }
 
-    play(turn, maximumPlayers, socketRoom, playCounter, colorBets){
+    play(turn, playCounter){
         var self = this;
         var currentSocketId = this.players[turn];
 
@@ -164,21 +166,21 @@ class Table {
         function playFunction(color){
 
             io.sockets.sockets[currentSocketId].removeListener('getPlay', playFunction);
-            io.sockets.to(socketRoom).emit('bettedColor', color, turn);
-            colorBets[turn] = color; // true: red, false: black.
+            io.sockets.to(self.socketRoom).emit('bettedColor', color, turn);
+            self.colorBets[turn] = color; // true: red, false: black.
 
-            if(++playCounter < maximumPlayers){
-                if(++turn >= maximumPlayers){
+            if(++playCounter < self.maximumPlayers){
+                if(++turn >= self.maximumPlayers){
                     turn = 0;
                 }
-                self.play(turn, maximumPlayers, socketRoom, playCounter, colorBets);
+                self.play(turn, playCounter);
             }
             else{
-                self.reward(colorBets);
+                self.reward(self.colorBets);
             }
         }
 
-        io.sockets.to(socketRoom).emit('play', currentSocketId, turn);
+        io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn);
     }
 
 }
@@ -188,7 +190,7 @@ class Table {
 function newConnection(socket){
     socket.on('join', function(room){
         socket.join(room);
-        if(io.sockets.adapter.rooms[room].length == 3){
+        if(io.sockets.adapter.rooms[room].length == 2){
             setTimeout(function(){
                 var table = new Table(io.sockets.adapter.rooms[room].sockets, room);
                 table.start();
