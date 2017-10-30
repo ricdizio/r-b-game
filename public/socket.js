@@ -36,21 +36,29 @@ function sendBet(){
     socket.emit('getBet', money.value);
 }
 
-
+function logCard(card){
+    console.log("Card: " + card.number + " of " + card.suit);
+}
 
 socket.on('bettedMoney', function(money, playerIndex){
     console.log("Jugador " + (playerIndex + 1) + " aposto " + money);
 });
 
-socket.on('bet', function(betId){
+socket.on('bet', function(betId, playerIndex){
     if(betId == socket.id){
         console.log("Te toca apostar");
     }
+    else{
+        console.log("Jugador " + (playerIndex + 1) + " esta apostando");
+    }
 });
 
-socket.on('play', function(betId){
+socket.on('play', function(betId, playerIndex){
     if(betId == socket.id){
         console.log("Te toca elegir");
+    }
+    else{
+        console.log("Jugador " + (playerIndex + 1) + " esta eligiendo");
     }
 });
 
@@ -66,8 +74,18 @@ socket.on('bettedColor', function(color, playerIndex){
     
 });
 
-socket.on('reward', function(playerIndex){
-    console.log("Jugador " + (playerIndex + 1) + " gano.");
+socket.on('deal', function(card){
+    logCard(card);
+});
+
+socket.on('reward', function(playerIndex, prize, houseWon){
+    if(!houseWon){
+        console.log("Jugador " + (playerIndex + 1) + " gano " + prize);
+    }
+    else{
+        console.log("Gana la casa");
+    }
+    
 });
 
 socket.emit('join', "room1");

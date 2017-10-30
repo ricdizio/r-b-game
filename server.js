@@ -53,7 +53,8 @@ class Table {
         this.socketRoom = socketRoom;
         this.betTurn = 0;
         this.playTurn = 0;
-        this.maximumPlayers = 2;
+        this.pool = 0;
+        this.maximumPlayers = 3;
 
         this.deck = new Array();
         this.generateDeck();
@@ -92,25 +93,42 @@ class Table {
     }
 
     chooseColor(){
-        
+        var previousBetTurn = this.betTurn;
+
         if(++this.betTurn >= this.maximumPlayers){
             this.betTurn = 0;
         }
 
-        //io.sockets.to(this.socketRoom).emit('colores');
         var playCounter = 0;
         var colorBets = new Array();
-        this.play(--this.betTurn, this.maximumPlayers, this.socketRoom, playCounter, colorBets);
-        //this.bet(this.betTurn, this.maximumPlayers, this.socketRoom, 0);
+        this.play(previousBetTurn, this.maximumPlayers, this.socketRoom, playCounter, colorBets);
     }
 
     reward(colorBets){
         var card = this.dealCard();
+        var counter = 0;
+
+        io.sockets.to(this.socketRoom).emit('deal', card);
+
         for(var i = 0; i < this.maximumPlayers; i++){
             if(colorBets[i] == card.color){
-                io.sockets.to(this.socketRoom).emit('reward', i);
+                counter++;
             }
         }
+        var prize = this.pool / counter;
+
+        if(counter == 0){
+            io.sockets.to(this.socketRoom).emit('reward', 0, 0, true);
+        }
+        else{
+            for(var i = 0; i < this.maximumPlayers; i++){
+                if(colorBets[i] == card.color){
+                    io.sockets.to(this.socketRoom).emit('reward', i, prize, false);
+                }
+            }
+        }
+
+        this.start();
     }
 
     bet(turn, maximumPlayers, socketRoom, betCounter){
@@ -134,7 +152,7 @@ class Table {
             }
         }
 
-        io.sockets.to(socketRoom).emit('bet', currentSocketId);
+        io.sockets.to(socketRoom).emit('bet', currentSocketId, turn);
     }
 
     play(turn, maximumPlayers, socketRoom, playCounter, colorBets){
@@ -160,7 +178,7 @@ class Table {
             }
         }
 
-        io.sockets.to(socketRoom).emit('play', currentSocketId);
+        io.sockets.to(socketRoom).emit('play', currentSocketId, turn);
     }
 
 }
@@ -170,18 +188,15 @@ class Table {
 function newConnection(socket){
     socket.on('join', function(room){
         socket.join(room);
-        if(io.sockets.adapter.rooms[room].length == 2){
+        if(io.sockets.adapter.rooms[room].length == 3){
             setTimeout(function(){
                 var table = new Table(io.sockets.adapter.rooms[room].sockets, room);
                 table.start();
-            }, 2000);
+            }, 1000);
         }
     });
 
     socket.on('disconnect', function(){
-    });
-
-    socket.on('test', function(){
     });
 }
 
