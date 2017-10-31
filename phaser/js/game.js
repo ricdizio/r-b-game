@@ -19,6 +19,7 @@ window.onload = function() {
 
 var button;
 var flip = false;
+var cardNumber = 0;
 var playGame = function(game){}
 playGame.prototype = {
     preload: function() {
@@ -27,6 +28,7 @@ playGame.prototype = {
         game.load.image('ButtonB', 'assets/buttonB.png');
         game.load.spritesheet('cards0', 'assets/cards0.png', 334, 440);
         game.load.image('table', 'assets/table2.png');
+        
         for(var i = 0; i < 51; i++){
             game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
         }
@@ -34,17 +36,18 @@ playGame.prototype = {
 
     create: function() {
         game.add.sprite(0,0,'table');
-        this.buttonR = game.add.sprite(50,game.height-200,'ButtonR');
-        this.buttonB = game.add.sprite(game.width-250,game.height-180,'ButtonB');
-        this.card =  game.add.sprite(game.width / 2, game.height / 2, "flip", 0);
-        this.card.anchor.set(0.5);
-        this.card.scale.set(gameOptions.cardScale);
-        this.buttonR.scale.set(gameOptions.buttonScale);
-        this.buttonB.scale.set(gameOptions.buttonScale);
-        this.buttonR = game.add.button(50,game.height-200, 'buttonR', this.onClickR, this, 0, 0, 0);
-        this.buttonB = game.add.button(game.width-250,game.height-180, 'buttonB', this.onClickB, this, 0, 0, 0);
+        var buttonR = game.add.sprite(50,game.height-200,'ButtonR');
+        var buttonB = game.add.sprite(game.width-250,game.height-180,'ButtonB');
+        card =  game.add.sprite(game.width / 2, 0, "flip", 0);
+        card.anchor.set(0.5);
+        card.scale.set(gameOptions.cardScale);
+        buttonR.scale.set(gameOptions.buttonScale);
+        buttonB.scale.set(gameOptions.buttonScale);
+        buttonR = game.add.button(50,game.height-200, 'buttonR', this.onClickR, this, 0, 0, 0);
+        buttonB = game.add.button(game.width-250,game.height-180, 'buttonB', this.onClickB, this, 0, 0, 0);
+        
 
-        this.card.isFlipping = false;
+        card.isFlipping = false;
     },
 
     onClickB: function(){
@@ -55,6 +58,7 @@ playGame.prototype = {
     },
 
     update: function() {
+        this.card = card;
         if(flip){
             this.flipTween = game.add.tween(this.card.scale).to({
                 x: 0,
@@ -77,14 +81,38 @@ playGame.prototype = {
             }, this);
 
             if(!this.card.isFlipping){
- 
+                this.moveCards();
                 this.card.isFlipping = true;
-
                 // start the first of the two flipping animations
                 this.flipTween.start();
             }
         }
 
+    },
+    handleSwipe: function() {
+        var tween = game.add.tween(this.card).to({
+            x: game.width / 2
+        }, SVGAngle.height/2, Phaser.Easing.Cubic.Out, true);
+        tween.onComplete.add(function() {
+        game.time.events.add(Phaser.Timer.SECOND, this.moveCards, this);
+          
+        }, this)
+    },
+    moveCards: function() {
+        var moveDownTween = game.add.tween(this.card).to({
+            y: game.height / 2
+        }, 500, Phaser.Easing.Cubic.Out, true);
+        game.time.events.add(Phaser.Timer.SECOND*2, this.fadeCards, this);
+    },
+    fadeCards: function(){
+        for(var i = 0; i < 2; i++){
+            var fadeTween = game.add.tween(this.card).to({
+                alpha: 0
+            }, 500, Phaser.Easing.Linear.None, true);
+        }
+        game.time.events.add(Phaser.Timer.SECOND*3, function(){
+            game.state.start("PlayGame");    
+        }, this)  
     },
 
     makeCard: function(cardIndex) {
