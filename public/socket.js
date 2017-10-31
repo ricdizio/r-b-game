@@ -33,7 +33,7 @@ function sendBlack(){
 }
 
 function sendBet(){
-  socket.emit('getBet', money.value);
+  socket.emit('getBet', parseInt(money.value));
 }
 
 function logCard(card){

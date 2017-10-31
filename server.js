@@ -22,9 +22,10 @@ var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 var suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs'];
 var decks = 1;
 var deck = new Array();
-const players = 3;
+const players = 2;
+const initialMoney = 5000;
 
-class Card {
+class Card{
   constructor(value, number, suit){
     if(value < 10){
       this.value = value;
@@ -45,29 +46,53 @@ class Card {
   }
 }
 
-class Table {
-  constructor(players, socketRoom, maximumPlayers){
-    this.players = this.getIds(players);
+class Player{
+  constructor(socketId, money, playerIndex){
+    this.socketId = socketId;
+    this.money = money;
+    this.playerIndex = playerIndex;
+  }
+
+  add(money){
+    this.money += money;
+  }
+
+  substract(money){
+    this.money -= money;
+  }
+}
+
+class Table{
+  constructor(players, socketRoom, maximumPlayers, initialMoney){
+    
     this.socketRoom = socketRoom;
-    this.betTurn = 0;
-    this.playTurn = 0;
+    this.initialMoney = initialMoney;
+    this.maximumPlayers = maximumPlayers;
+
+    this.players = this.initiatePlayers(players, initialMoney);
 
     this.pool = 0;
-    this.maximumPlayers = maximumPlayers;
+    this.betTurn = 0;
 
     this.deck = new Array();
     this.colorBets = new Array();
+
     this.generateDeck();
   }
 
-  getIds(players){
+  initiatePlayers(players, initialMoney){
     var temporalIds = new Array();
-    for (var property in players) {
-      if (players.hasOwnProperty(property)) {
+    var temporalObjectArray = new Array();
+
+    for (var property in players){
+      if (players.hasOwnProperty(property)){
         temporalIds.push(property);
       }
     }
-    return temporalIds;
+    for(var i = 0; i < temporalIds.length; i++){
+      temporalObjectArray[i] = new Player(temporalIds[i], initialMoney, i);
+    }
+    return temporalObjectArray;
   }
 
   generateDeck(){
@@ -89,7 +114,12 @@ class Table {
 
   start(){
     var betCounter = 0;
+    this.pool = 0;
+    this.playingPlayers = 0;
     this.bet(this.betTurn, betCounter);
+    console.log("Empieza el juego");
+    console.log(this.players[0]);
+    console.log(this.players[1]);
   }
 
   chooseColor(){
@@ -114,14 +144,17 @@ class Table {
         counter++;
       }
     }
-    var prize = this.pool / counter;
 
     if(counter == 0){
       io.sockets.to(this.socketRoom).emit('reward', 0, 0, true);
     }
     else{
+
+      var prize = this.pool / counter;
+
       for(var i = 0; i < this.maximumPlayers; i++){
         if(colorArray[i] == card.color){
+          this.players[i].add(prize);
           io.sockets.to(this.socketRoom).emit('reward', i, prize, false);
         }
       }
@@ -132,13 +165,15 @@ class Table {
 
   bet(turn, betCounter){
     var self = this;
-    var currentSocketId = this.players[turn];
+    var currentSocketId = this.players[turn].socketId;
 
     io.sockets.sockets[currentSocketId].on('getBet', betFunction);
 
     function betFunction(money){
       io.sockets.sockets[currentSocketId].removeListener('getBet', betFunction);
       io.sockets.to(self.socketRoom).emit('bettedMoney', money, turn);
+      self.players[turn].substract(money);
+      self.pool += money;
 
       if(++betCounter < self.maximumPlayers){
         if(++turn >= self.maximumPlayers){
@@ -156,7 +191,7 @@ class Table {
 
   play(turn, playCounter){
     var self = this;
-    var currentSocketId = this.players[turn];
+    var currentSocketId = this.players[turn].socketId;
 
     io.sockets.sockets[currentSocketId].on('getPlay', playFunction);
 
@@ -188,7 +223,7 @@ function newConnection(socket){
     socket.join(room);
     if(io.sockets.adapter.rooms[room].length == players){
       setTimeout(function(){
-        var table = new Table(io.sockets.adapter.rooms[room].sockets, room, players);
+        var table = new Table(io.sockets.adapter.rooms[room].sockets, room, players, initialMoney);
         table.start();
       }, 1000);
     }
