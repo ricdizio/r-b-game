@@ -213,7 +213,6 @@ class Table{
     io.sockets.sockets[currentSocketId].on('getPlay', playFunction);
 
     function playFunction(color){
-
       io.sockets.sockets[currentSocketId].removeListener('getPlay', playFunction);
       io.sockets.to(self.socketRoom).emit('bettedColor', color, turn);
       self.colorBets[turn] = color; // true: red, false: black.
