@@ -110,8 +110,10 @@ playGame.prototype = {
                 alpha: 0
             }, 500, Phaser.Easing.Linear.None, true);
         }
-        game.time.events.add(Phaser.Timer.SECOND*3, function(){
-            game.state.start("PlayGame");    
+        game.time.events.add(Phaser.Timer.SECOND*2, function(){
+            card =  game.add.sprite(game.width / 2, 0, "flip", 0);
+            card.anchor.set(0.5);
+            //game.state.start("PlayGame");    
         }, this)  
     },
 
