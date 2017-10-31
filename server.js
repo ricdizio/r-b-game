@@ -74,10 +74,8 @@ class Table{
     this.pool = 0;
     this.betTurn = 0;
 
-    this.deck = new Array();
+    this.deck = this.shuffle(this.generateDeck());
     this.colorBets = new Array();
-
-    this.generateDeck();
   }
 
   initiatePlayers(players, initialMoney){
@@ -96,13 +94,15 @@ class Table{
   }
 
   generateDeck(){
+    var temporalArray = new Array();
     for(var i = 0; i < decks; i++){
       for(var j = 0; j < suits.length; j++){
         for(var k = 0; k < numbers.length; k++){
-          this.deck.push(new Card(k + 1, numbers[k], suits[j]));
+          temporalArray.push(new Card(k + 1, numbers[k], suits[j]));
         }
       }
     }
+    return temporalArray;
   }
 
   dealCard(){
@@ -112,14 +112,31 @@ class Table{
     return card;
   }
 
+  shuffle(array){
+    var newArray = array;
+    var arrayLength = array.length;
+    var randomNumber;
+    var temp;
+
+    while(arrayLength){
+      randomNumber = Math.floor(Math.random() * arrayLength--);
+      temp = newArray[arrayLength];
+      newArray[arrayLength] = newArray[randomNumber];
+      newArray[randomNumber] = temp;
+    }
+
+    return newArray;
+  }
+
+  begin(){
+    this.deck = this.shuffle(this.deck);
+    this.start();
+  }
+
   start(){
     var betCounter = 0;
     this.pool = 0;
-    this.playingPlayers = 0;
     this.bet(this.betTurn, betCounter);
-    console.log("Empieza el juego");
-    console.log(this.players[0]);
-    console.log(this.players[1]);
   }
 
   chooseColor(){
@@ -224,7 +241,7 @@ function newConnection(socket){
     if(io.sockets.adapter.rooms[room].length == players){
       setTimeout(function(){
         var table = new Table(io.sockets.adapter.rooms[room].sockets, room, players, initialMoney);
-        table.start();
+        table.begin();
       }, 1000);
     }
   });
