@@ -5,89 +5,104 @@ var gameOptions = {
     gameHeight: 600,
     cardSheetWidth: 65,
     cardSheetHeight: 81,
-    cardScale: 0.8,
+    cardScale: 1,
     buttonScale: 0.4,
     flipZoom: 1.2,
-    flipSpeed: 500
+    flipSpeed: 300
+}
+window.onload = function() {
+    //game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight,Phaser.AUTO, '', { preload: preload, create: create, update: update });
+    game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight);
+    game.state.add("PlayGame", playGame);
+    game.state.start("PlayGame");
 }
 
-//var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
-game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight,Phaser.AUTO, '', { preload: preload, create: create, update: update });
 var button;
-var turn;
-
-function preload() {
-    game.load.spritesheet('flip', 'data/flip.png', 167, 243);
-    game.load.image('ButtonR', 'data/buttonR.png');
-    game.load.image('ButtonB', 'data/buttonB.png');
-    game.load.spritesheet('cards0', 'data/cards0.png', 334, 440);
-    game.load.image('table', 'data/table2.png');
-    for(var i = 0; i < 51; i++){
-        game.load.image("card" + i, "data/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
-    }
-}
-
-function create() {
-    game.add.sprite(0,0,'table');
-    var buttonR = game.add.sprite(50,game.height-200,'ButtonR');
-    var buttonB = game.add.sprite(game.width-250,game.height-180,'ButtonB');
-    var card = game.add.sprite(500, 50,'flip',0);
-    card.scale.set(gameOptions.cardScale);
-    buttonR.scale.set(gameOptions.buttonScale);
-    buttonB.scale.set(gameOptions.buttonScale);
-
-    card.isFlipping = false;
-    game.input.onDown.add(function(){
-        // if the card is not flipping...
-        if(!card.isFlipping){
-
-            // it's flipping now!
-            card.isFlipping = true;
-
-            // start the first of the two flipping animations
-            flipTween.start();
+var flip = false;
+var playGame = function(game){}
+playGame.prototype = {
+    preload: function() {
+        game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
+        game.load.image('ButtonR', 'assets/buttonR.png');
+        game.load.image('ButtonB', 'assets/buttonB.png');
+        game.load.spritesheet('cards0', 'assets/cards0.png', 334, 440);
+        game.load.image('table', 'assets/table2.png');
+        for(var i = 0; i < 51; i++){
+            game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
         }
-    });
+    },
 
-    flipTween = game.add.tween(card.scale).to({
-        x: 0,
-        y: gameOptions.flipZoom
-    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+    create: function() {
+        game.add.sprite(0,0,'table');
+        this.buttonR = game.add.sprite(50,game.height-200,'ButtonR');
+        this.buttonB = game.add.sprite(game.width-250,game.height-180,'ButtonB');
+        this.card =  game.add.sprite(game.width / 2, game.height / 2, "flip", 0);
+        this.card.anchor.set(0.5);
+        this.card.scale.set(gameOptions.cardScale);
+        this.buttonR.scale.set(gameOptions.buttonScale);
+        this.buttonB.scale.set(gameOptions.buttonScale);
+        this.buttonR = game.add.button(50,game.height-200, 'buttonR', this.onClickR, this, 0, 0, 0);
+        this.buttonB = game.add.button(game.width-250,game.height-180, 'buttonB', this.onClickB, this, 0, 0, 0);
 
-    flipTween.onComplete.add(function(){
-        card.frame = 1 - card.frame;
-        backFlipTween.start();
-    });
-    backFlipTween = game.add.tween(card.scale).to({
-        x: 1,
-        y: 1
-    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+        this.card.isFlipping = false;
+    },
 
-    // once the card has been placed down on the table, we can flip it again
-    backFlipTween.onComplete.add(function(){
-        card.isFlipping = false;
-    });
-}
+    onClickB: function(){
+        flip = !flip;
+    },
+    onClickB: function(){
+        flip = !flip;
+    },
 
-function update() {
-    
-}
+    update: function() {
+        if(flip){
+            this.flipTween = game.add.tween(this.card.scale).to({
+                x: 0,
+                y: gameOptions.flipZoom
+            }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
-function makeCard(cardIndex) {
-    var card = game.add.sprite(gameOptions.cardSheetWidth * gameOptions.cardScale / -2, game.height / 2, "cards0");
-    card.anchor.set(0.5);
-    card.scale.set(gameOptions.cardScale);
-    card.loadTexture("cards" + getCardTexture(deck[cardIndex]));
-    card.frame = getCardFrame(deck[cardIndex]);
-    return card;
-}
+            this.flipTween.onComplete.add(function(){
+                this.card.frame = 1 - this.card.frame;
+                this.backFlipTween.start();
+                flip = false;
+            }, this);
+     
+            this.backFlipTween = game.add.tween(this.card.scale).to({
+                x: 1,
+                y: 1
+            }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+           
+            this.backFlipTween.onComplete.add(function(){
+                this.card.isFlipping = false;
+            }, this);
 
-function getCardTexture(cardValue){
-    return Math.floor((cardValue % 13) / 3) + 5 * Math.floor(cardValue / 26);
-}
+            if(!this.card.isFlipping){
+ 
+                this.card.isFlipping = true;
 
-function getCardFrame(cardValue){
-    return (cardValue % 13) % 3 + 3 * (Math.floor(cardValue / 13) % 2);
+                // start the first of the two flipping animations
+                this.flipTween.start();
+            }
+        }
+
+    },
+
+    makeCard: function(cardIndex) {
+        var card = game.add.sprite(gameOptions.cardSheetWidth * gameOptions.cardScale / -2, game.height / 2, "cards0");
+        card.anchor.set(0.5);
+        card.scale.set(gameOptions.cardScale);
+        card.loadTexture("cards" + getCardTexture(deck[cardIndex]));
+        card.frame = getCardFrame(deck[cardIndex]);
+        return card;
+    },
+/*
+    getCardTexture: function(cardValue){
+        return Math.floor((cardValue % 13) / 3) + 5 * Math.floor(cardValue / 26);
+    },
+
+    getCardFrame: function(cardValue){
+        return (cardValue % 13) % 3 + 3 * (Math.floor(cardValue / 13) % 2);
+    }*/
 }
 /*
 function moveCards() {
