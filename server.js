@@ -24,6 +24,7 @@ var decks = 1;
 var deck = new Array();
 const players = 2;
 const initialMoney = 5000;
+const timeoutTime = 3000;
 
 class Card{
   constructor(value, number, suit){
@@ -63,7 +64,7 @@ class Player{
 }
 
 class Table{
-  constructor(players, socketRoom, maximumPlayers, initialMoney){
+  constructor(players, socketRoom, maximumPlayers, initialMoney, timeoutTime){
     
     this.socketRoom = socketRoom;
     this.initialMoney = initialMoney;
@@ -73,6 +74,7 @@ class Table{
 
     this.pool = 0;
     this.betTurn = 0;
+    this.timeoutTime = timeoutTime;
 
     this.deck = this.shuffle(this.generateDeck());
     this.colorBets = new Array();
@@ -192,18 +194,49 @@ class Table{
       self.players[turn].substract(money);
       self.pool += money;
 
-      if(++betCounter < self.maximumPlayers){
-        if(++turn >= self.maximumPlayers){
-          turn = 0;
-        }
-        self.bet(turn, betCounter);
+      var temporalObject = {
+        counter: betCounter,
+        turn: turn
+      }
+
+      if(self.checkCounters(temporalObject, self.maximumPlayers)){
+        self.bet(temporalObject.turn, temporalObject.counter);
       }
       else{
         self.chooseColor();
       }
     }
 
-    io.sockets.to(self.socketRoom).emit('bet', currentSocketId, turn);
+    io.sockets.to(this.socketRoom).emit('bet', currentSocketId, turn);
+    
+    setTimeout(function(){
+      io.sockets.sockets[currentSocketId].removeListener('getBet', betFunction);
+      io.sockets.to(self.socketRoom).emit('timedOut', turn);
+      
+      var temporalObject = {
+        counter: betCounter,
+        turn: turn
+      }
+
+      if(self.checkCounters(temporalObject, self.maximumPlayers)){
+        self.bet(temporalObject.turn, temporalObject.counter);
+      }
+      else{
+        self.chooseColor();
+      }
+    }, timeoutTime);
+  }
+
+  checkCounters(object, maximumPlayers){
+    if(++object.counter < maximumPlayers){
+        if(++object.turn >= maximumPlayers){
+          object.turn = 0;
+        }
+        return true;
+      }
+      else{
+        return false;
+      }
   }
 
   play(turn, playCounter){
@@ -217,11 +250,13 @@ class Table{
       io.sockets.to(self.socketRoom).emit('bettedColor', color, turn);
       self.colorBets[turn] = color; // true: red, false: black.
 
-      if(++playCounter < self.maximumPlayers){
-        if(++turn >= self.maximumPlayers){
-          turn = 0;
-        }
-        self.play(turn, playCounter);
+      var temporalObject = {
+        counter: playCounter,
+        turn: turn
+      }
+
+      if(self.checkCounters(temporalObject, self.maximumPlayers)){
+        self.play(temporalObject.turn, temporalObject.counter);
       }
       else{
         self.reward(self.colorBets);
@@ -229,6 +264,34 @@ class Table{
     }
 
     io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn);
+
+    setTimeout(function(){
+      var randomPick = self.randomColor();
+      io.sockets.sockets[currentSocketId].removeListener('getPlay', playFunction);
+      io.sockets.to(self.socketRoom).emit('bettedColor', randomPick, turn);
+      self.colorBets[turn] = randomPick; // true: red, false: black.
+
+      var temporalObject = {
+        counter: playCounter,
+        turn: turn
+      }
+
+      if(self.checkCounters(temporalObject, self.maximumPlayers)){
+        self.play(temporalObject.turn, temporalObject.counter);
+      }
+      else{
+        self.reward(self.colorBets);
+      }
+    }, timeoutTime);
+  }
+
+  randomColor(){
+    if(Math.random() > 0.5){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 }
 
@@ -239,7 +302,8 @@ function newConnection(socket){
     socket.join(room);
     if(io.sockets.adapter.rooms[room].length == players){
       setTimeout(function(){
-        var table = new Table(io.sockets.adapter.rooms[room].sockets, room, players, initialMoney);
+        var table = new Table(io.sockets.adapter.rooms[room].sockets, room, 
+          players, initialMoney, timeoutTime);
         table.begin();
       }, 1000);
     }
