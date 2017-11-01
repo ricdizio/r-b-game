@@ -88,4 +88,8 @@ socket.on('reward', function(playerIndex, prize, houseWon){
   
 });
 
+socket.on('timedOut', function(playerIndex){
+  console.log('Jugador ' + (playerIndex + 1) + ' ha tardado demasiado');
+});
+
 socket.emit('join', "room1");
