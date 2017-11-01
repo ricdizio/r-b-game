@@ -11,110 +11,105 @@ var gameOptions = {
     flipSpeed: 300
 }
 window.onload = function() {
-    game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight);
-    game.state.add("PlayGame", playGame);
-    game.state.start("PlayGame");
+    game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 }
 
 var button;
 var flip = false;
 var cardNumber = 0;
-var playGame = function(game){}
-playGame.prototype = {
-    preload: function() {
-        game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
-        game.load.image('ButtonR', 'assets/buttonR.png');
-        game.load.image('ButtonB', 'assets/buttonB.png');
-        game.load.spritesheet('cards0', 'assets/cards0.png', 334, 440);
-        game.load.image('table', 'assets/table2.png');
+
+function preload() {
+    game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
+    game.load.image('ButtonR', 'assets/buttonR.png');
+    game.load.image('ButtonB', 'assets/buttonB.png');
+    game.load.spritesheet('cards0', 'assets/cards0.png', 334, 440);
+    game.load.image('table', 'assets/table2.png');
+    
+    for(var i = 0; i < 51; i++){
+        game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
+    }
+}
+function create() {
+    game.add.sprite(0,0,'table');
+    var buttonR = game.add.sprite(50,game.height-200,'ButtonR');
+    var buttonB = game.add.sprite(game.width-250,game.height-180,'ButtonB');
+    card =  game.add.sprite(game.width / 2, 0, "flip", 0);
+    card.anchor.set(0.5);
+    card.scale.set(gameOptions.cardScale);
+    buttonR.scale.set(gameOptions.buttonScale);
+    buttonB.scale.set(gameOptions.buttonScale);
+    //buttonR = game.add.button(50,game.height-200, 'buttonR', onClickR(), this, 0, 0, 0);
+    buttonB = game.add.button(game.width-250,game.height-180, 'buttonB', onClickB, this, 0, 0, 0);    
+
+    card.isFlipping = false;
+}
+function onClickR(){
+    flip = !flip;
+}
+function onClickB(){
+    flip = !flip;
+}
+function update(card) {
+    if(flip){
+        flipTween = game.add.tween(card.scale).to({
+            x: 0,
+            y: gameOptions.flipZoom
+        }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+
+        flipTween.onComplete.add(function(){
+            card.frame = 1 - card.frame;
+            backFlipTween.start();
+            flip = false;
+        });
+    
+        backFlipTween = game.add.tween(card.scale).to({
+            x: 1,
+            y: 1
+        }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
         
-        for(var i = 0; i < 51; i++){
-            game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
+        backFlipTween.onComplete.add(function(){
+            card.isFlipping = false;
+        });
+
+        if(!card.isFlipping){
+            moveCards(card);
+            card.isFlipping = true;
+            // start the first of the two flipping animations
+            flipTween.start();
         }
-    },
-    create: function() {
-        game.add.sprite(0,0,'table');
-        var buttonR = game.add.sprite(50,game.height-200,'ButtonR');
-        var buttonB = game.add.sprite(game.width-250,game.height-180,'ButtonB');
+    }
+}
+function handleSwipe(card) {
+    var tween = game.add.tween(card).to({
+        x: game.width / 2
+    }, SVGAngle.height/2, Phaser.Easing.Cubic.Out, true);
+    tween.onComplete.add(function() {
+        game.time.events.add(Phaser.Timer.SECOND, moveCards); 
+    })
+}
+function moveCards(card) {
+    var moveDownTween = game.add.tween(card).to({
+        y: game.height / 2
+    }, 500, Phaser.Easing.Cubic.Out, true);
+    game.time.events.add(Phaser.Timer.SECOND*2, fadeCards(card));
+}
+function fadeCards(card){
+    for(var i = 0; i < 2; i++){
+        var fadeTween = game.add.tween(card).to({
+            alpha: 0
+        }, 500, Phaser.Easing.Linear.None, true);
+    }
+    game.time.events.add(Phaser.Timer.SECOND*2, function(){
         card =  game.add.sprite(game.width / 2, 0, "flip", 0);
         card.anchor.set(0.5);
-        card.scale.set(gameOptions.cardScale);
-        buttonR.scale.set(gameOptions.buttonScale);
-        buttonB.scale.set(gameOptions.buttonScale);
-        buttonR = game.add.button(50,game.height-200, 'buttonR', this.onClickR, this, 0, 0, 0);
-        buttonB = game.add.button(game.width-250,game.height-180, 'buttonB', this.onClickB, this, 0, 0, 0);    
-
-        card.isFlipping = false;
-    },
-    onClickB: function(){
-        flip = !flip;
-    },
-    onClickB: function(){
-        flip = !flip;
-    },
-    update: function() {
-        this.card = card;
-        if(flip){
-            this.flipTween = game.add.tween(this.card.scale).to({
-                x: 0,
-                y: gameOptions.flipZoom
-            }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
-
-            this.flipTween.onComplete.add(function(){
-                this.card.frame = 1 - this.card.frame;
-                this.backFlipTween.start();
-                flip = false;
-            }, this);
-     
-            this.backFlipTween = game.add.tween(this.card.scale).to({
-                x: 1,
-                y: 1
-            }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
-           
-            this.backFlipTween.onComplete.add(function(){
-                this.card.isFlipping = false;
-            }, this);
-
-            if(!this.card.isFlipping){
-                this.moveCards();
-                this.card.isFlipping = true;
-                // start the first of the two flipping animations
-                this.flipTween.start();
-            }
-        }
-    },
-    handleSwipe: function() {
-        var tween = game.add.tween(this.card).to({
-            x: game.width / 2
-        }, SVGAngle.height/2, Phaser.Easing.Cubic.Out, true);
-        tween.onComplete.add(function() {
-        game.time.events.add(Phaser.Timer.SECOND, this.moveCards, this); 
-        }, this)
-    },
-    moveCards: function() {
-        var moveDownTween = game.add.tween(this.card).to({
-            y: game.height / 2
-        }, 500, Phaser.Easing.Cubic.Out, true);
-        game.time.events.add(Phaser.Timer.SECOND*2, this.fadeCards, this);
-    },
-    fadeCards: function(){
-        for(var i = 0; i < 2; i++){
-            var fadeTween = game.add.tween(this.card).to({
-                alpha: 0
-            }, 500, Phaser.Easing.Linear.None, true);
-        }
-        game.time.events.add(Phaser.Timer.SECOND*2, function(){
-            card =  game.add.sprite(game.width / 2, 0, "flip", 0);
-            card.anchor.set(0.5);
-            //game.state.start("PlayGame");    
-        }, this)  
-    },
-    makeCard: function(cardIndex) {
-        var card = game.add.sprite(gameOptions.cardSheetWidth * gameOptions.cardScale / -2, game.height / 2, "cards0");
-        card.anchor.set(0.5);
-        card.scale.set(gameOptions.cardScale);
-        card.loadTexture("cards" + getCardTexture(deck[cardIndex]));
-        card.frame = getCardFrame(deck[cardIndex]);
-        return card;
-    }
+        //game.state.start("PlayGame");    
+    })  
+}
+function makeCard(cardIndex) {
+    var card = game.add.sprite(gameOptions.cardSheetWidth * gameOptions.cardScale / -2, game.height / 2, "cards0");
+    card.anchor.set(0.5);
+    card.scale.set(gameOptions.cardScale);
+    card.loadTexture("cards" + getCardTexture(deck[cardIndex]));
+    card.frame = getCardFrame(deck[cardIndex]);
+    return card;
 }
