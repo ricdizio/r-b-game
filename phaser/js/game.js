@@ -11,7 +11,6 @@ var gameOptions = {
     flipSpeed: 300
 }
 window.onload = function() {
-    //game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight,Phaser.AUTO, '', { preload: preload, create: create, update: update });
     game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight);
     game.state.add("PlayGame", playGame);
     game.state.start("PlayGame");
@@ -33,7 +32,6 @@ playGame.prototype = {
             game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
         }
     },
-
     create: function() {
         game.add.sprite(0,0,'table');
         var buttonR = game.add.sprite(50,game.height-200,'ButtonR');
@@ -44,19 +42,16 @@ playGame.prototype = {
         buttonR.scale.set(gameOptions.buttonScale);
         buttonB.scale.set(gameOptions.buttonScale);
         buttonR = game.add.button(50,game.height-200, 'buttonR', this.onClickR, this, 0, 0, 0);
-        buttonB = game.add.button(game.width-250,game.height-180, 'buttonB', this.onClickB, this, 0, 0, 0);
-        
+        buttonB = game.add.button(game.width-250,game.height-180, 'buttonB', this.onClickB, this, 0, 0, 0);    
 
         card.isFlipping = false;
     },
-
     onClickB: function(){
         flip = !flip;
     },
     onClickB: function(){
         flip = !flip;
     },
-
     update: function() {
         this.card = card;
         if(flip){
@@ -87,15 +82,13 @@ playGame.prototype = {
                 this.flipTween.start();
             }
         }
-
     },
     handleSwipe: function() {
         var tween = game.add.tween(this.card).to({
             x: game.width / 2
         }, SVGAngle.height/2, Phaser.Easing.Cubic.Out, true);
         tween.onComplete.add(function() {
-        game.time.events.add(Phaser.Timer.SECOND, this.moveCards, this);
-          
+        game.time.events.add(Phaser.Timer.SECOND, this.moveCards, this); 
         }, this)
     },
     moveCards: function() {
@@ -116,7 +109,6 @@ playGame.prototype = {
             //game.state.start("PlayGame");    
         }, this)  
     },
-
     makeCard: function(cardIndex) {
         var card = game.add.sprite(gameOptions.cardSheetWidth * gameOptions.cardScale / -2, game.height / 2, "cards0");
         card.anchor.set(0.5);
@@ -124,33 +116,5 @@ playGame.prototype = {
         card.loadTexture("cards" + getCardTexture(deck[cardIndex]));
         card.frame = getCardFrame(deck[cardIndex]);
         return card;
-    },
-/*
-    getCardTexture: function(cardValue){
-        return Math.floor((cardValue % 13) / 3) + 5 * Math.floor(cardValue / 26);
-    },
-
-    getCardFrame: function(cardValue){
-        return (cardValue % 13) % 3 + 3 * (Math.floor(cardValue / 13) % 2);
-    }*/
+    }
 }
-/*
-function moveCards() {
-    var cardToMove = this.nextCardIndex % 2;
-    var moveOutTween = game.add.tween(this.cardsInGame[cardToMove]).to({
-        x: game.width + gameOptions.cardSheetWidth * gameOptions.cardScale
-    }, 500, Phaser.Easing.Cubic.Out, true);
-    cardToMove = (this.nextCardIndex + 1) % 2
-    var moveDownTween = game.add.tween(this.cardsInGame[cardToMove]).to({
-        y: game.height / 2
-    }, 500, Phaser.Easing.Cubic.Out, true);
-    moveDownTween.onComplete.add(function() {
-        var cardToMove = this.nextCardIndex % 2
-        this.cardsInGame[cardToMove].loadTexture("cards" + this.getCardTexture(this.deck[this.nextCardIndex]));
-        this.cardsInGame[cardToMove].frame = this.getCardFrame(this.deck[this.nextCardIndex]);
-        this.nextCardIndex = (this.nextCardIndex + 1) % 52;
-        this.cardsInGame[cardToMove].x = gameOptions.cardSheetWidth * gameOptions.cardScale / -2;
-        game.input.onDown.add(this.beginSwipe, this);
-        this.infoGroup.visible = true;
-    }, this)
-}*/
