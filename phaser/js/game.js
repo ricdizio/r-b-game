@@ -215,7 +215,8 @@ playGame.prototype = {
             betNumber = 0;
         else
             betNumber++;
-        cardsInGame.push(game.add.sprite(game.width / 2, game.height*3/4, "flip", 0));
+
+        cardsInGame[betNumber] = game.add.sprite(game.width / 2, game.height*3/4, "flip", 0);
         //card =  game.add.sprite(game.width / 2, game.height*3/4, "flip", 0);
         cardsInGame[betNumber].anchor.set(0.5);
         cardsInGame[betNumber].scale.set(gameOptions.cardScaleOff);
