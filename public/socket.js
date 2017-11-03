@@ -1,24 +1,18 @@
-var socket = io.connect('http://localhost:3000');
+var socket = io.connect('http://192.168.1.119:3000');
 var bet = 0;
 
 class Card {
-  constructor(value, number, suit){
-    if(value < 10){
-      this.value = value;
-    }
-    else{
-      this.value = 10;
-    }
-    
+  constructor(index, number, suit){
+    this.index = index;
     this.number = number;
     this.suit = suit;
   }
 }
 
-
 var red = document.getElementById('red');
 var black = document.getElementById('black');
 var bet = document.getElementById('bet');
+var currentTurn = 0;
 
 red.addEventListener('click', sendRed);
 black.addEventListener('click', sendBlack);
@@ -37,6 +31,7 @@ function sendBet(){
 }
 
 function logCard(card){
+  playGame.flipCard();
   console.log("Card: " + card.number + " of " + card.suit);
 }
 
@@ -53,13 +48,23 @@ socket.on('bet', function(betId, playerIndex){
   }
 });
 
-socket.on('play', function(betId, playerIndex){
-  if(betId == socket.id){
-    console.log("Te toca elegir");
-  }
-  else{
-    console.log("Jugador " + (playerIndex + 1) + " esta eligiendo");
-  }
+socket.on('play', function(betId, playerIndex, lastTurn){
+  //if(!lastTurn){
+    if(betId == socket.id){
+      console.log("Te toca elegir");
+  
+    }
+    else{
+      console.log("Jugador " + (playerIndex + 1) + " esta eligiendo");
+    }
+    currentTurn = playerIndex;
+    playGame.checkPlayer(playerIndex);
+    playGame.alertTurn(playerIndex);
+  //}
+  //else{
+  //  playGame.checkPlayer(playerIndex);
+  //}
+  
 });
 
 socket.on('bettedColor', function(color, playerIndex){
@@ -93,3 +98,4 @@ socket.on('timedOut', function(playerIndex){
 });
 
 socket.emit('join', "room1");
+

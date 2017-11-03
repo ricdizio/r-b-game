@@ -22,19 +22,13 @@ var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 var suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs'];
 var decks = 1;
 var deck = new Array();
-const players = 2;
+const players = 3;
 const initialMoney = 5000;
-const timeoutTime = 3000;
+const timeoutTime = 30000;
 
 class Card{
-  constructor(value, number, suit){
-    if(value < 10){
-      this.value = value;
-    }
-    else{
-      this.value = 10;
-    }
-
+  constructor(index, number, suit){
+    this.index = index;
     this.number = number;
     this.suit = suit;
 
@@ -100,7 +94,7 @@ class Table{
     for(var i = 0; i < decks; i++){
       for(var j = 0; j < suits.length; j++){
         for(var k = 0; k < numbers.length; k++){
-          temporalArray.push(new Card(k + 1, numbers[k], suits[j]));
+          temporalArray.push(new Card(j*4 + k, numbers[k], suits[j]));
         }
       }
     }
@@ -189,6 +183,7 @@ class Table{
     io.sockets.sockets[currentSocketId].on('getBet', betFunction);
 
     function betFunction(money){
+      clearTimeout(setTime);
       io.sockets.sockets[currentSocketId].removeListener('getBet', betFunction);
       io.sockets.to(self.socketRoom).emit('bettedMoney', money, turn);
       self.players[turn].substract(money);
@@ -209,7 +204,7 @@ class Table{
 
     io.sockets.to(this.socketRoom).emit('bet', currentSocketId, turn);
     
-    setTimeout(function(){
+    var setTime = setTimeout(function(){
       io.sockets.sockets[currentSocketId].removeListener('getBet', betFunction);
       io.sockets.to(self.socketRoom).emit('timedOut', turn);
       
@@ -224,7 +219,7 @@ class Table{
       else{
         self.chooseColor();
       }
-    }, timeoutTime);
+    }, this.timeoutTime);
   }
 
   checkCounters(object, maximumPlayers){
@@ -246,9 +241,11 @@ class Table{
     io.sockets.sockets[currentSocketId].on('getPlay', playFunction);
 
     function playFunction(color){
+      clearTimeout(setTime);
       io.sockets.sockets[currentSocketId].removeListener('getPlay', playFunction);
       io.sockets.to(self.socketRoom).emit('bettedColor', color, turn);
       self.colorBets[turn] = color; // true: red, false: black.
+
 
       var temporalObject = {
         counter: playCounter,
@@ -259,13 +256,14 @@ class Table{
         self.play(temporalObject.turn, temporalObject.counter);
       }
       else{
+        io.sockets.to(self.socketRoom).emit('play', currentSocketId, ++turn, true);
         self.reward(self.colorBets);
       }
     }
 
-    io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn);
+    io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
 
-    setTimeout(function(){
+    var setTime = setTimeout(function(){
       var randomPick = self.randomColor();
       io.sockets.sockets[currentSocketId].removeListener('getPlay', playFunction);
       io.sockets.to(self.socketRoom).emit('bettedColor', randomPick, turn);
@@ -282,7 +280,7 @@ class Table{
       else{
         self.reward(self.colorBets);
       }
-    }, timeoutTime);
+    }, this.timeoutTime);
   }
 
   randomColor(){
@@ -294,7 +292,6 @@ class Table{
     }
   }
 }
-
 
 
 function newConnection(socket){
