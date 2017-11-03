@@ -30,8 +30,7 @@ var cardsInGame = new Array();
 var turn = 0, lastTurn = -1;
 var nameTurn = ['¡Tu Turno!', 'Jugador 1', 'Jugador 2'];
 
-var playGame = function(game){}
-playGame.prototype = {
+var playGame = {
     preload: function() {
         game.load.image('table', 'assets/table2.png');
         game.load.image('circle', 'assets/circle.png');
