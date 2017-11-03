@@ -77,7 +77,7 @@ socket.on('bettedColor', function(color, playerIndex){
   else{
     color = "negro";
   }
-
+  // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
   console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
   
 });
@@ -88,15 +88,18 @@ socket.on('deal', function(card){
 
 socket.on('reward', function(playerIndex, prize, houseWon){
   if(!houseWon){
+    // Aqui sabemos que jugador gano (playerindex) y cuanto gano (prize)
     console.log("Jugador " + (playerIndex + 1) + " gano " + prize);
   }
   else{
+    // Mostrar en pantalla que gano la casa.
     console.log("Gana la casa");
   }
   
 });
 
 socket.on('timedOut', function(playerIndex){
+  // Aqui indica que el jugador playerIndex tardo demasiado y su turno fue pasado.
   console.log('Jugador ' + (playerIndex + 1) + ' ha tardado demasiado');
 });
 
