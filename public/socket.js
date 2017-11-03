@@ -42,9 +42,11 @@ socket.on('bettedMoney', function(money, playerIndex){
 socket.on('bet', function(betId, playerIndex){
   if(betId == socket.id){
     console.log("Te toca apostar");
+    // Colocar en pantalla "te toca apostar"
   }
   else{
     console.log("Jugador " + (playerIndex + 1) + " esta apostando");
+    //Colocar en pantalla "jugador playerindex+1 esta apostando"
   }
 });
 
@@ -52,10 +54,11 @@ socket.on('play', function(betId, playerIndex, lastTurn){
   //if(!lastTurn){
     if(betId == socket.id){
       console.log("Te toca elegir");
-  
+      // Colocar en pantalla "te toca elegir"
     }
     else{
       console.log("Jugador " + (playerIndex + 1) + " esta eligiendo");
+      // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
     playGame.checkPlayer(playerIndex);
