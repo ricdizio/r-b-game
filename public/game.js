@@ -29,6 +29,7 @@ var betNumber = -1;
 var nameText;
 var playerIndex;
 var check0, check1, check2, alert;
+var checkColor;
 var cardsInGame = new Array();
 var nameTurn = ['Jugador 0', 'Jugador 1', 'Jugador 2'];
 
@@ -36,7 +37,8 @@ var playGame = {
     preload: function() {
         game.load.image('table', 'assets/table2.png');
         game.load.image('circle', 'assets/circle.png');
-        game.load.image('check', 'assets/check.png');
+        game.load.image('checkRojo', 'assets/checkR.png');
+        game.load.image('checkNegro', 'assets/checkB.png');
         game.load.image('ButtonR', 'assets/buttonR.png');
         game.load.image('ButtonB', 'assets/buttonB.png');
         game.load.image('alert', 'assets/turnAlert.png');
@@ -52,38 +54,29 @@ var playGame = {
         spriteCard = this.makeCard();
         buttonR = game.add.sprite(game.width/2 - 100, game.height*0.9,'ButtonR');
         buttonB = game.add.sprite(game.width/2 + 100, game.height*0.9,'ButtonB');
-        buttonE = game.add.sprite(0,0,'event');
         circle1Turn = game.add.sprite(game.width*0.2, game.height/2, 'circle');
         circle2Turn = game.add.sprite(game.width*0.8, game.height/2, 'circle');
         circle3Turn = game.add.sprite(game.width/2, game.height*0.15, 'circle');
         alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
         alert.scale.set(gameOptions.alertScale);
         alert.anchor.set(0.5);
-
         buttonR.anchor.set(0.5);
         buttonB.anchor.set(0.5);
-        buttonE.anchor.set(0.5);
         circle1Turn.anchor.set(0.5);
         circle2Turn.anchor.set(0.5);
         circle3Turn.anchor.set(0.5);
-
         buttonR.scale.set(gameOptions.buttonScale);
         buttonB.scale.set(gameOptions.buttonScale);
         circle1Turn.scale.set(gameOptions.circleScale);
         circle2Turn.scale.set(gameOptions.circleScale);
         circle3Turn.scale.set(gameOptions.circleScale);
-
-        buttonE = game.add.button(0,0,'event', this.onClickEvent, this, 0, 0, 0);
         buttonR = game.add.button(game.width/2 - 100, game.height*0.9, 'buttonR', this.onClickR, this, 0, 0, 0);
         buttonB = game.add.button(game.width/2 + 100, game.height*0.9, 'buttonB', this.onClickB, this, 0, 0, 0);    
-
         buttonR.anchor.set(0.5);
         buttonB.anchor.set(0.5);
         spriteCard.isFlipping = false;
-
-        nameText = game.add.text(game.width/2, 20, nameTurn[0], { fontSize: '32px', fill: '#000' });
+        nameText = game.add.text(game.width/2, 20,'', { fontSize: '32px', fill: '#000' });
         betText = game.add.text(20, game.height-40,'Ronda:' + betNumber, { fontSize: '32px', fill: '#000' });
-        otherText = game.add.text(45, 10,'<- Turno otros Jugadores', { fontSize: '32px', fill: '#000' });
         nameText.anchor.set(0.5);
     },
     onClickR: function(){
@@ -96,13 +89,8 @@ var playGame = {
         //this.checkPlayer(currentTurn);
         console.log("BLACK BUTTON");
     },
-    onClickEvent: function(){
-        console.log("EVENT");
-        //this.checkPlayer(currentTurn);
-    },
-    alertTurn: function(playerIndex){
-        if(!playerIndex == 3)
-            nameText.text = nameTurn[playerIndex];
+    alertTurn: function(playerIndex, playerText){
+        nameText.text = playerText;
         if(alert)
             alert.destroy();
         if(playerIndex == 0){
@@ -116,20 +104,22 @@ var playGame = {
         }
         alert.scale.set(gameOptions.alertScale);
         alert.anchor.set(0.5);
+        
     },
-    checkPlayer: function(playerIndex){
-        if((playerIndex) == 0){
-            check0 = game.add.sprite(game.width*0.2, game.height/2, 'check');
+    checkPlayer: function(playerIndex, color){
+
+        if(playerIndex == 0){
+            check0 = game.add.sprite(game.width*0.2, game.height/2, 'check'+color);
             check0.anchor.set(0.5);
             check0.scale.set(gameOptions.checkScale);
         }
-        else if((playerIndex) == 1){
-            check1 = game.add.sprite(game.width/2, game.height*0.15, 'check');
+        else if(playerIndex == 1){
+            check1 = game.add.sprite(game.width/2, game.height*0.15, 'check'+color);
             check1.anchor.set(0.5);
             check1.scale.set(gameOptions.checkScale);
         }
-        else if((playerIndex) == 2){
-            check2 = game.add.sprite(game.width*0.8, game.height/2, 'check');
+        else if(playerIndex == 2){
+            check2 = game.add.sprite(game.width*0.8, game.height/2, 'check'+color);
             check2.anchor.set(0.5);
             check2.scale.set(gameOptions.checkScale);
         }
@@ -171,14 +161,6 @@ var playGame = {
             // start the first of the two flipping animations
             flipTween.start();
         }
-    },
-    handleSwipe: function() {
-        var tween = game.add.tween(spriteCard).to({
-            x: game.width / 2
-        }, SVGAngle.height/2, Phaser.Easing.Cubic.Out, true);
-        tween.onComplete.add(function() {
-        game.time.events.add(Phaser.Timer.SECOND, this.moveCards, this); 
-        }, this)
     },
     moveCards: function() {
         var moveDownTween = game.add.tween(spriteCard).to({

@@ -53,15 +53,17 @@ socket.on('bet', function(betId, playerIndex){
 socket.on('play', function(betId, playerIndex, lastTurn){
   //if(!lastTurn){
     if(betId == socket.id){
-      console.log("Te toca elegir");
+      console.log("Te toca elegir!");
+      playGame.alertTurn(playerIndex, '¡Te toca elegir!');
       // Colocar en pantalla "te toca elegir"
     }
     else{
-      console.log("Jugador " + (playerIndex + 1) + " esta eligiendo");
+      console.log("Jugador " + (playerIndex + 1) + " esta eligiendo!");
+      playGame.alertTurn(playerIndex, "Jugador " + (playerIndex + 1) + " esta eligiendo!");
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
-    playGame.alertTurn(playerIndex);
+
   //}
   //else{
   //  playGame.checkPlayer(playerIndex);
@@ -71,13 +73,13 @@ socket.on('play', function(betId, playerIndex, lastTurn){
 
 socket.on('bettedColor', function(color, playerIndex){
   if(color){
-    color = "rojo";
+    color = "Rojo";
   }
   else{
-    color = "negro";
+    color = "Negro";
   }
   // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
-  playGame.checkPlayer(playerIndex);
+  playGame.checkPlayer(playerIndex, color);
   console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
 });
 
