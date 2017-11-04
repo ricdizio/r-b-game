@@ -63,7 +63,7 @@ socket.on('play', function(betId, playerIndex, lastTurn){
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
-
+    console.log("PLAAAAAAAAAAAAAAAAAAAAAAY");
   //}
   //else{
   //  playGame.checkPlayer(playerIndex);

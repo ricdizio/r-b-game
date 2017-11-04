@@ -25,6 +25,7 @@ var deck = new Array();
 const players = 3;
 const initialMoney = 5000;
 const timeoutTime = 30000;
+const timeBetweenRounds = 5000;
 
 class Card{
   constructor(index, number, suit){
@@ -125,8 +126,12 @@ class Table{
   }
 
   begin(){
+    var self = this;
     this.deck = this.shuffle(this.deck);
-    this.start();
+    
+    setTimeout(function(){
+      self.start();
+    }, 10000);
   }
 
   start(){
@@ -147,35 +152,7 @@ class Table{
     this.play(previousBetTurn, playCounter);
   }
 
-  reward(colorArray){
-    var card = this.dealCard();
-    var counter = 0;
-
-    io.sockets.to(this.socketRoom).emit('deal', card);
-
-    for(var i = 0; i < this.maximumPlayers; i++){
-      if(colorArray[i] == card.color){
-        counter++;
-      }
-    }
-
-    if(counter == 0){
-      io.sockets.to(this.socketRoom).emit('reward', 0, 0, true);
-    }
-    else{
-
-      var prize = this.pool / counter;
-
-      for(var i = 0; i < this.maximumPlayers; i++){
-        if(colorArray[i] == card.color){
-          this.players[i].add(prize);
-          io.sockets.to(this.socketRoom).emit('reward', i, prize, false);
-        }
-      }
-    }
-
-    this.start();
-  }
+  
 
   bet(turn, betCounter){
     var self = this;
@@ -221,18 +198,6 @@ class Table{
         self.chooseColor();
       }
     }, this.timeoutTime);
-  }
-
-  checkCounters(object, maximumPlayers){
-    if(++object.counter < maximumPlayers){
-        if(++object.turn >= maximumPlayers){
-          object.turn = 0;
-        }
-        return true;
-      }
-      else{
-        return false;
-      }
   }
 
   play(turn, playCounter){
@@ -286,6 +251,51 @@ class Table{
     }, this.timeoutTime);
   }
 
+  reward(colorArray){
+    var card = this.dealCard();
+    var counter = 0;
+    var self = this;
+
+    io.sockets.to(this.socketRoom).emit('deal', card);
+
+    for(var i = 0; i < this.maximumPlayers; i++){
+      if(colorArray[i] == card.color){
+        counter++;
+      }
+    }
+
+    if(counter == 0){
+      io.sockets.to(this.socketRoom).emit('reward', 0, 0, true);
+    }
+    else{
+
+      var prize = this.pool / counter;
+
+      for(var i = 0; i < this.maximumPlayers; i++){
+        if(colorArray[i] == card.color){
+          this.players[i].add(prize);
+          io.sockets.to(this.socketRoom).emit('reward', i, prize, false);
+        }
+      }
+    }
+
+    setTimeout(function(){
+      self.start();
+    }, timeBetweenRounds);
+  }
+
+  checkCounters(object, maximumPlayers){
+    if(++object.counter < maximumPlayers){
+        if(++object.turn >= maximumPlayers){
+          object.turn = 0;
+        }
+        return true;
+      }
+      else{
+        return false;
+      }
+  }
+
   randomColor(){
     if(Math.random() > 0.5){
       return true;
@@ -301,11 +311,9 @@ function newConnection(socket){
   socket.on('join', function(room){
     socket.join(room);
     if(io.sockets.adapter.rooms[room].length == players){
-      setTimeout(function(){
-        var table = new Table(io.sockets.adapter.rooms[room].sockets, room, 
-          players, initialMoney, timeoutTime);
-        table.begin();
-      }, 1000);
+      var table = new Table(io.sockets.adapter.rooms[room].sockets, room, 
+        players, initialMoney, timeoutTime);
+      table.begin();
     }
   });
 
