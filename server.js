@@ -132,7 +132,8 @@ class Table{
   start(){
     var betCounter = 0;
     this.pool = 0;
-    this.bet(this.betTurn, betCounter);
+    this.chooseColor();
+    //this.bet(this.betTurn, betCounter);
   }
 
   chooseColor(){
