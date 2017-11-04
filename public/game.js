@@ -90,7 +90,7 @@ var playGame = {
   },
   alertTurn: function(playerIndex, playerText){
       nameText.text = playerText;
-      if(!firstAlert)
+      if(alert)
         alert.destroy();
       if(playerIndex == 0){
         alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
@@ -148,6 +148,7 @@ var playGame = {
       }
   },
   reward: function(card) {
+    nameText.text = '';
     if(card.color){
       rewardText.text = '¡ROJO!';
     }
@@ -171,7 +172,6 @@ var playGame = {
     check1.destroy();
     check2.destroy();
     alert.destroy();
-    firstAlert = true;
     rewardText.text = '';
 
     game.time.events.add(Phaser.Timer.SECOND*0.5, function(){
