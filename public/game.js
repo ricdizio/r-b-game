@@ -22,9 +22,8 @@ window.onload = function() {
 }
 
 var button;
-var flip = false;
+var flip = false, firstAlert = true;
 var cardNumber = 0;
-var playCard = false;
 var betNumber = -1;
 var nameText, rewardText;
 var playerIndex;
@@ -91,7 +90,7 @@ var playGame = {
   },
   alertTurn: function(playerIndex, playerText){
       nameText.text = playerText;
-      if(alert)
+      if(!firstAlert)
         alert.destroy();
       if(playerIndex == 0){
         alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
@@ -171,13 +170,14 @@ var playGame = {
     check0.destroy();
     check1.destroy();
     check2.destroy();
+    alert.destroy();
+    firstAlert = true;
     rewardText.text = '';
 
     game.time.events.add(Phaser.Timer.SECOND*0.5, function(){
-      playCard = false;
       spriteCard.destroy();
       spriteCard = this.makeCard();
-      betText.text = 'Ronda: ' + betNumber; 
+      betText.text = 'Ronda: ' + betNumber;
     }, this) 
   },
   makeCard: function() {
