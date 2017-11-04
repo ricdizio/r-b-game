@@ -19,7 +19,7 @@ io.sockets.on('connection', newConnection);
 
 
 var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-var suits = ['Hearts', 'Diamonds', 'Spades', 'Clubs'];
+var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
 var decks = 1;
 var deck = new Array();
 const players = 3;
@@ -92,9 +92,9 @@ class Table{
   generateDeck(){
     var temporalArray = new Array();
     for(var i = 0; i < decks; i++){
-      for(var j = 0; j < suits.length; j++){
-        for(var k = 0; k < numbers.length; k++){
-          temporalArray.push(new Card(j*4 + k, numbers[k], suits[j]));
+      for(var j = 0; j < numbers.length; j++){
+        for(var k = 0; k < suits.length; k++){
+          temporalArray.push(new Card(j*4 + k, numbers[j], suits[k]));
         }
       }
     }

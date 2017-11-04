@@ -6,7 +6,7 @@ var gameOptions = {
     cardSheetWidth: 65,
     cardSheetHeight: 81,
     cardScaleOff: 0.5,
-    cardScaleOn: 1,
+    cardScaleOn: 2,
     circleScale: 0.4,
     alertScale: 0.5,
     checkScale: 0.75,
@@ -49,13 +49,13 @@ var playGame = {
     },
     create: function() {
         game.add.sprite(0,0,'table');
-        card = this.makeCard();
-        var buttonR = game.add.sprite(game.width/2 - 100, game.height*0.9,'ButtonR');
-        var buttonB = game.add.sprite(game.width/2 + 100, game.height*0.9,'ButtonB');
-        var buttonE = game.add.sprite(0,0,'event');
-        var circle1Turn = game.add.sprite(game.width*0.2, game.height/2, 'circle');
-        var circle2Turn = game.add.sprite(game.width*0.8, game.height/2, 'circle');
-        var circle3Turn = game.add.sprite(game.width/2, game.height*0.15, 'circle');
+        spriteCard = this.makeCard();
+        buttonR = game.add.sprite(game.width/2 - 100, game.height*0.9,'ButtonR');
+        buttonB = game.add.sprite(game.width/2 + 100, game.height*0.9,'ButtonB');
+        buttonE = game.add.sprite(0,0,'event');
+        circle1Turn = game.add.sprite(game.width*0.2, game.height/2, 'circle');
+        circle2Turn = game.add.sprite(game.width*0.8, game.height/2, 'circle');
+        circle3Turn = game.add.sprite(game.width/2, game.height*0.15, 'circle');
         alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
         alert.scale.set(gameOptions.alertScale);
         alert.anchor.set(0.5);
@@ -79,11 +79,11 @@ var playGame = {
 
         buttonR.anchor.set(0.5);
         buttonB.anchor.set(0.5);
-        card.isFlipping = false;
+        spriteCard.isFlipping = false;
 
         nameText = game.add.text(game.width/2, 20, nameTurn[0], { fontSize: '32px', fill: '#000' });
         betText = game.add.text(20, game.height-40,'Ronda:' + betNumber, { fontSize: '32px', fill: '#000' });
-        var otherText = game.add.text(45, 10,'<- Turno otros Jugadores', { fontSize: '32px', fill: '#000' });
+        otherText = game.add.text(45, 10,'<- Turno otros Jugadores', { fontSize: '32px', fill: '#000' });
         nameText.anchor.set(0.5);
     },
     onClickR: function(){
@@ -103,7 +103,8 @@ var playGame = {
     alertTurn: function(playerIndex){
         if(!playerIndex == 3)
             nameText.text = nameTurn[playerIndex];
-        alert.destroy();
+        if(alert)
+            alert.destroy();
         if(playerIndex == 0){
             alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
         }
@@ -117,17 +118,17 @@ var playGame = {
         alert.anchor.set(0.5);
     },
     checkPlayer: function(playerIndex){
-        if((playerIndex - 1) == 0){
+        if((playerIndex) == 0){
             check0 = game.add.sprite(game.width*0.2, game.height/2, 'check');
             check0.anchor.set(0.5);
             check0.scale.set(gameOptions.checkScale);
         }
-        else if((playerIndex - 1) == 1){
+        else if((playerIndex) == 1){
             check1 = game.add.sprite(game.width/2, game.height*0.15, 'check');
             check1.anchor.set(0.5);
             check1.scale.set(gameOptions.checkScale);
         }
-        else if((playerIndex - 1) == 2){
+        else if((playerIndex) == 2){
             check2 = game.add.sprite(game.width*0.8, game.height/2, 'check');
             check2.anchor.set(0.5);
             check2.scale.set(gameOptions.checkScale);
@@ -142,36 +143,37 @@ var playGame = {
             this.alertTurn();
         }*/
     },
-    flipCard: function() {
-        this.card = card;
-        this.flipTween = game.add.tween(this.card.scale).to({
+    flipCard: function(card) {
+        //this.card = spriteCard;
+        flipTween = game.add.tween(spriteCard.scale).to({
             x: 0,
             y: gameOptions.flipZoom
         }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
-        this.flipTween.onComplete.add(function(){
-            this.card.frame = 1 - this.card.frame;
-            this.backFlipTween.start();
+        flipTween.onComplete.add(function(){
+            //spriteCard.frame = 1 - spriteCard.frame;
+            spriteCard.loadTexture('card'+card.index);
+            backFlipTween.start();
             //flip = false;
         }, this);
-        this.backFlipTween = game.add.tween(this.card.scale).to({
-            x: 1,
-            y: 1
+        backFlipTween = game.add.tween(spriteCard.scale).to({
+            x: gameOptions.cardScaleOn,
+            y: gameOptions.cardScaleOn
         }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
         
-        this.backFlipTween.onComplete.add(function(){
-            this.card.isFlipping = false;
+        backFlipTween.onComplete.add(function(){
+            spriteCard.isFlipping = false;
         }, this);
 
-        if(!this.card.isFlipping){
+        if(!spriteCard.isFlipping){
             this.moveCards();
-            this.card.isFlipping = true;
+            spriteCard.isFlipping = true;
             // start the first of the two flipping animations
-            this.flipTween.start();
+            flipTween.start();
         }
     },
     handleSwipe: function() {
-        var tween = game.add.tween(this.card).to({
+        var tween = game.add.tween(spriteCard).to({
             x: game.width / 2
         }, SVGAngle.height/2, Phaser.Easing.Cubic.Out, true);
         tween.onComplete.add(function() {
@@ -179,14 +181,14 @@ var playGame = {
         }, this)
     },
     moveCards: function() {
-        var moveDownTween = game.add.tween(this.card).to({
+        var moveDownTween = game.add.tween(spriteCard).to({
             y: game.height / 2
         }, 500, Phaser.Easing.Cubic.Out, true);
         game.time.events.add(Phaser.Timer.SECOND*2, this.fadeCards, this);
     },
     fadeCards: function(){
         for(var i = 0; i < 2; i++){
-            var fadeTween = game.add.tween(this.card).to({
+            var fadeTween = game.add.tween(spriteCard).to({
                 alpha: 0
             }, 500, Phaser.Easing.Linear.None, true);
         }
@@ -197,8 +199,8 @@ var playGame = {
         //this.alertTurn(playerIndex);
         game.time.events.add(Phaser.Timer.SECOND*0.5, function(){
             playCard = false;
-            card.destroy();
-            card = this.makeCard();
+            spriteCard.destroy();
+            spriteCard = this.makeCard();
             betText.text = 'Ronda: ' + betNumber; 
             //card =  game.add.sprite(game.width / 2, 0, "flip", 0);
             //card.anchor.set(0.5);

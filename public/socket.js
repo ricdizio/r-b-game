@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.1.119:3000');
+var socket = io.connect('http://localhost:3000');
 var bet = 0;
 
 class Card {
@@ -31,7 +31,7 @@ function sendBet(){
 }
 
 function logCard(card){
-  playGame.flipCard();
+  playGame.flipCard(card);
   console.log("Card: " + card.number + " of " + card.suit);
 }
 
@@ -61,7 +61,6 @@ socket.on('play', function(betId, playerIndex, lastTurn){
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
-    playGame.checkPlayer(playerIndex);
     playGame.alertTurn(playerIndex);
   //}
   //else{
@@ -78,8 +77,8 @@ socket.on('bettedColor', function(color, playerIndex){
     color = "negro";
   }
   // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
+  playGame.checkPlayer(playerIndex);
   console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
-  
 });
 
 socket.on('deal', function(card){
