@@ -139,6 +139,7 @@ class Table{
 
   start(){
     if(this.round < this.maximumRounds){
+      io.sockets.to(this.socketRoom).emit('round', ++this.round);
       var betCounter = 0;
       this.pool = 0;
       this.chooseColor();
@@ -295,7 +296,7 @@ class Table{
       }
       console.log(balance);
       console.log(prize);
-      io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, false, ++this.round);
+      io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, false);
     }
 
     setTimeout(function(){

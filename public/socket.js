@@ -87,7 +87,7 @@ socket.on('deal', function(card){
   logCard(card);
 });
 
-socket.on('reward', function(winningPlayers, prize, balance, houseWon, round){
+socket.on('reward', function(winningPlayers, prize, balance, houseWon){
   if(!houseWon){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
     // balance contiene el dinero de cada jugador (del 0 a N jugadores).
@@ -103,10 +103,12 @@ socket.on('reward', function(winningPlayers, prize, balance, houseWon, round){
   for(var i = 0; i < balance.length; i++){
       console.log("Jugador " + (i+1) + " tiene " + balance[i]);
   }
-
-  console.log("Round " + (round + 1));
-  
 });
+
+socket.on('round', function(round){
+  // Aqui actualiza la ronda abajo a la izq.
+  console.log("Round " + (round + 1));
+})
 
 socket.on('timedOut', function(playerIndex){
   // Aqui indica que el jugador playerIndex tardo demasiado y su turno fue pasado.
