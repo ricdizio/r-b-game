@@ -257,12 +257,13 @@ class Table{
         self.play(temporalObject.turn, temporalObject.counter);
       }
       else{
-        io.sockets.to(self.socketRoom).emit('play', currentSocketId, ++turn, true);
+        //io.sockets.to(self.socketRoom).emit('play', currentSocketId, ++turn, true);
         self.reward(self.colorBets);
       }
     }
 
-    io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
+    //io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
+    io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn);
 
     var setTime = setTimeout(function(){
       var randomPick = self.randomColor();
