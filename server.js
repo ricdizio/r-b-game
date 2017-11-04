@@ -23,7 +23,8 @@ var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
 var decks = 1;
 var deck = new Array();
 const players = 3;
-const initialMoney = 5000;
+const maximumRounds = 5;
+const initialMoney = 500;
 const timeoutTime = 30000;
 const timeBetweenRounds = 5000;
 
@@ -59,16 +60,18 @@ class Player{
 }
 
 class Table{
-  constructor(players, socketRoom, maximumPlayers, initialMoney, timeoutTime){
+  constructor(players, socketRoom, maximumPlayers, maximumRounds, initialMoney, timeoutTime){
     
     this.socketRoom = socketRoom;
     this.initialMoney = initialMoney;
     this.maximumPlayers = maximumPlayers;
+    this.maximumRounds = maximumRounds;
 
     this.players = this.initiatePlayers(players, initialMoney);
 
     this.pool = 0;
     this.betTurn = 0;
+    this.round = 0;
     this.timeoutTime = timeoutTime;
 
     this.deck = this.shuffle(this.generateDeck());
@@ -135,10 +138,16 @@ class Table{
   }
 
   start(){
-    var betCounter = 0;
-    this.pool = 0;
-    this.chooseColor();
-    //this.bet(this.betTurn, betCounter);
+    if(this.round < this.maximumRounds){
+      var betCounter = 0;
+      this.pool = 0;
+      this.chooseColor();
+      //this.bet(this.betTurn, betCounter);
+    }
+    else{
+      this.end();
+    }
+    
   }
 
   chooseColor(){
@@ -151,8 +160,6 @@ class Table{
     var playCounter = 0;
     this.play(previousBetTurn, playCounter);
   }
-
-  
 
   bet(turn, betCounter){
     var self = this;
@@ -212,7 +219,6 @@ class Table{
       io.sockets.to(self.socketRoom).emit('bettedColor', color, turn);
       self.colorBets[turn] = color; // true: red, false: black.
 
-
       var temporalObject = {
         counter: playCounter,
         turn: turn
@@ -265,18 +271,31 @@ class Table{
     }
 
     if(counter == 0){
-      io.sockets.to(this.socketRoom).emit('reward', 0, 0, true);
+      // House won.
+      io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0, true);
     }
     else{
-
+      
       var prize = this.pool / counter;
+      // ****************************************************************************************************** //
+      // ****************************************************************************************************** //
+      // QUITAR LUEGO //
+      prize = 300;
+      // ****************************************************************************************************** //
+      // ****************************************************************************************************** //
+      var winningPlayers = new Array();
+      var balance = new Array();
 
       for(var i = 0; i < this.maximumPlayers; i++){
         if(colorArray[i] == card.color){
           this.players[i].add(prize);
-          io.sockets.to(this.socketRoom).emit('reward', i, prize, false);
+          winningPlayers.push(i);
         }
+        balance.push(this.players[i].money);
       }
+      console.log(balance);
+      console.log(prize);
+      io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, false, ++this.round);
     }
 
     setTimeout(function(){
@@ -296,6 +315,10 @@ class Table{
       }
   }
 
+  end(){
+    console.log('Game Over');
+  }
+
   randomColor(){
     if(Math.random() > 0.5){
       return true;
@@ -312,7 +335,7 @@ function newConnection(socket){
     socket.join(room);
     if(io.sockets.adapter.rooms[room].length == players){
       var table = new Table(io.sockets.adapter.rooms[room].sockets, room, 
-        players, initialMoney, timeoutTime);
+        players, maximumRounds, initialMoney, timeoutTime);
       table.begin();
     }
   });
