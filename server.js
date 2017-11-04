@@ -268,6 +268,7 @@ class Table{
       var randomPick = self.randomColor();
       io.sockets.sockets[currentSocketId].removeListener('getPlay', playFunction);
       io.sockets.to(self.socketRoom).emit('bettedColor', randomPick, turn);
+      io.sockets.to(self.socketRoom).emit('timedOut', turn);
       self.colorBets[turn] = randomPick; // true: red, false: black.
 
       var temporalObject = {
