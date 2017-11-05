@@ -27,6 +27,9 @@ const maximumRounds = 5;
 const initialMoney = 500;
 const timeoutTime = 30000;
 const timeBetweenRounds = 5000;
+const constantBet = 100;
+
+
 
 class Card{
   constructor(index, number, suit){
@@ -164,12 +167,10 @@ class Table{
   }
 
   constantBet(){
-    var temporalArray = new Array();
     for(var i = 0; i < this.maximumPlayers; i++){
       this.players[i].substract(this.constantMoneyBet);
-      temporalArray.push(this.players[i].money);
     }
-    io.sockets.to(this.socketRoom).emit('moneyAfterConstantBet', temporalArray);
+    io.sockets.to(this.socketRoom).emit('substractConstantBet', this.constantMoneyBet);
   }
 
   bet(turn, betCounter){
@@ -328,6 +329,14 @@ class Table{
 
   end(){
     console.log('Game Over');
+    io.sockets.to(this.socketRoom).emit('tableEnd');
+    this.database();
+  }
+
+  database(){
+    // Escribir en la base de datos el dinero nuevo.
+    // Idea: Solo escribir en la base de datos cuando el usuario se descoencta / se va.
+    // Para esto se tendria que llevar el dinero de cada jugador en algun otro lado.
   }
 
   randomColor(){
@@ -346,7 +355,7 @@ function newConnection(socket){
     socket.join(room);
     if(io.sockets.adapter.rooms[room].length == players){
       var table = new Table(io.sockets.adapter.rooms[room].sockets, room, 
-        players, maximumRounds, initialMoney, timeoutTime);
+        players, maximumRounds, initialMoney, timeoutTime, constantBet);
       table.begin();
     }
   });

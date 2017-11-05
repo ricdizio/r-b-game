@@ -116,5 +116,14 @@ socket.on('timedOut', function(playerIndex){
   console.log('Jugador ' + (playerIndex + 1) + ' ha tardado demasiado');
 });
 
+socket.on('substractConstantBet', function(constantBet){
+  // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
+});
+
+
+socket.on('end', function(){
+  console.log('Table is over');
+});
+
 socket.emit('join', "room1");
 
