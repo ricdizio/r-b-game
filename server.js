@@ -60,12 +60,13 @@ class Player{
 }
 
 class Table{
-  constructor(players, socketRoom, maximumPlayers, maximumRounds, initialMoney, timeoutTime){
+  constructor(players, socketRoom, maximumPlayers, maximumRounds, initialMoney, timeoutTime, constantMoneyBet){
     
     this.socketRoom = socketRoom;
     this.initialMoney = initialMoney;
     this.maximumPlayers = maximumPlayers;
     this.maximumRounds = maximumRounds;
+    this.constantMoneyBet = constantMoneyBet;
 
     this.players = this.initiatePlayers(players, initialMoney);
 
@@ -160,6 +161,15 @@ class Table{
 
     var playCounter = 0;
     this.play(previousBetTurn, playCounter);
+  }
+
+  constantBet(){
+    var temporalArray = new Array();
+    for(var i = 0; i < this.maximumPlayers; i++){
+      this.players[i].substract(this.constantMoneyBet);
+      temporalArray.push(this.players[i].money);
+    }
+    io.sockets.to(this.socketRoom).emit('moneyAfterConstantBet', temporalArray);
   }
 
   bet(turn, betCounter){
