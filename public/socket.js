@@ -87,18 +87,24 @@ socket.on('deal', function(card){
   logCard(card);
 });
 
-socket.on('reward', function(winningPlayers, prize, balance, houseWon){
+socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
   if(!houseWon){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
     // balance contiene el dinero de cada jugador (del 0 a N jugadores).
     for(var i = 0; i < winningPlayers.length; i++){
-      console.log("Jugador " + (i+1) + " gano " + prize);
+      if(ids[i] == socket.id){
+        console.log('You won ' + prize +'!');
+      }
+      else{
+        console.log("Jugador " + (i+1) + " gano " + prize);
+      }
     }
   }
   else{
     // Mostrar en pantalla que gano la casa.
     console.log("Gana la casa");
   }
+
   for(var i = 0; i < balance.length; i++){
       console.log("Jugador " + (i+1) + " tiene " + balance[i]);
   }

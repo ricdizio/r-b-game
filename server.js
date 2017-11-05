@@ -287,7 +287,6 @@ class Table{
       io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0, true);
     }
     else{
-      
       var prize = this.pool / counter;
       // ****************************************************************************************************** //
       // ****************************************************************************************************** //
@@ -297,6 +296,7 @@ class Table{
       // ****************************************************************************************************** //
       var winningPlayers = new Array();
       var balance = new Array();
+      var ids = new Array();
 
       for(var i = 0; i < this.maximumPlayers; i++){
         if(colorArray[i] == card.color){
@@ -304,10 +304,9 @@ class Table{
           winningPlayers.push(i);
         }
         balance.push(this.players[i].money);
+        ids.push(this.players[i].socketId);
       }
-      console.log(balance);
-      console.log(prize);
-      io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, false);
+      io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false);
     }
 
     setTimeout(function(){
