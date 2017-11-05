@@ -24,13 +24,12 @@ window.onload = function() {
 var button;
 var flip = false, firstAlert = true;
 var cardNumber = 0;
-var betNumber = -1;
-var nameText, rewardText;
+var nameText, colorText;
 var playerIndex;
 var check0, check1, check2, alert;
 var checkColor;
 var cardsInGame = new Array();
-var nameTurn = ['Jugador 0', 'Jugador 1', 'Jugador 2'];
+var nameTurn = ['Player 0', 'Player 1', 'Player 2'];
 
 var playGame = {
   preload: function() {
@@ -44,7 +43,7 @@ var playGame = {
     game.load.spritesheet('cards0', 'assets/cards0.png', 334, 440);
     game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
     
-    for(var i = 0; i < 51; i++){
+    for(var i = 0; i < 52; i++){
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
     }
   },
@@ -75,10 +74,12 @@ var playGame = {
     buttonB.anchor.set(0.5);
     spriteCard.isFlipping = false;
     nameText = game.add.text(game.width/2, 20,'', { fontSize: '32px', fill: '#000' });
-    rewardText = game.add.text(game.width/2, game.height/3,'', { fontSize: '32px', fill: '#000' });
-    betText = game.add.text(20, game.height-40,'Ronda:' + betNumber, { fontSize: '32px', fill: '#000' });
+    colorText = game.add.text(game.width/2, game.height/3,'', { fontSize: '32px', fill: '#000' });
+    roundText = game.add.text(20, game.height-40,'Rund: 0', { fontSize: '32px', fill: '#000' });
+    winnerText = game.add.text(game.width/2, 20,'', { fontSize: '32px', fill: '#000' });
     nameText.anchor.set(0.5);
-    rewardText.anchor.set(0.5);
+    colorText.anchor.set(0.5);
+    winnerText.anchor.set(0.5);
   },
   onClickR: function(){
     console.log("RED BUTTON");
@@ -89,72 +90,101 @@ var playGame = {
     console.log("BLACK BUTTON");
   },
   alertTurn: function(playerIndex, playerText){
-      nameText.text = playerText;
-      if(alert)
-        alert.destroy();
-      if(playerIndex == 0){
-        alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
-      }
-      else if(playerIndex == 1){
-        alert = game.add.sprite(game.width/2, game.height*0.15, 'alert');
-      }
-      else if(playerIndex == 2){
-        alert = game.add.sprite(game.width*0.8, game.height/2, 'alert');
-      }
-      alert.scale.set(gameOptions.alertScale);
-      alert.anchor.set(0.5);   
+    //winnerText.text = '';
+    nameText.text = playerText;
+    if(alert)
+      alert.destroy();
+    if(playerIndex == 0){
+      winnerText.text = '';
+      alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
+    }
+    else if(playerIndex == 1){
+      winnerText.text = '';
+      alert = game.add.sprite(game.width/2, game.height*0.15, 'alert');
+    }
+    else if(playerIndex == 2){
+      winnerText.text = '';
+      alert = game.add.sprite(game.width*0.8, game.height/2, 'alert');
+    }
+    alert.scale.set(gameOptions.alertScale);
+    alert.anchor.set(0.5);   
   },
   checkPlayer: function(playerIndex, color){
-      if(playerIndex == 0){
-        check0 = game.add.sprite(game.width*0.2, game.height/2, 'check'+color);
-        check0.anchor.set(0.5);
-        check0.scale.set(gameOptions.checkScale);
-      }
-      else if(playerIndex == 1){
-        check1 = game.add.sprite(game.width/2, game.height*0.15, 'check'+color);
-        check1.anchor.set(0.5);
-        check1.scale.set(gameOptions.checkScale);
-      }
-      else if(playerIndex == 2){
-        check2 = game.add.sprite(game.width*0.8, game.height/2, 'check'+color);
-        check2.anchor.set(0.5);
-        check2.scale.set(gameOptions.checkScale);
-      }
+    if(playerIndex == 0){
+      check0 = game.add.sprite(game.width*0.2, game.height/2, 'check'+color);
+      check0.anchor.set(0.5);
+      check0.scale.set(gameOptions.checkScale);
+    }
+    else if(playerIndex == 1){
+      check1 = game.add.sprite(game.width/2, game.height*0.15, 'check'+color);
+      check1.anchor.set(0.5);
+      check1.scale.set(gameOptions.checkScale);
+    }
+    else if(playerIndex == 2){
+      check2 = game.add.sprite(game.width*0.8, game.height/2, 'check'+color);
+      check2.anchor.set(0.5);
+      check2.scale.set(gameOptions.checkScale);
+    }
   },
   flipCard: function(card) {
-      flipTween = game.add.tween(spriteCard.scale).to({
-        x: 0,
-        y: gameOptions.flipZoom
-      }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+    flipTween = game.add.tween(spriteCard.scale).to({
+      x: 0,
+      y: gameOptions.flipZoom
+    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
-      flipTween.onComplete.add(function(){
-        spriteCard.loadTexture('card'+card.index);
-        backFlipTween.start();
-      }, this);
-      backFlipTween = game.add.tween(spriteCard.scale).to({
-        x: gameOptions.cardScaleOn,
-        y: gameOptions.cardScaleOn
-      }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
-      
-      backFlipTween.onComplete.add(function(){
-        spriteCard.isFlipping = false;
-      }, this);
+    flipTween.onComplete.add(function(){
+      spriteCard.loadTexture('card'+card.index);
+      backFlipTween.start();
+    }, this);
+    backFlipTween = game.add.tween(spriteCard.scale).to({
+      x: gameOptions.cardScaleOn,
+      y: gameOptions.cardScaleOn
+    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+    
+    backFlipTween.onComplete.add(function(){
+      spriteCard.isFlipping = false;
+    }, this);
 
-      if(!spriteCard.isFlipping){
-        this.moveCards();
-        spriteCard.isFlipping = true;
-        flipTween.start();
-        this.reward(card);
-      }
+    if(!spriteCard.isFlipping){
+      this.moveCards();
+      spriteCard.isFlipping = true;
+      flipTween.start();
+      this.winColor(card);
+    }
   },
-  reward: function(card) {
+  winColor: function(card) {
     nameText.text = '';
     if(card.color){
-      rewardText.text = '¡ROJO!';
+      colorText.text = '¡RED!';
     }
     else{
-      rewardText.text = '¡NEGRO!';
+      colorText.text = '¡BLACK!';
     }
+  },
+  updateWinners: function(winningPlayers, prize, balance, houseWon){
+    //winnerText = '';
+    if(!houseWon){
+      this.auxiliar = winningPlayers.lenght;
+      if(winningPlayers.lenght > 1){
+        winnerText.text = 'Ganan los jugadores: ' + winningPlayers[0];
+        console.log("Ganan los jugadores "+ (winningPlayers[0]+1));
+        for(var i = 1; i < winningPlayers.lenght; i++){
+          winnerText.text = winnerText.text + ' ' + (winningPlayers[i]+1);
+          console.log(" y "+winningPlayers[i]);
+        }
+      }
+      else{
+        winnerText.text = 'Gana el jugador: '+(winningPlayers[0]+1);
+        console.log("Gana el jugador "+winningPlayers[0]);
+      }
+    }
+    else{
+      winnerText.text = 'Gana la Casa!';
+      console.log("Gana la casa");
+    }
+  },
+  updateRound: function(roundNumber){
+    roundText.text = 'Round: '+roundNumber;
   },
   moveCards: function() {
     var moveDownTween = game.add.tween(spriteCard).to({
@@ -172,23 +202,17 @@ var playGame = {
     check1.destroy();
     check2.destroy();
     alert.destroy();
-    rewardText.text = '';
+    colorText.text = '';
 
     game.time.events.add(Phaser.Timer.SECOND*0.5, function(){
       spriteCard.destroy();
       spriteCard = this.makeCard();
-      betText.text = 'Ronda: ' + betNumber;
     }, this) 
   },
   makeCard: function() {
-    if(betNumber == 9)
-        betNumber = 0;
-    else
-        betNumber++;
-
-    cardsInGame[betNumber] = game.add.sprite(game.width / 2, game.height*3/4, "flip", 0);
-    cardsInGame[betNumber].anchor.set(0.5);
-    cardsInGame[betNumber].scale.set(gameOptions.cardScaleOff);
-    return cardsInGame[betNumber];
+    cardAux = game.add.sprite(game.width / 2, game.height*3/4, "flip", 0);
+    cardAux.anchor.set(0.5);
+    cardAux.scale.set(gameOptions.cardScaleOff);
+    return cardAux;
   }
 }

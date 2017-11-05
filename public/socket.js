@@ -99,14 +99,15 @@ socket.on('reward', function(winningPlayers, prize, balance, houseWon){
     // Mostrar en pantalla que gano la casa.
     console.log("Gana la casa");
   }
-
   for(var i = 0; i < balance.length; i++){
       console.log("Jugador " + (i+1) + " tiene " + balance[i]);
   }
+  //playGame.updateWinners(winningPlayers, prize, balance);
 });
 
 socket.on('round', function(round){
   // Aqui actualiza la ronda abajo a la izq.
+  playGame.updateRound(round);
   console.log("Round " + (round + 1));
 })
 
