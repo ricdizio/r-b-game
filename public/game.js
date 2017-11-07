@@ -21,18 +21,9 @@ window.onload = function() {
   game.state.start("PlayGame");
 }
 
-var button;
-var flip = false, firstAlert = true;
-var cardNumber = 0;
-var nameText, colorText;
-var playerIndex;
-var check0, check1, check2, alert;
-var checkColor;
-var cardsInGame = new Array();
-var nameTurn = ['Player 0', 'Player 1', 'Player 2'];
-
 var playGame = {
   preload: function() {
+    game.stage.disableVisibilityChange = true;
     game.load.image('table', 'assets/table2.png');
     game.load.image('circle', 'assets/circle.png');
     game.load.image('checkRojo', 'assets/checkRed.png');
@@ -161,30 +152,21 @@ var playGame = {
       colorText.text = '¡BLACK!';
     }
   },
-  updateWinners: function(winningPlayers, prize, balance, houseWon){
-    //winnerText = '';
+  updateWinners: function(winText, prize, balance, houseWon){
     if(!houseWon){
-      this.auxiliar = winningPlayers.lenght;
-      if(winningPlayers.lenght > 1){
-        winnerText.text = 'Ganan los jugadores: ' + winningPlayers[0];
-        console.log("Ganan los jugadores "+ (winningPlayers[0]+1));
-        for(var i = 1; i < winningPlayers.lenght; i++){
-          winnerText.text = winnerText.text + ' ' + (winningPlayers[i]+1);
-          console.log(" y "+winningPlayers[i]);
-        }
+      if(prize != 0){
+        winnerText.text = winText + prize;
       }
       else{
-        winnerText.text = 'Gana el jugador: '+(winningPlayers[0]+1);
-        console.log("Gana el jugador "+winningPlayers[0]);
+        winnerText.text = winText;
       }
     }
     else{
-      winnerText.text = 'Gana la Casa!';
-      console.log("Gana la casa");
+      winnerText.text = winText;
     }
   },
   updateRound: function(roundNumber){
-    roundText.text = 'Round: '+roundNumber;
+    roundText.text = 'Round: '+ roundNumber;
   },
   moveCards: function() {
     var moveDownTween = game.add.tween(spriteCard).to({
@@ -203,7 +185,7 @@ var playGame = {
     check2.destroy();
     alert.destroy();
     colorText.text = '';
-
+    winnerText.text = '';
     game.time.events.add(Phaser.Timer.SECOND*0.5, function(){
       spriteCard.destroy();
       spriteCard = this.makeCard();

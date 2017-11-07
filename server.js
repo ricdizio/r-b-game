@@ -284,7 +284,7 @@ class Table{
 
     if(counter == 0){
       // House won.
-      io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0, true);
+      io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0, 0, true);
     }
     else{
       var prize = this.pool / counter;
