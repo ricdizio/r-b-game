@@ -97,6 +97,7 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
       if(ids[winningPlayers[i]] == socket.id){
         winText = 'You Won ';
         console.log('You won ' + prize +'!');
+        break;
       }
       else{
         winText = 'You Loose';

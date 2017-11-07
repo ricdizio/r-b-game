@@ -273,6 +273,7 @@ class Table{
     var card = this.dealCard();
     var counter = 0;
     var self = this;
+    var balance = new Array();
 
     io.sockets.to(this.socketRoom).emit('deal', card);
 
@@ -284,7 +285,10 @@ class Table{
 
     if(counter == 0){
       // House won.
-      io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0, 0, true);
+      for(var i = 0; i < this.maximumPlayers; i++){
+        balance.push(this.players[i].money);
+      }
+      io.sockets.to(this.socketRoom).emit('reward', 0, 0, balance, 0, true);
     }
     else{
       // var prize = this.pool / counter;
@@ -296,7 +300,6 @@ class Table{
       // ****************************************************************************************************** //
       // ****************************************************************************************************** //
       var winningPlayers = new Array();
-      var balance = new Array();
       var ids = new Array();
 
       for(var i = 0; i < this.maximumPlayers; i++)

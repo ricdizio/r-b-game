@@ -42,6 +42,7 @@ var playGame = {
   create: function() {
     game.add.sprite(0,0,'table');
     spriteCard = this.makeCard();
+    spriteCard.animations.updateIfVisible = false;
     buttonR = game.add.sprite(game.width/2 - 100, game.height*0.9,'ButtonR');
     buttonB = game.add.sprite(game.width/2 + 100, game.height*0.9,'ButtonB');
     circle1Turn = game.add.sprite(game.width*0.2, game.height/2, 'circle');
