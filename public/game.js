@@ -68,7 +68,7 @@ var playGame = {
     spriteCard.isFlipping = false;
     nameText = game.add.text(game.width/2, 20,'', { fontSize: '32px', fill: '#000' });
     colorText = game.add.text(game.width/2, game.height/3,'', { fontSize: '32px', fill: '#000' });
-    roundText = game.add.text(20, game.height-40,'Rund: 0', { fontSize: '32px', fill: '#000' });
+    roundText = game.add.text(20, game.height-40,'Round: 0', { fontSize: '32px', fill: '#000' });
     winnerText = game.add.text(game.width/2, 20,'', { fontSize: '32px', fill: '#000' });
     nameText.anchor.set(0.5);
     colorText.anchor.set(0.5);
