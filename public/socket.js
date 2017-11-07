@@ -93,7 +93,6 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
   if(!houseWon){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
     // balance contiene el dinero de cada jugador (del 0 a N jugadores).
-
     for(var i = 0; i < winningPlayers.length; i++){
       if(ids[winningPlayers[i]] == socket.id){
         winText = 'You Won ';
@@ -102,7 +101,7 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
       else{
         winText = 'You Loose';
         prize = 0;
-        console.log('You Loose ' + prize +'!');
+        console.log('You Loose ');
       }
     }
   }

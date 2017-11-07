@@ -73,9 +73,9 @@ var playGame = {
     colorText.anchor.set(0.5);
     winnerText.anchor.set(0.5);
 
-    balanceText0 = game.add.text(game.width*0.12, game.height/2,'800', { fontSize: '32px', fill: '#000' });
-    balanceText1 = game.add.text(game.width/2-100, game.height*0.15,'800', { fontSize: '32px', fill: '#000' });
-    balanceText2 = game.add.text(game.width*0.72, game.height/2,'800', { fontSize: '32px', fill: '#000' });
+    balanceText0 = game.add.text(game.width*0.12, game.height/2,'500', { fontSize: '32px', fill: '#000' });
+    balanceText1 = game.add.text(game.width/2-100, game.height*0.15,'500', { fontSize: '32px', fill: '#000' });
+    balanceText2 = game.add.text(game.width*0.72, game.height/2,'500', { fontSize: '32px', fill: '#000' });
     balanceText0.anchor.set(0.5);
     balanceText1.anchor.set(0.5);
     balanceText2.anchor.set(0.5);
@@ -162,19 +162,18 @@ var playGame = {
   updateWinners: function(winText, prize, balance, houseWon){
     if(!houseWon){
       if(prize != 0){
-        winnerText.text = winText + prize;
+        winnerText.text = winText +''+ prize;
       }
       else{
         winnerText.text = winText;
       }
+      balanceText0.text = balance[0];
+      balanceText1.text = balance[1];
+      balanceText2.text = balance[2];
     }
     else{
       winnerText.text = winText;
     }
-    aux = balance;
-    balanceText0.text = balance[0];
-    balanceText1.text = balance[1];
-    balanceText2.text = balance[2];
   },
   updateRound: function(roundNumber){
     roundText.text = 'Round: '+ roundNumber;
@@ -197,7 +196,7 @@ var playGame = {
     alert.destroy();
     colorText.text = '';
     winnerText.text = '';
-    game.time.events.add(Phaser.Timer.SECOND*0.5, function(){
+    game.time.events.add(Phaser.Timer.SECOND, function(){
       spriteCard.destroy();
       spriteCard = this.makeCard();
     }, this) 
