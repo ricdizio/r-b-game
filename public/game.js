@@ -168,13 +168,13 @@ var playGame = {
       else{
         winnerText.text = winText;
       }
-      balanceText0.text = balance[0];
-      balanceText1.text = balance[1];
-      balanceText2.text = balance[2];
     }
     else{
       winnerText.text = winText;
     }
+    balanceText0.text = balance[0];
+    balanceText1.text = balance[1];
+    balanceText2.text = balance[2];
   },
   updateRound: function(roundNumber){
     roundText.text = 'Round: '+ roundNumber;
