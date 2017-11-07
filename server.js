@@ -287,28 +287,31 @@ class Table{
       io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0, 0, true);
     }
     else{
-      var prize = this.pool / counter;
+      // var prize = this.pool / counter;
+      var prize = 300 / counter;
       // ****************************************************************************************************** //
       // ****************************************************************************************************** //
       // QUITAR LUEGO //
-      prize = 300;
+      //prize = 300;
       // ****************************************************************************************************** //
       // ****************************************************************************************************** //
       var winningPlayers = new Array();
       var balance = new Array();
       var ids = new Array();
 
-      for(var i = 0; i < this.maximumPlayers; i++){
+      for(var i = 0; i < this.maximumPlayers; i++)
         if(colorArray[i] == card.color){
-          this.players[i].add(prize);
           winningPlayers.push(i);
+          this.players[i].add(prize);
         }
+
+      for(var i = 0; i < this.maximumPlayers; i++){
         balance.push(this.players[i].money);
         ids.push(this.players[i].socketId);
       }
+      
       io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false);
     }
-
     setTimeout(function(){
       self.start();
     }, timeBetweenRounds);

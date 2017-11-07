@@ -93,7 +93,7 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
   if(!houseWon){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
     // balance contiene el dinero de cada jugador (del 0 a N jugadores).
-    prize = prize / winningPlayers.length;
+
     for(var i = 0; i < winningPlayers.length; i++){
       if(ids[winningPlayers[i]] == socket.id){
         winText = 'You Won ';
@@ -101,8 +101,8 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
       }
       else{
         winText = 'You Loose';
-        console.log('You Loose ' + prize +'!');
         prize = 0;
+        console.log('You Loose ' + prize +'!');
       }
     }
   }
@@ -120,7 +120,7 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
 socket.on('round', function(round){
   // Aqui actualiza la ronda abajo a la izq.
   playGame.updateRound(round);
-  console.log("Round " + (round + 1));
+  console.log("Round " + (round));
 })
 
 socket.on('timedOut', function(playerIndex){
