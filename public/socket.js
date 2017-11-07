@@ -9,22 +9,8 @@ class Card {
   }
 }
 
-var red = document.getElementById('red');
-var black = document.getElementById('black');
-var bet = document.getElementById('bet');
 var currentTurn = 0;
 
-red.addEventListener('click', sendRed);
-black.addEventListener('click', sendBlack);
-bet.addEventListener('click', sendBet);
-
-function sendRed(){
-  socket.emit('getPlay', true);
-}
-
-function sendBlack(){
-  socket.emit('getPlay', false);
-}
 
 function sendBet(){
   socket.emit('getBet', parseInt(money.value));
