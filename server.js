@@ -146,7 +146,8 @@ class Table{
       io.sockets.to(this.socketRoom).emit('round', ++this.round);
       var betCounter = 0;
       this.pool = 0;
-      this.chooseColor();
+      this.constantBet();
+      //this.chooseColor();
       //this.bet(this.betTurn, betCounter);
     }
     else{
@@ -167,10 +168,13 @@ class Table{
   }
 
   constantBet(){
+    this.pool = 0;
     for(var i = 0; i < this.maximumPlayers; i++){
       this.players[i].substract(this.constantMoneyBet);
+      this.pool += this.constantMoneyBet;
     }
     io.sockets.to(this.socketRoom).emit('substractConstantBet', this.constantMoneyBet);
+    this.chooseColor();
   }
 
   bet(turn, betCounter){
@@ -287,25 +291,17 @@ class Table{
       io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0, 0, true);
     }
     else{
-      // var prize = this.pool / counter;
-      var prize = 300 / counter;
-      // ****************************************************************************************************** //
-      // ****************************************************************************************************** //
-      // QUITAR LUEGO //
-      //prize = 300;
-      // ****************************************************************************************************** //
-      // ****************************************************************************************************** //
+      var prize = this.pool / counter;
+
       var winningPlayers = new Array();
       var balance = new Array();
       var ids = new Array();
 
-      for(var i = 0; i < this.maximumPlayers; i++)
+      for(var i = 0; i < this.maximumPlayers; i++){
         if(colorArray[i] == card.color){
           winningPlayers.push(i);
           this.players[i].add(prize);
         }
-
-      for(var i = 0; i < this.maximumPlayers; i++){
         balance.push(this.players[i].money);
         ids.push(this.players[i].socketId);
       }
