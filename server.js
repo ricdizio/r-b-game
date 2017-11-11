@@ -22,6 +22,7 @@ var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K']
 var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
 var decks = 1;
 var deck = new Array();
+var tables = new Array();
 const players = 3;
 const maximumRounds = 5;
 const initialMoney = 500;
@@ -330,7 +331,9 @@ class Table{
 
   end(){
     console.log('Game Over');
+    //tables.splice(tables.indexOf(), 1);
     io.sockets.to(this.socketRoom).emit('tableEnd');
+
     this.database();
   }
 
@@ -357,6 +360,7 @@ function newConnection(socket){
     if(io.sockets.adapter.rooms[room].length == players){
       var table = new Table(io.sockets.adapter.rooms[room].sockets, room, 
         players, maximumRounds, initialMoney, timeoutTime, constantBet);
+      tables.push(table);
       table.begin();
     }
   });
