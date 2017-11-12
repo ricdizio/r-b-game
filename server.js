@@ -2,6 +2,8 @@
 // socket.rooms es un OBJETO. Los atributos son el nombre las salas, y contienen el nombre de la sala.
 // io.sockets.adapter.rooms // salas creadas en el servidor.
 
+// Cuidado: chequear siempre el socket.id antes de hacer algo con el, si no existe el server crashea. Esto aplica para las funciones que envien desde el cliente el socket.id
+
 // Socket and server settings.
 const express = require('express');
 const socketIO = require('socket.io');
@@ -77,6 +79,7 @@ class Table{
     this.pool = 0;
     this.betTurn = 0;
     this.round = 0;
+    this.poolAnswer = 0;
     this.timeoutTime = timeoutTime;
 
     this.deck = this.shuffle(this.generateDeck());
@@ -146,7 +149,7 @@ class Table{
     if(this.round < this.maximumRounds){
       io.sockets.to(this.socketRoom).emit('round', ++this.round);
       var betCounter = 0;
-      this.pool = 0;
+      //this.pool = 0; // Ahora se hace en sendReward.
       this.constantBet();
       //this.chooseColor();
       //this.bet(this.betTurn, betCounter);
@@ -154,7 +157,16 @@ class Table{
     else{
       this.end();
     }
-    
+  }
+
+  constantBet(){
+    //this.pool = 0; // Ahora se hace en sendreward.
+    for(var i = 0; i < this.maximumPlayers; i++){
+      this.players[i].substract(this.constantMoneyBet);
+      this.pool += this.constantMoneyBet;
+    }
+    io.sockets.to(this.socketRoom).emit('substractConstantBet', this.constantMoneyBet);
+    this.chooseColor();
   }
 
   chooseColor(){
@@ -166,16 +178,6 @@ class Table{
 
     var playCounter = 0;
     this.play(previousBetTurn, playCounter);
-  }
-
-  constantBet(){
-    this.pool = 0;
-    for(var i = 0; i < this.maximumPlayers; i++){
-      this.players[i].substract(this.constantMoneyBet);
-      this.pool += this.constantMoneyBet;
-    }
-    io.sockets.to(this.socketRoom).emit('substractConstantBet', this.constantMoneyBet);
-    this.chooseColor();
   }
 
   bet(turn, betCounter){
@@ -265,7 +267,7 @@ class Table{
         turn: turn
       }
 
-      if(self.checkCounters(temporalObject, self.maximumPlayers)){
+      if(self.checkCounters(temporalObject, self.maximumPlayers)){ // Dentro de checkcounters es que se suman los contadores.
         self.play(temporalObject.turn, temporalObject.counter);
       }
       else{
@@ -295,7 +297,43 @@ class Table{
       }
       io.sockets.to(this.socketRoom).emit('reward', 0, 0, balance, 0, true);
     }
+    else if(counter == this.maximumPlayers){
+      this.poolAnswer = 0;
+
+      for(var i = 0; i < this.maximumPlayers; i++){
+        io.sockets.sockets[this.players[i].socketId].on('getPoolAnswer', poolAnswer);
+      }
+
+      io.sockets.to(this.socketRoom).emit('confirmPool');
+
+      function poolAnswer(poolAnswer, socketId){
+        if(poolAnswer){
+          io.sockets.sockets[socketId].removeListener('getPoolAnswer', playFunction);
+          if(++this.poolAnswer == this.maximumPlayers){ // Si todos dicen que si.
+            this.sendReward(0, 0, false);
+          }
+        }
+        else{ // Si uno se niega.
+          for(var i = 0; i < this.maximumPlayers; i++){ // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
+            io.sockets.sockets[this.players[i].socketId].removeListener('getPoolAnswer', playFunction);
+          }
+          this.sendReward(colorArray, counter, true);
+        }
+      }
+    }
     else{
+      this.sendReward(colorArray, counter, true);
+    }
+
+    var poolTimeoutVariable = setTimeout(function(){
+      poolAnswer(false, 0);
+    }, poolTimeout);
+  }
+
+  sendReward(colorArray, counter, do){
+    clearTimeout(poolTimeoutVariable);
+
+    if(do){
       var prize = this.pool / counter;
 
       var winningPlayers = new Array();
@@ -309,11 +347,12 @@ class Table{
         balance.push(this.players[i].money);
         ids.push(this.players[i].socketId);
       }
-      
+      this.pool = 0;
       io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false);
     }
+
     setTimeout(function(){
-      self.start();
+      this.start();
     }, timeBetweenRounds);
   }
 
@@ -331,7 +370,7 @@ class Table{
 
   end(){
     console.log('Game Over');
-    //tables.splice(tables.indexOf(), 1);
+    tables.splice(tables.indexOf(this), 1);
     io.sockets.to(this.socketRoom).emit('tableEnd');
 
     this.database();
