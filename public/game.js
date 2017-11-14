@@ -15,6 +15,7 @@ var gameOptions = {
   flipSpeed: 300
 }
 
+
 window.onload = function() {
   game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight);
   game.state.add("PlayGame", playGame);
@@ -22,8 +23,34 @@ window.onload = function() {
 }
 var aux;
 
+class playerGUI {
+  constructor(index, posX, posY){
+    this.index = index;
+    this.posX = posX;
+    this.posY = posY;
+  }
+  init(){
+    this.circleTurn = game.add.sprite(this.posX, this.posY, 'circle');
+    this.circleTurn.scale.set(gameOptions.circleScale);
+    this.circleTurn.anchor.set(0.5);
+  }
+  check(color){
+    this.check = game.add.sprite(this.posX, this.posY, 'check'+color);
+    this.check.anchor.set(0.5);
+    this.check.scale.set(gameOptions.checkScale);
+  }
+  alert(bool){
+    if(bool){
+      alert = game.add.sprite(this.posX, this.posY, 'alert');
+    } else{
+      alert.destroy();
+    }
+  }
+}
+
 var playGame = {
   preload: function() {
+    var maxPLayers = 3;
     game.stage.disableVisibilityChange = true;
     game.load.image('table', 'assets/table2.png');
     game.load.image('circle', 'assets/circle.png');
@@ -34,6 +61,12 @@ var playGame = {
     game.load.image('alert', 'assets/turnAlert.png');
     game.load.spritesheet('cards0', 'assets/cards0.png', 334, 440);
     game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
+
+    var playerArray = [ 
+      new playerGUI(0, game.width*0.2, game.height/2),
+      new playerGUI(0, game.width/2,   game.height*0.15),
+      new playerGUI(0, game.width*0.8, game.height/2)
+    ];
     
     for(var i = 0; i < 52; i++){
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
@@ -43,29 +76,23 @@ var playGame = {
     game.add.sprite(0,0,'table');
     spriteCard = this.makeCard();
     spriteCard.animations.updateIfVisible = false;
+
     buttonR = game.add.sprite(game.width/2 - 100, game.height*0.9,'ButtonR');
     buttonB = game.add.sprite(game.width/2 + 100, game.height*0.9,'ButtonB');
-    circle1Turn = game.add.sprite(game.width*0.2, game.height/2, 'circle');
-    circle2Turn = game.add.sprite(game.width*0.8, game.height/2, 'circle');
-    circle3Turn = game.add.sprite(game.width/2, game.height*0.15, 'circle');
+    buttonR.scale.set(gameOptions.buttonScale);
+    buttonB.scale.set(gameOptions.buttonScale);
+    buttonR.anchor.set(0.5);
+    buttonB.anchor.set(0.5);
+    
     alert = game.add.sprite(game.width*0.2, game.height/2, 'alert');
     alert.scale.set(gameOptions.alertScale);
     alert.anchor.set(0.5);
-    buttonR.anchor.set(0.5);
-    buttonB.anchor.set(0.5);
-    circle1Turn.anchor.set(0.5);
-    circle2Turn.anchor.set(0.5);
-    circle3Turn.anchor.set(0.5);
-    buttonR.scale.set(gameOptions.buttonScale);
-    buttonB.scale.set(gameOptions.buttonScale);
-    circle1Turn.scale.set(gameOptions.circleScale);
-    circle2Turn.scale.set(gameOptions.circleScale);
-    circle3Turn.scale.set(gameOptions.circleScale);
+    
     buttonR = game.add.button(game.width/2 - 100, game.height*0.9, 'buttonR', this.onClickR, this, 0, 0, 0);
     buttonB = game.add.button(game.width/2 + 100, game.height*0.9, 'buttonB', this.onClickB, this, 0, 0, 0);    
     buttonR.anchor.set(0.5);
     buttonB.anchor.set(0.5);
-    spriteCard.isFlipping = false;
+
     nameText = game.add.text(game.width/2, 20,'', { fontSize: '32px', fill: '#000' });
     colorText = game.add.text(game.width/2, game.height/3,'', { fontSize: '32px', fill: '#000' });
     roundText = game.add.text(20, game.height-40,'Round: 0', { fontSize: '32px', fill: '#000' });
@@ -80,6 +107,16 @@ var playGame = {
     balanceText0.anchor.set(0.5);
     balanceText1.anchor.set(0.5);
     balanceText2.anchor.set(0.5);
+    py = new playerGUI(0,game.width*0.2, game.height/2,);
+    arr = new Array(py);
+    arr[1].init();
+    //testcircleTurn = game.add.sprite(game.width*0.2, game.height/2, 'circle');
+    //testcircleTurn.scale.set(gameOptions.circleScale);
+    //testcircleTurn.anchor.set(0.5);
+
+    for(var i = 0; i < maxPLayers ; i++){
+      playerArray[i].init();
+    }
   },
   onClickR: function(){
     console.log("RED BUTTON");
@@ -109,7 +146,8 @@ var playGame = {
     alert.anchor.set(0.5);   
   },
   checkPlayer: function(playerIndex, color){
-    if(playerIndex == 0){
+    playerArray[playerIndex].check(color);
+    /*if(playerIndex == 0){
       check0 = game.add.sprite(game.width*0.2, game.height/2, 'check'+color);
       check0.anchor.set(0.5);
       check0.scale.set(gameOptions.checkScale);
@@ -123,7 +161,7 @@ var playGame = {
       check2 = game.add.sprite(game.width*0.8, game.height/2, 'check'+color);
       check2.anchor.set(0.5);
       check2.scale.set(gameOptions.checkScale);
-    }
+    }*/
   },
   flipCard: function(card) {
     flipTween = game.add.tween(spriteCard.scale).to({
@@ -206,6 +244,7 @@ var playGame = {
     cardAux = game.add.sprite(game.width / 2, game.height*3/4, "flip", 0);
     cardAux.anchor.set(0.5);
     cardAux.scale.set(gameOptions.cardScaleOff);
+    cardAux.isFlipping = false;
     return cardAux;
   }
 }

@@ -330,10 +330,10 @@ class Table{
     }, poolTimeout);
   }
 
-  sendReward(colorArray, counter, do){
+  sendReward(colorArray, counter, do_){
     clearTimeout(poolTimeoutVariable);
 
-    if(do){
+    if(do_){
       var prize = this.pool / counter;
 
       var winningPlayers = new Array();
