@@ -140,9 +140,6 @@ var playGame = {
     this.playerArray[prevPlayer].alert(false);
   },
   checkPlayer: function(playerIndex, color){
-    console.log(this.playerArray);
-    console.log('playerindex: ' + playerIndex + ' color: ' + color);
-    console.log(this.playerArray[playerIndex].index);
     this.playerArray[playerIndex].check(color, true);
   },
   flipCard: function(card) {
