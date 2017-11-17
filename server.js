@@ -332,11 +332,10 @@ class Table{
 
   }
 
-  sendReward(colorArray, counter, do_){
+  sendReward(colorArray, counter, go){
     clearTimeout(this.poolTimeoutVariable);
     var self = this;
-    // quitar false y poner do_
-    if(false){
+    if(go){
       var prize = this.pool / counter;
 
       var winningPlayers = new Array();
@@ -395,11 +394,10 @@ class Table{
   }
 }
 
-
 function newConnection(socket){
-  socket.on('join', function(room){
+  socket.on('join', function(room, roomCapacity){
     socket.join(room);
-    if(io.sockets.adapter.rooms[room].length == players){
+    if(io.sockets.adapter.rooms[room].length == roomCapacity){
       var table = new Table(io.sockets.adapter.rooms[room].sockets, room, 
         players, maximumRounds, initialMoney, timeoutTime, constantBet);
       tables.push(table);
@@ -407,6 +405,7 @@ function newConnection(socket){
     }
   });
 
+  socket.emit('menu');
   socket.on('disconnect', function(){
   });
 }
