@@ -35,12 +35,12 @@ class playerGUI {
   }
   check(color, bool){
     if(bool){
-      this.check = game.add.sprite(this.posX, this.posY, 'check'+color);
-      this.check.anchor.set(0.5);
-      this.check.scale.set(gameOptions.checkScale);
+      this.checkSprite = game.add.sprite(this.posX, this.posY, 'check'+color);
+      this.checkSprite.anchor.set(0.5);
+      this.checkSprite.scale.set(gameOptions.checkScale);
     }
     else{
-      this.check.destroy();
+      this.checkSprite.destroy();
     }
   }
   alert(bool){
@@ -93,16 +93,16 @@ var playGame = {
     game.add.sprite(0,0,'table');
     spriteCard = this.makeCard();
     spriteCard.animations.updateIfVisible = false;
-    var playerArray = new Array(
+    this.playerArray = new Array(
       new playerGUI(1, game.width*0.2, game.height/2),
       new playerGUI(2, game.width/2,   game.height*0.15),
       new playerGUI(3, game.width*0.8, game.height/2)
     );
 
     for(var i = 0; i < this.maxPlayers ; i++){
-      playerArray[i].init();
+      this.playerArray[i].init();
     }
-    playerArray[0].alert(true);
+    this.playerArray[0].alert(true);
 
     this.addSprite(game.width/2 - 100, game.height*0.9,'ButtonR',0.5,0.5,gameOptions.buttonScale);
     this.addSprite(game.width/2 + 100, game.height*0.9,'ButtonB',0.5,0.5,gameOptions.buttonScale);
@@ -131,12 +131,19 @@ var playGame = {
     console.log("BLACK BUTTON");
   },
   alertTurn: function(playerIndex, playerText){
+    var prevPlayer = playerIndex - 1;
+    if(prevPlayer < 0)
+      prevPlayer = this.maxPlayers - 1;
     nameText.text = playerText;
     winnerText.text = '';
-    playerArray[playerIndex].alert(true); 
+    this.playerArray[playerIndex].alert(true);
+    this.playerArray[prevPlayer].alert(false);
   },
   checkPlayer: function(playerIndex, color){
-    playerArray[playerIndex].check(color, true);
+    console.log(this.playerArray);
+    console.log('playerindex: ' + playerIndex + ' color: ' + color);
+    console.log(this.playerArray[playerIndex].index);
+    this.playerArray[playerIndex].check(color, true);
   },
   flipCard: function(card) {
     flipTween = game.add.tween(spriteCard.scale).to({
@@ -185,7 +192,7 @@ var playGame = {
     else{
       winnerText.text = winText;
     }
-    for(var i = 0; i< length(balance); i++)
+    for(var i = 0; i< balance.length ; i++)
       balanceText[0].text = balance[0];
   },
   updateRound: function(roundNumber){
@@ -203,9 +210,9 @@ var playGame = {
           alpha: 0
       }, 500, Phaser.Easing.Linear.None, true);
     }
-    for(var i = 0; i<maxPlayers; i++){
-      playerArray[i].check(0, false);
-      playerArray[i].alert(false);
+    for(var i = 0; i<this.maxPlayers; i++){
+      this.playerArray[i].check(0, false);
+      this.playerArray[i].alert(false);
     }
     colorText.text = '';
     winnerText.text = '';

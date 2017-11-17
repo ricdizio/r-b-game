@@ -31,7 +31,7 @@ const initialMoney = 500;
 const timeoutTime = 30000;
 const timeBetweenRounds = 5000;
 const constantBet = 100;
-
+const poolTimeout = 15000;
 
 
 class Card{
@@ -67,7 +67,7 @@ class Player{
 
 class Table{
   constructor(players, socketRoom, maximumPlayers, maximumRounds, initialMoney, timeoutTime, constantMoneyBet){
-    
+
     this.socketRoom = socketRoom;
     this.initialMoney = initialMoney;
     this.maximumPlayers = maximumPlayers;
@@ -298,6 +298,11 @@ class Table{
       io.sockets.to(this.socketRoom).emit('reward', 0, 0, balance, 0, true);
     }
     else if(counter == this.maximumPlayers){
+
+      var poolTimeoutVariable = setTimeout(function(){
+        poolAnswer(false, 0);
+      }, poolTimeout);
+
       this.poolAnswer = 0;
 
       for(var i = 0; i < this.maximumPlayers; i++){
@@ -306,8 +311,8 @@ class Table{
 
       io.sockets.to(this.socketRoom).emit('confirmPool');
 
-      function poolAnswer(poolAnswer, socketId){
-        if(poolAnswer){
+      function poolAnswer(poolAnswerVar, socketId){
+        if(poolAnswerVar){
           io.sockets.sockets[socketId].removeListener('getPoolAnswer', playFunction);
           if(++this.poolAnswer == this.maximumPlayers){ // Si todos dicen que si.
             this.sendReward(0, 0, false);
@@ -325,15 +330,13 @@ class Table{
       this.sendReward(colorArray, counter, true);
     }
 
-    var poolTimeoutVariable = setTimeout(function(){
-      poolAnswer(false, 0);
-    }, poolTimeout);
   }
 
   sendReward(colorArray, counter, do_){
-    clearTimeout(poolTimeoutVariable);
-
-    if(do_){
+    clearTimeout(this.poolTimeoutVariable);
+    var self = this;
+    // quitar false y poner do_
+    if(false){
       var prize = this.pool / counter;
 
       var winningPlayers = new Array();
@@ -352,7 +355,7 @@ class Table{
     }
 
     setTimeout(function(){
-      this.start();
+      self.start();
     }, timeBetweenRounds);
   }
 
