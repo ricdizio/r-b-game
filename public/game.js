@@ -197,7 +197,7 @@ var playGame = {
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
     this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
-    poolNo = game.add.button(game.width/2 + 100, game.height*0.8, 'poolN', this.poolDenied, this, 0, 0, 0); 
+  
   },
   onClickR: function(){
     console.log("RED BUTTON");
