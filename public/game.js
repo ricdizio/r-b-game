@@ -35,7 +35,7 @@ class cardGUI {
   }
   flip(card){
     this.card.isFlipping = true;
-    flipTween = game.add.tween(this.card.scale).to({
+    var flipTween = game.add.tween(this.card.scale).to({
       x: 0,
       y: gameOptions.flipZoom
     }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
@@ -43,7 +43,7 @@ class cardGUI {
       this.card.loadTexture('card'+card.index);
       backFlipTween.start();
     }, this);
-    backFlipTween = game.add.tween(this.card.scale).to({
+    var backFlipTween = game.add.tween(this.card.scale).to({
       x: gameOptions.cardScaleOn,
       y: gameOptions.cardScaleOn
     }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
@@ -51,13 +51,15 @@ class cardGUI {
     backFlipTween.onComplete.add(function(){
       this.card.isFlipping = false;
     }, this);
+    flipTween.start();
     this.move(0, game.height / 2, 2);
   }
   move(posX=0, posY=0, time){
-    var moveDownTween = game.add.tween(spriteCard).to({
+    var moveUpTween = game.add.tween(spriteCard).to({
       x: posX,
       y: posY
     }, 500, Phaser.Easing.Cubic.Out, true);
+    moveUpTween.start();
     game.time.events.add(Phaser.Timer.SECOND*time, this.fade, this);
   }
   fade(){
@@ -97,11 +99,11 @@ class playerGUI {
   }
   alert(bool){
     if(bool){
-      alert = game.add.sprite(this.posX, this.posY, 'alert');
-      alert.scale.set(gameOptions.alertScale);
-      alert.anchor.set(0.5);
+      this.alertSprite = game.add.sprite(this.posX, this.posY, 'alert');
+      this.alertSprite.scale.set(gameOptions.alertScale);
+      this.alertSprite.anchor.set(0.5);
     } else{
-      alert.destroy();
+      this.alertSprite.destroy();
     }
   }
 }
@@ -110,6 +112,8 @@ var playGame = {
   preload: function() {
     this.maxPlayers = 3;
     game.stage.disableVisibilityChange = true;
+    // FICHAAAAAA
+    // game.load.image('ID', 'ruta/archivo.png');
     game.load.image('table', 'assets/table.png');
     game.load.image('circle', 'assets/circle.png');
     game.load.image('checkRed', 'assets/checkRed.png');
@@ -154,7 +158,8 @@ var playGame = {
     for(var i = 0; i < this.maxPlayers ; i++){
       this.playerArray[i].init();
     }
-    this.playerArray[0].alert(true);
+    // AÑADIR AL JUEGO FICHAAAA
+    // this.addsprite(POSX, POSY, 'ID', coordenada referencia X, coordref Y, escalar imagen);
 
     this.addSprite(game.width/2 - 100, game.height*0.9,'ButtonR',0.5,0.5,gameOptions.buttonScale);
     this.addSprite(game.width/2 + 100, game.height*0.9,'ButtonB',0.5,0.5,gameOptions.buttonScale);
@@ -194,7 +199,7 @@ var playGame = {
   showCard: function(card) {
     spriteCard.flip(card);
     this.printWinColor(card);
-    spriteCard.move();
+    //spriteCard.move();
 
     for(var i = 0; i<this.maxPlayers; i++){
       this.playerArray[i].check(0, false);
@@ -228,7 +233,7 @@ var playGame = {
     }*/
   },
   printWinColor: function(card) {
-    nameText.text = '';
+    this.nameText.text = '';
     if(card.color){
       this.colorText.text = '¡RED!';
     }
@@ -239,10 +244,10 @@ var playGame = {
   updateWinners: function(winText, prize, balance, houseWon){
     if(!houseWon){
       if(prize != 0){
-        winnerText.text = winText +''+ prize;
+        this.winnerText.text = winText +''+ prize;
       }
       else{
-        winnerText.text = winText;
+        this.winnerText.text = winText;
       }
     }
     else{
