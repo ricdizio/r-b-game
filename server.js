@@ -329,7 +329,6 @@ class Table{
     else{
       this.sendReward(colorArray, counter, true);
     }
-
   }
 
   sendReward(colorArray, counter, go){

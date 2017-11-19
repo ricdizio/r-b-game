@@ -17,7 +17,7 @@ function sendBet(){
 }
 
 function logCard(card){
-  playGame.flipCard(card);
+  playGame.showCard(card);
   console.log("Card: " + card.number + " of " + card.suit);
 }
 
@@ -59,10 +59,10 @@ socket.on('play', function(betId, playerIndex, lastTurn){
 
 socket.on('bettedColor', function(color, playerIndex){
   if(color){
-    color = "Rojo";
+    color = "Red";
   }
   else{
-    color = "Negro";
+    color = "Black";
   }
   // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
   playGame.checkPlayer(playerIndex, color);

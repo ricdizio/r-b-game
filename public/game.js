@@ -22,6 +22,58 @@ window.onload = function() {
 }
 var aux;
 
+class cardGUI {
+  constructor(){
+    this.update = false;
+  }
+  make(posX, posY, sprite){
+    this.card = game.add.sprite(game.width / 2, game.height*3/4, sprite, 0);
+    this.card.animations.updateIfVisible = this.update;
+    this.card.anchor.set(0.5);
+    this.card.scale.set(gameOptions.cardScaleOff);
+    this.card.isFlipping = false;
+  }
+  flip(card){
+    this.card.isFlipping = true;
+    flipTween = game.add.tween(this.card.scale).to({
+      x: 0,
+      y: gameOptions.flipZoom
+    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+    flipTween.onComplete.add(function(){
+      this.card.loadTexture('card'+card.index);
+      backFlipTween.start();
+    }, this);
+    backFlipTween = game.add.tween(this.card.scale).to({
+      x: gameOptions.cardScaleOn,
+      y: gameOptions.cardScaleOn
+    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+    
+    backFlipTween.onComplete.add(function(){
+      this.card.isFlipping = false;
+    }, this);
+    this.move(0, game.height / 2, 2);
+  }
+  move(posX=0, posY=0, time){
+    var moveDownTween = game.add.tween(spriteCard).to({
+      x: posX,
+      y: posY
+    }, 500, Phaser.Easing.Cubic.Out, true);
+    game.time.events.add(Phaser.Timer.SECOND*time, this.fade, this);
+  }
+  fade(){
+    for(var i = 0; i < 2; i++){
+      var fadeTween = game.add.tween(this.card).to({
+          alpha: 0
+      }, 500, Phaser.Easing.Linear.None, true);
+    }
+    game.time.events.add(Phaser.Timer.SECOND, function(){
+    }, this) 
+  }
+  destroy(){
+    this.card.destroy();
+  }
+}
+
 class playerGUI {
   constructor(index, posX, posY){
     this.index = index;
@@ -58,16 +110,14 @@ var playGame = {
   preload: function() {
     this.maxPlayers = 3;
     game.stage.disableVisibilityChange = true;
-    game.load.image('table', 'assets/table2.png');
+    game.load.image('table', 'assets/table.png');
     game.load.image('circle', 'assets/circle.png');
-    game.load.image('checkRojo', 'assets/checkRed.png');
-    game.load.image('checkNegro', 'assets/checkBlack.png');
+    game.load.image('checkRed', 'assets/checkRed.png');
+    game.load.image('checkBlack', 'assets/checkBlack.png');
     game.load.image('ButtonR', 'assets/buttonR.png');
     game.load.image('ButtonB', 'assets/buttonB.png');
     game.load.image('alert', 'assets/turnAlert.png');
-    game.load.spritesheet('cards0', 'assets/cards0.png', 334, 440);
     game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
-   
     for(var i = 0; i < 52; i++){
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
     }
@@ -91,8 +141,10 @@ var playGame = {
   },
   create: function() {
     game.add.sprite(0,0,'table');
-    spriteCard = this.makeCard();
-    spriteCard.animations.updateIfVisible = false;
+    //spriteCard = this.makeCard();
+    spriteCard = new cardGUI();
+    spriteCard.make(game.width / 2, game.height*3/4, 'flip')
+    
     this.playerArray = new Array(
       new playerGUI(1, game.width*0.2, game.height/2),
       new playerGUI(2, game.width/2,   game.height*0.15),
@@ -131,19 +183,26 @@ var playGame = {
     console.log("BLACK BUTTON");
   },
   alertTurn: function(playerIndex, playerText){
-    var prevPlayer = playerIndex - 1;
-    if(prevPlayer < 0)
-      prevPlayer = this.maxPlayers - 1;
     nameText.text = playerText;
     winnerText.text = '';
     this.playerArray[playerIndex].alert(true);
-    this.playerArray[prevPlayer].alert(false);
   },
   checkPlayer: function(playerIndex, color){
     this.playerArray[playerIndex].check(color, true);
+    this.playerArray[playerIndex].alert(false);
   },
-  flipCard: function(card) {
-    flipTween = game.add.tween(spriteCard.scale).to({
+  showCard: function(card) {
+    spriteCard.flip(card);
+    this.printWinColor(card);
+    spriteCard.move();
+
+    for(var i = 0; i<this.maxPlayers; i++){
+      this.playerArray[i].check(0, false);
+      this.playerArray[i].alert(false);
+    }
+    colorText.text = '';
+    winnerText.text = '';
+    /*flipTween = game.add.tween(spriteCard.scale).to({
       x: 0,
       y: gameOptions.flipZoom
     }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
@@ -166,9 +225,9 @@ var playGame = {
       spriteCard.isFlipping = true;
       flipTween.start();
       this.winColor(card);
-    }
+    }*/
   },
-  winColor: function(card) {
+  printWinColor: function(card) {
     nameText.text = '';
     if(card.color){
       colorText.text = '¡RED!';
@@ -217,12 +276,5 @@ var playGame = {
       spriteCard.destroy();
       spriteCard = this.makeCard();
     }, this) 
-  },
-  makeCard: function() {
-    cardAux = game.add.sprite(game.width / 2, game.height*3/4, "flip", 0);
-    cardAux.anchor.set(0.5);
-    cardAux.scale.set(gameOptions.cardScaleOff);
-    cardAux.isFlipping = false;
-    return cardAux;
   }
 }
