@@ -251,7 +251,6 @@ class Table{
         self.reward(self.colorBets);
       }
     }
-
     //io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
     io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn);
 
@@ -275,7 +274,6 @@ class Table{
       }
     }, this.timeoutTime);
   }
-
   reward(colorArray){
     var card = this.dealCard();
     var counter = 0;
@@ -289,7 +287,6 @@ class Table{
         counter++;
       }
     }
-
     if(counter == 0){
       // House won.
       for(var i = 0; i < this.maximumPlayers; i++){

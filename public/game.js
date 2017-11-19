@@ -6,9 +6,9 @@ var gameOptions = {
   cardSheetWidth: 65,
   cardSheetHeight: 81,
   cardScaleOff: 0.5,
-  cardScaleOn: 2,
+  cardScaleOn: 1.7,
   circleScale: 0.4,
-  alertScale: 0.5,
+  alertScale: 0.45,
   checkScale: 0.4,
   buttonScale: 0.1,
   flipZoom: 1.2,
@@ -23,11 +23,13 @@ window.onload = function() {
 var aux;
 
 class cardGUI {
-  constructor(){
+  constructor(posX, posY){
     this.update = false;
+    this.posX = posX;
+    this.posY = posY;
   }
-  make(posX, posY, sprite){
-    this.card = game.add.sprite(game.width / 2, game.height*3/4, sprite, 0);
+  make(){
+    this.card = game.add.sprite(game.width / 2, game.height*3/4, 'flip', 0);
     this.card.animations.updateIfVisible = this.update;
     this.card.anchor.set(0.5);
     this.card.scale.set(gameOptions.cardScaleOff);
@@ -35,14 +37,17 @@ class cardGUI {
   }
   flip(card){
     this.card.isFlipping = true;
+
     var flipTween = game.add.tween(this.card.scale).to({
       x: 0,
       y: gameOptions.flipZoom
     }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+
     flipTween.onComplete.add(function(){
       this.card.loadTexture('card'+card.index);
       backFlipTween.start();
     }, this);
+
     var backFlipTween = game.add.tween(this.card.scale).to({
       x: gameOptions.cardScaleOn,
       y: gameOptions.cardScaleOn
@@ -51,15 +56,20 @@ class cardGUI {
     backFlipTween.onComplete.add(function(){
       this.card.isFlipping = false;
     }, this);
+
     flipTween.start();
-    this.move(game.width/2, game.height/2, 2);
+    this.move(true,0,0);
   }
-  move(posX=0, posY=0, time){
+  move(toTable, posX=0, posY=0){
+    if(toTable){
+      posX = this.posX;
+      posY = this.posY;
+    }
     var moveUpTween = game.add.tween(this.card).to({
       x: posX,
       y: posY
     }, 500, Phaser.Easing.Cubic.Out, true);
-    game.time.events.add(Phaser.Timer.SECOND*time, this.fade, this);
+    //game.time.events.add(Phaser.Timer.SECOND*time, this.fade, this);
   }
   fade(){
     for(var i = 0; i < 2; i++){
@@ -109,6 +119,9 @@ class playerGUI {
 var playGame = {
   preload: function() {
     this.maxPlayers = 3;
+    this.maxRounds = 5;
+    this.nCards = 0;
+    this.foo = false;
     game.stage.disableVisibilityChange = true;
     // FICHAAAAAA
     // game.load.image('ID', 'ruta/archivo.png');
@@ -143,19 +156,30 @@ var playGame = {
   },
   create: function() {
     game.add.sprite(0,0,'table');
-    //spriteCard = this.makeCard();
-    spriteCard = new cardGUI();
-    spriteCard.make(game.width / 2, game.height*3/4, 'flip')
-    
+
+    this.cardArray = new Array(
+      new cardGUI(game.width*0.325, game.height/2),
+      new cardGUI(game.width*0.4125, game.height/2),
+      new cardGUI(game.width*0.5, game.height/2),
+      new cardGUI(game.width*0.5875, game.height/2),
+      new cardGUI(game.width*0.675, game.height/2)
+    );
+    this.cardArray[this.nCards].make();
+
     this.playerArray = new Array(
       new playerGUI(1, game.width*0.2, game.height/2),
       new playerGUI(2, game.width/2,   game.height*0.15),
       new playerGUI(3, game.width*0.8, game.height/2)
     );
-
     for(var i = 0; i < this.maxPlayers ; i++){
       this.playerArray[i].init();
     }
+
+    this.balanceText = new Array(
+      this.addText(game.width*0.2, game.height/2+60,'500', 0.5),
+      this.addText(game.width/2, game.height*0.15+60,'500', 0.5),
+      this.addText(game.width*0.8, game.height/2+60,'500', 0.5)
+    );
     // AÑADIR AL JUEGO FICHAAAA
     // this.addsprite(POSX, POSY, 'ID', coordenada referencia X, coordref Y, escalar imagen);
 
@@ -166,16 +190,14 @@ var playGame = {
     buttonB = game.add.button(game.width/2 + 100, game.height*0.9, 'buttonB', this.onClickB, this, 0, 0, 0);    
     buttonR.anchor.set(0.5);
     buttonB.anchor.set(0.5);
-
-    this.nameText = this.addText(game.width/2, game.height/3,'',0.5);
+    buttonR.input.useHandCursor = true;
+    buttonB.input.useHandCursor = true;
+    this.nameText = this.addText(game.width/2, game.height/3-5,'',0.5);
     this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
     this.roundText = this.addText(20, game.height-40,'Round: 0');
-    this.winnerText = this.addText(game.width/2, 20,'',0.5);
-    balanceText = new Array(
-      this.addText(game.width*0.12, game.height/2,'500', 0.5),
-      this.addText(game.width/2-100, game.height*0.15,'500', 0.5),
-      this.addText(game.width*0.72, game.height/2,'500', 0.5)
-    );
+    this.winnerText = this.addText(game.width/2, 15,'',0.5);
+    this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
+    poolNo = game.add.button(game.width/2 + 100, game.height*0.8, 'poolN', this.poolDenied, this, 0, 0, 0); 
   },
   onClickR: function(){
     console.log("RED BUTTON");
@@ -185,8 +207,32 @@ var playGame = {
     socket.emit('getPlay', false);
     console.log("BLACK BUTTON");
   },
+  poolRequest: function(req){
+    if(req){
+      this.poolText.text = 'Accumulate Bet?'
+      poolYes = game.add.button(game.width/2 - 100, game.height*0.8, 'poolY', this.poolAccept, this, 0, 0, 0);
+      poolNo = game.add.button(game.width/2 + 100, game.height*0.8, 'poolN', this.poolDenied, this, 0, 0, 0);    
+      poolYes.anchor.set(0.5);
+      poolNo.anchor.set(0.5);
+      poolYes.input.useHandCursor = true;
+      poolNo.input.useHandCursor = true;
+    }else{
+      this.poolText.text = '';
+      this.poolYes.destroy();
+      this.poolNo.destroy();
+    }
+  },
+  poolAccept: function(){
+   this.poolRequest(false);
+   socket.emit('poolReq', true);
+  },
+  poolDenied: function(){
+    this.poolRequest(false);
+    socket.emit('poolRes', false);
+  },
   alertTurn: function(playerIndex, playerText){
     this.winnerText.text = '';
+    this.colorText.text = '';
     this.nameText.text = playerText;
     this.playerArray[playerIndex].alert(true);
   },
@@ -195,40 +241,22 @@ var playGame = {
     this.playerArray[playerIndex].alert(false);
   },
   showCard: function(card) {
-    spriteCard.flip(card);
+    this.cardArray[this.nCards].flip(card);
     this.printWinColor(card);
-    //spriteCard.move();
-
+    this.cardArray[this.nCards].move(true, 0,0);
+    this.nCards++;
+    this.cardArray.push(new cardGUI());
+    if(this.nCards!=this.maxRounds){
+      this.cardArray[this.nCards].make();
+    }
+    //game.time.events.add(Phaser.Timer.SECOND*time, this.cardArray[nCards].move, this);
+    //this.cardArray[nCards].move();
     for(var i = 0; i<this.maxPlayers; i++){
       this.playerArray[i].check(0, false);
       this.playerArray[i].alert(false);
     }
     this.colorText.text = '';
     this.winnerText.text = '';
-    /*flipTween = game.add.tween(spriteCard.scale).to({
-      x: 0,
-      y: gameOptions.flipZoom
-    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
-
-    flipTween.onComplete.add(function(){
-      spriteCard.loadTexture('card'+card.index);
-      backFlipTween.start();
-    }, this);
-    backFlipTween = game.add.tween(spriteCard.scale).to({
-      x: gameOptions.cardScaleOn,
-      y: gameOptions.cardScaleOn
-    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
-    
-    backFlipTween.onComplete.add(function(){
-      spriteCard.isFlipping = false;
-    }, this);
-
-    if(!spriteCard.isFlipping){
-      this.moveCards();
-      spriteCard.isFlipping = true;
-      flipTween.start();
-      this.winColor(card);
-    }*/
   },
   printWinColor: function(card) {
     this.nameText.text = '';
@@ -239,45 +267,27 @@ var playGame = {
       this.colorText.text = '¡BLACK!';
     }
   },
-  updateWinners: function(winText, prize, balance, houseWon){
-    if(!houseWon){
-      if(prize != 0){
-        this.winnerText.text = winText +''+ prize;
+  updateWinners: function(winText, prize, balance, houseWon, poolAccept=false){
+    if(!poolAccept){
+      if(!houseWon){
+        if(prize != 0){
+          this.winnerText.text = winText +''+ prize;
+        }
+        else{
+          this.winnerText.text = winText;
+        }
       }
       else{
         this.winnerText.text = winText;
       }
     }
-    else{
-      winnerText.text = winText;
-    }
     for(var i = 0; i< balance.length ; i++)
-      balanceText[0].text = balance[0];
+      this.balanceText[0].text = balance[0];
   },
   updateRound: function(roundNumber){
     this.roundText.text = 'Round: '+ roundNumber;
   },
-  moveCards: function() {
-    var moveDownTween = game.add.tween(spriteCard).to({
-      y: game.height / 2
-    }, 500, Phaser.Easing.Cubic.Out, true);
-    game.time.events.add(Phaser.Timer.SECOND*2, this.fadeCards, this);
-  },
-  fadeCards: function(){
-    for(var i = 0; i < 2; i++){
-      var fadeTween = game.add.tween(spriteCard).to({
-          alpha: 0
-      }, 500, Phaser.Easing.Linear.None, true);
-    }
-    for(var i = 0; i<this.maxPlayers; i++){
-      this.playerArray[i].check(0, false);
-      this.playerArray[i].alert(false);
-    }
-    this.colorText.text = '';
-    this.winnerText.text = '';
-    game.time.events.add(Phaser.Timer.SECOND, function(){
-      spriteCard.destroy();
-      spriteCard = this.makeCard();
-    }, this) 
+  foo: function(){
+    this.foo = true;
   }
 }
