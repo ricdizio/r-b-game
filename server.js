@@ -322,16 +322,16 @@ class Table{
           for(var i = 0; i < this.maximumPlayers; i++){ // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
             io.sockets.sockets[this.players[i].socketId].removeListener('getPoolAnswer', playFunction);
           }
-          this.sendReward(colorArray, counter, true);
+          this.sendReward(colorArray, counter, true, card, balance);
         }
       }
     }
     else{
-      this.sendReward(colorArray, counter, true);
+      this.sendReward(colorArray, counter, true, card, balance);
     }
   }
 
-  sendReward(colorArray, counter, go){
+  sendReward(colorArray, counter, go, card, balance){
     clearTimeout(this.poolTimeoutVariable);
     var self = this;
     if(go){

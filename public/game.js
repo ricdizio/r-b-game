@@ -164,10 +164,10 @@ var playGame = {
     buttonR.anchor.set(0.5);
     buttonB.anchor.set(0.5);
 
-    nameText = this.addText(game.width/2, game.height/3,'',0.5);
-    colorText = this.addText(game.width/2, game.height/3,'',0.5);
-    roundText = this.addText(20, game.height-40,'Round: 0');
-    winnerText = this.addText(game.width/2, 20,'',0.5);
+    this.nameText = this.addText(game.width/2, game.height/3,'',0.5);
+    this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
+    this.roundText = this.addText(20, game.height-40,'Round: 0');
+    this.winnerText = this.addText(game.width/2, 20,'',0.5);
     balanceText = new Array(
       this.addText(game.width*0.12, game.height/2,'500', 0.5),
       this.addText(game.width/2-100, game.height*0.15,'500', 0.5),
@@ -183,11 +183,11 @@ var playGame = {
     console.log("BLACK BUTTON");
   },
   alertTurn: function(playerIndex, playerText){
-    nameText.text = playerText;
-    winnerText.text = '';
+    this.nameText.text = playerText;
+    this.winnerText.text = '';
     this.playerArray[playerIndex].alert(true);
   },
-  checkPlayer: function(playerIndex, color){
+  checkPlayer: function(playerIndex, color, card){
     this.playerArray[playerIndex].check(color, true);
     this.playerArray[playerIndex].alert(false);
   },
@@ -200,8 +200,8 @@ var playGame = {
       this.playerArray[i].check(0, false);
       this.playerArray[i].alert(false);
     }
-    colorText.text = '';
-    winnerText.text = '';
+    this.colorText.text = '';
+    this.winnerText.text = '';
     /*flipTween = game.add.tween(spriteCard.scale).to({
       x: 0,
       y: gameOptions.flipZoom
@@ -230,10 +230,10 @@ var playGame = {
   printWinColor: function(card) {
     nameText.text = '';
     if(card.color){
-      colorText.text = '¡RED!';
+      this.colorText.text = '¡RED!';
     }
     else{
-      colorText.text = '¡BLACK!';
+      this.colorText.text = '¡BLACK!';
     }
   },
   updateWinners: function(winText, prize, balance, houseWon){
@@ -252,7 +252,7 @@ var playGame = {
       balanceText[0].text = balance[0];
   },
   updateRound: function(roundNumber){
-    roundText.text = 'Round: '+ roundNumber;
+    this.roundText.text = 'Round: '+ roundNumber;
   },
   moveCards: function() {
     var moveDownTween = game.add.tween(spriteCard).to({
@@ -270,8 +270,8 @@ var playGame = {
       this.playerArray[i].check(0, false);
       this.playerArray[i].alert(false);
     }
-    colorText.text = '';
-    winnerText.text = '';
+    this.colorText.text = '';
+    this.winnerText.text = '';
     game.time.events.add(Phaser.Timer.SECOND, function(){
       spriteCard.destroy();
       spriteCard = this.makeCard();
