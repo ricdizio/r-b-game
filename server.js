@@ -315,7 +315,7 @@ class Table{
         if(poolAnswerVar){
           io.sockets.sockets[socketId].removeListener('getPoolAnswer', playFunction);
           if(++this.poolAnswer == this.maximumPlayers){ // Si todos dicen que si.
-            this.sendReward(0, 0, false);
+            this.sendReward(0, 0, false, 0, 0);
           }
         }
         else{ // Si uno se niega.
