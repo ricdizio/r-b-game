@@ -52,14 +52,13 @@ class cardGUI {
       this.card.isFlipping = false;
     }, this);
     flipTween.start();
-    this.move(0, game.height / 2, 2);
+    this.move(game.width/2, game.height/2, 2);
   }
   move(posX=0, posY=0, time){
-    var moveUpTween = game.add.tween(spriteCard).to({
+    var moveUpTween = game.add.tween(this.card).to({
       x: posX,
       y: posY
     }, 500, Phaser.Easing.Cubic.Out, true);
-    moveUpTween.start();
     game.time.events.add(Phaser.Timer.SECOND*time, this.fade, this);
   }
   fade(){
@@ -107,7 +106,6 @@ class playerGUI {
     }
   }
 }
-
 var playGame = {
   preload: function() {
     this.maxPlayers = 3;
@@ -188,8 +186,8 @@ var playGame = {
     console.log("BLACK BUTTON");
   },
   alertTurn: function(playerIndex, playerText){
-    this.nameText.text = playerText;
     this.winnerText.text = '';
+    this.nameText.text = playerText;
     this.playerArray[playerIndex].alert(true);
   },
   checkPlayer: function(playerIndex, color, card){
