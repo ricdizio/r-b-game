@@ -182,28 +182,26 @@ var playGame = {
     );
     // AÑADIR AL JUEGO FICHAAAA
     // this.addsprite(POSX, POSY, 'ID', coordenada referencia X, coordref Y, escalar imagen);
-
-    this.addSprite(game.width/2 - 100, game.height*0.9,'ButtonR',0.5,0.5,gameOptions.buttonScale);
-    this.addSprite(game.width/2 + 100, game.height*0.9,'ButtonB',0.5,0.5,gameOptions.buttonScale);
     
-    buttonR = game.add.button(game.width/2 - 100, game.height*0.9, 'buttonR', this.onClickR, this, 0, 0, 0);
-    buttonB = game.add.button(game.width/2 + 100, game.height*0.9, 'buttonB', this.onClickB, this, 0, 0, 0);    
-    buttonR.anchor.set(0.5);
-    buttonB.anchor.set(0.5);
-    buttonR.input.useHandCursor = true;
-    buttonB.input.useHandCursor = true;
     this.nameText = this.addText(game.width/2, game.height/3-5,'',0.5);
     this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
     this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
-  
   },
   onClickR: function(){
+    this.auxR.destroy();
+    this.auxB.destroy();
+    buttonR.destroy();
+    buttonB.destroy();
     console.log("RED BUTTON");
     socket.emit('getPlay', true);
   },
   onClickB: function(){
+    this.auxR.destroy();
+    this.auxB.destroy();
+    buttonR.destroy();
+    buttonB.destroy();
     socket.emit('getPlay', false);
     console.log("BLACK BUTTON");
   },
@@ -230,11 +228,21 @@ var playGame = {
     this.poolRequest(false);
     socket.emit('poolRes', false);
   },
-  alertTurn: function(playerIndex, playerText){
+  alertTurn: function(select, playerIndex, playerText){
     this.winnerText.text = '';
     this.colorText.text = '';
     this.nameText.text = playerText;
     this.playerArray[playerIndex].alert(true);
+    if(select){
+      this.auxR = this.addSprite(game.width/2 - 100, game.height*0.9,'ButtonR',0.5,0.5,gameOptions.buttonScale);
+      this.auxB = this.addSprite(game.width/2 + 100, game.height*0.9,'ButtonB',0.5,0.5,gameOptions.buttonScale);
+      buttonR = game.add.button(game.width/2 - 100, game.height*0.9, 'buttonR', this.onClickR, this, 0, 0, 0);
+      buttonB = game.add.button(game.width/2 + 100, game.height*0.9, 'buttonB', this.onClickB, this, 0, 0, 0);    
+      buttonR.anchor.set(0.5);
+      buttonB.anchor.set(0.5);
+      buttonR.input.useHandCursor = true;
+      buttonB.input.useHandCursor = true;
+    }
   },
   checkPlayer: function(playerIndex, color, card){
     this.playerArray[playerIndex].check(color, true);

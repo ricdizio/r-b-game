@@ -40,12 +40,12 @@ socket.on('play', function(betId, playerIndex, lastTurn){
   //if(!lastTurn){
     if(betId == socket.id){
       console.log("Te toca elegir!");
-      playGame.alertTurn(playerIndex, '¡Te toca elegir!');
+      playGame.alertTurn(true, playerIndex, '¡Te toca elegir!');
       // Colocar en pantalla "te toca elegir"
     }
     else{
       console.log("Jugador " + (playerIndex + 1) + " esta eligiendo!");
-      playGame.alertTurn(playerIndex, "Jugador " + (playerIndex + 1) + " esta eligiendo!");
+      playGame.alertTurn(false, playerIndex, "Jugador " + (playerIndex + 1) + " esta eligiendo!");
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
