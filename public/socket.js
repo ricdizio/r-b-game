@@ -75,7 +75,7 @@ socket.on('deal', function(card){
 
 socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
   
-  var winText = new Array();
+  var winText = new String();
   if(!houseWon){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
     // balance contiene el dinero de cada jugador (del 0 a N jugadores).

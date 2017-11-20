@@ -189,19 +189,21 @@ var playGame = {
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
     this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
   },
-  onClickR: function(){
+  disableButtons: function(){
     this.auxR.destroy();
     this.auxB.destroy();
     buttonR.destroy();
     buttonB.destroy();
+    buttonR.inputEnabled = false;
+    buttonB.inputEnabled = false;
+  },
+  onClickR: function(){
+    this.disableButtons();
     console.log("RED BUTTON");
     socket.emit('getPlay', true);
   },
   onClickB: function(){
-    this.auxR.destroy();
-    this.auxB.destroy();
-    buttonR.destroy();
-    buttonB.destroy();
+    this.disableButtons();
     socket.emit('getPlay', false);
     console.log("BLACK BUTTON");
   },
@@ -240,6 +242,8 @@ var playGame = {
       buttonB = game.add.button(game.width/2 + 100, game.height*0.9, 'buttonB', this.onClickB, this, 0, 0, 0);    
       buttonR.anchor.set(0.5);
       buttonB.anchor.set(0.5);
+      buttonR.inputEnabled = true;
+      buttonB.inputEnabled = true;
       buttonR.input.useHandCursor = true;
       buttonB.input.useHandCursor = true;
     }
@@ -259,10 +263,6 @@ var playGame = {
     }
     //game.time.events.add(Phaser.Timer.SECOND*time, this.cardArray[nCards].move, this);
     //this.cardArray[nCards].move();
-    for(var i = 0; i<this.maxPlayers; i++){
-      this.playerArray[i].check(0, false);
-      this.playerArray[i].alert(false);
-    }
     this.colorText.text = '';
     this.winnerText.text = '';
   },
@@ -294,6 +294,9 @@ var playGame = {
   },
   updateRound: function(roundNumber){
     this.roundText.text = 'Round: '+ roundNumber;
+    for(var i =0; i<this.maxPlayers; i++){
+      this.playerArray[i].check(0, false);
+    }
   },
   foo: function(){
     this.foo = true;
