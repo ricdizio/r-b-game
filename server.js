@@ -75,7 +75,6 @@ class Table{
     this.constantMoneyBet = constantMoneyBet;
 
     this.players = this.initiatePlayers(players, initialMoney);
-    this.addChat(this.players);
     this.pool = 0;
     this.betTurn = 0;
     this.round = 0;
@@ -97,18 +96,21 @@ class Table{
     }
     for(var i = 0; i < temporalIds.length; i++){
       temporalObjectArray[i] = new Player(temporalIds[i], initialMoney, i);
-      this.addChat(temporalObjectArray[i]);
     }
+
+    this.addChat(temporalObjectArray);
+
     return temporalObjectArray;
   }
 
   addChat(players){
+    var self = this;
     for(var i = 0; i < players.length; i++){
       io.sockets.sockets[players[i].socketId].on('chat', chat);
     }
 
     function chat(message){
-      io.sockets.to(this.socketRoom).emit('chat', message);
+      io.sockets.to(self.socketRoom).emit('chat', message);
     }
   }
   generateDeck(){
