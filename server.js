@@ -104,11 +104,11 @@ class Table{
 
   addChat(players){
     for(var i = 0; i < players.length; i++){
-      io.sockets.sockets[players[i].socketId].on('getChat', chat);
+      io.sockets.sockets[players[i].socketId].on('chat', chat);
     }
 
     function chat(message){
-      io.sockets.to(this.socketRoom).emit('sendChat', message);
+      io.sockets.to(this.socketRoom).emit('chat', message);
     }
   }
   generateDeck(){
