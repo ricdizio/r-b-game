@@ -10,3 +10,6 @@ typings/
 # Optional npm cache directory
 .npm
 
+#Victor Tests
+test/
+

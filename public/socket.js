@@ -49,7 +49,6 @@ socket.on('play', function(betId, playerIndex, lastTurn){
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
-    console.log("PLAAAAAAAAAAAAAAAAAAAAAAY");
   //}
   //else{
   //  playGame.checkPlayer(playerIndex);
@@ -74,7 +73,7 @@ socket.on('deal', function(card){
 });
 
 socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
-  
+  console.log('premio: ' + prize);
   var winText = new String();
   if(!houseWon){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
@@ -96,25 +95,32 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
     // Mostrar en pantalla que gano la casa.
     console.log("Gana la casa");
     winText = 'The House Wins';
+    prize =0;
   }
   for(var i = 0; i < balance.length; i++){
       console.log("Jugador " + (i+1) + " tiene " + balance[i]);
   }
-  playGame.updateWinners(winText, prize, balance, houseWon);
+  playGame.updateWinners(winText, prize);
+  playGame.updateBalane(balance);
+});
+
+socket.on('poolRequest', function(){
+  playGame.poolRequest(true);
 });
 
 socket.on('round', function(round){
   // Aqui actualiza la ronda abajo a la izq.
   playGame.updateRound(round);
   console.log("Round " + (round));
-})
+});
 
 socket.on('timedOut', function(playerIndex){
   // Aqui indica que el jugador playerIndex tardo demasiado y su turno fue pasado.
   console.log('Jugador ' + (playerIndex + 1) + ' ha tardado demasiado');
 });
 
-socket.on('substractConstantBet', function(constantBet){
+socket.on('substractConstantBet', function(balance){
+  playGame.updateBalane(balance);
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 

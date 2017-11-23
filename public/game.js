@@ -210,25 +210,25 @@ var playGame = {
   poolRequest: function(req){
     if(req){
       this.poolText.text = 'Accumulate Bet?'
-      poolYes = game.add.button(game.width/2 - 100, game.height*0.8, 'poolY', this.poolAccept, this, 0, 0, 0);
-      poolNo = game.add.button(game.width/2 + 100, game.height*0.8, 'poolN', this.poolDenied, this, 0, 0, 0);    
+      poolYes = game.add.button(game.width/2 + 100, game.height*0.8, 'poolY', this.poolAccept, this, 0, 0, 0);
+      poolNo = game.add.button(game.width/2 - 100, game.height*0.8, 'poolN', this.poolDenied, this, 0, 0, 0);    
       poolYes.anchor.set(0.5);
       poolNo.anchor.set(0.5);
       poolYes.input.useHandCursor = true;
       poolNo.input.useHandCursor = true;
     }else{
       this.poolText.text = '';
-      this.poolYes.destroy();
-      this.poolNo.destroy();
+      poolYes.destroy();
+      poolNo.destroy();
     }
   },
   poolAccept: function(){
    this.poolRequest(false);
-   socket.emit('poolReq', true);
+   socket.emit('getPoolAnswer', true, socket.id);
   },
   poolDenied: function(){
     this.poolRequest(false);
-    socket.emit('poolRes', false);
+    socket.emit('getPoolAnswer', false, socket.id);
   },
   alertTurn: function(select, playerIndex, playerText){
     this.winnerText.text = '';
@@ -275,22 +275,17 @@ var playGame = {
       this.colorText.text = '¡BLACK!';
     }
   },
-  updateWinners: function(winText, prize, balance, houseWon, poolAccept=false){
-    if(!poolAccept){
-      if(!houseWon){
-        if(prize != 0){
-          this.winnerText.text = winText +''+ prize;
-        }
-        else{
-          this.winnerText.text = winText;
-        }
-      }
-      else{
-        this.winnerText.text = winText;
-      }
+  updateWinners: function(winText, prize){
+    if(prize != 0){
+      this.winnerText.text = winText +''+ prize;
     }
+    else{
+      this.winnerText.text = winText;
+    }
+  },
+  updateBalane: function(balance){
     for(var i = 0; i< balance.length ; i++)
-      this.balanceText[0].text = balance[0];
+    this.balanceText[i].text = balance[i];
   },
   updateRound: function(roundNumber){
     this.roundText.text = 'Round: '+ roundNumber;
