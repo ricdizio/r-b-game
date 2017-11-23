@@ -4,6 +4,12 @@
 
 // Cuidado: chequear siempre el socket.id antes de hacer algo con el, si no existe el server crashea. Esto aplica para las funciones que envien desde el cliente el socket.id
 
+/* Optimizaciones: 
+No mandar el socket id desde el cliente. Usar algun atributo que probablemente tenga socket.io
+Evitar usar self = this. Esto copiara toda la clase y no se utiliza toda, tratar de copiar solo lo necesario.
+*/
+
+
 // Socket and server settings.
 const express = require('express');
 const socketIO = require('socket.io');
@@ -32,7 +38,8 @@ const timeoutTime = 30000;
 const timeBetweenRounds = 5000;
 const constantBet = 100;
 const poolTimeout = 30000;
-
+const pickSuitTimeout = 10000;
+const pickSuitDelay = 5000;
 
 class Card{
   constructor(index, number, suit){
@@ -75,6 +82,7 @@ class Table{
     this.constantMoneyBet = constantMoneyBet;
 
     this.players = this.initiatePlayers(players, initialMoney);
+    this.suits = new Array();
     this.pool = 0;
     this.betTurn = 0;
     this.round = 0;
@@ -82,6 +90,7 @@ class Table{
     this.poolAnswer = 0;
     this.timeoutTime = timeoutTime;
     this.poolTimeoutVariable;
+    this.chooseFirstTimeoutVariable;
 
     this.deck = this.shuffle(this.generateDeck());
     this.colorBets = new Array();
@@ -127,10 +136,12 @@ class Table{
     return temporalArray;
   }
 
-  dealCard(){
+  dealCard(remove){
     var random = Math.floor(Math.random() * this.deck.length);
     var card = this.deck[random];
-    this.deck.splice(deck.indexOf(card), 1);
+    if(remove){
+      this.deck.splice(deck.indexOf(card), 1);
+    }
     return card;
   }
 
@@ -155,23 +166,56 @@ class Table{
     this.deck = this.shuffle(this.deck);
     
     setTimeout(function(){
-      self.start();
+      self.chooseFirst();
     }, 10000);
+  }
+
+  chooseFirst(){
+    this.suits = new Array();
+    var self = this;
+    this.chooseFirstCounter = 0;
+
+    for(var i = 0; i < this.maximumPlayers; i++){
+      io.sockets.sockets[this.players[i].socketId].on('suit', chooseFirstTurn);
+    }
+
+    function chooseFirstTurn(suit, socketId){
+      io.sockets.sockets[socketId].removeListener('suit', chooseFirstTurn);
+
+      for(var i = 0; i < self.maximumPlayers; i++){
+        if(self.players[i].socketId == socketId){
+          self.suits[i] = suit;
+        }
+      }
+
+      if(++this.chooseFirstCounter == this.maximumPlayers){
+        var card = dealCard(false);
+        io.sockets.to(self.socketRoom).emit('donePicking', card.suit);
+
+        var setTime = setTimeout(function(){
+          self.start();
+        }, pickSuitDelay);
+      }
+      else{
+        io.sockets.to(self.socketRoom).emit('pickedSuit', self.suits);
+      }
+    }
   }
 
   start(){
     if(this.round < this.maximumRounds){
       io.sockets.to(this.socketRoom).emit('round', ++this.round);
       var betCounter = 0;
-      //this.pool = 0; // Ahora se hace en sendReward.
+
       this.constantBet();
-      //this.chooseColor();
-      //this.bet(this.betTurn, betCounter);
+      
     }
     else{
       this.end();
     }
   }
+
+  
 
   constantBet(){
     //this.pool = 0; // Ahora se hace en sendreward.
@@ -293,7 +337,7 @@ class Table{
     }, this.timeoutTime);
   }
   reward(colorArray){
-    var card = this.dealCard();
+    var card = this.dealCard(true);
     var counter = 0;
     var self = this;
     var balance = new Array();
