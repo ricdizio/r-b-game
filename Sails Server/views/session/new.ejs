@@ -1,0 +1,45 @@
+<style type="text/css">
+	.textCenter
+	{
+		text-align: center;
+		margin-top: 8px;
+	}
+</style>
+
+
+<form action="/signup/new" method="POST" id="sign-up-form" class="form-signin">
+	<h2 class="form-signin-heading textCenter">Login form</h2>
+<!--
+
+	this is the information recived from the server when the fields of the form are wrongs
+
+	Dont work for now ... error with json variables
+
+
+
+	<t% if(flash && flash.err) { %t>
+		<ul class="alert alert-success">
+	<t% Object.keys(flash.err).forEach(function(error) { %t>
+		<li> <t%- JSON.stringify(flash.err[error]) %> </li>
+	<t% }) %t>
+		</ul>
+	<t% } %t>
+
+
+-->
+
+	<div class="container">
+		<div class="form-group">
+		    <label for="exampleInputEmail1">Email address or nickName</label>
+		    <input type="email"  name="email" class="form-control" id="" aria-describedby="" placeholder="Enter email">
+		    <label for="exampleInputPassword1">Password</label>
+		    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password">
+		</div>
+		<input type="submit" class="btn btn-lg btn-primary btn-block" value="Login"/>
+		<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+		<div class="box">  
+	    <span class="textoMain spanSign">Do you not have acount?</span>
+	    <a class="textoMain linkA" href="/signup">Sign Up here!</a>
+    </div>
+	</div>
+</form>

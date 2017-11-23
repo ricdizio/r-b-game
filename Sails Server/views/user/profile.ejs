@@ -1,0 +1,14 @@
+<div class='container mx-auto'>
+	<h1><%= user.name %> <%= user.lastName %>  </h1>
+	<h3>nickName: <%= user.nickName %> </h3>
+	<% if (user.admin) { %>
+		<p>User is admin</p>
+	<% } else { %>
+		<p>User is not admin</p>
+	<% } %>		
+	<hr>
+	<p>Cantidad de tokens: <%= user.tokens %></p>
+	<p>contact: <%= user.email %> </p>
+	
+	<a class="btn btn-medium btn-primary" href="/profile/<%= user.nickName %>/edit">Edit</a>
+</div>

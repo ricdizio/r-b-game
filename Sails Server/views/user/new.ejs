@@ -1,0 +1,50 @@
+<style type="text/css">
+	.textCenter
+	{
+		text-align: center;
+		margin-top: 8px;
+	}
+</style>
+
+
+<form action="/signup/new" method="POST" id="sign-up-form" class="form-signin">
+	<h2 class="form-signin-heading textCenter">Create an account</h2>
+<!--
+
+	this is the information recived from the server when the fields of the form are wrongs
+
+	Dont work for now ... error with json variables
+
+-->
+
+
+	<div class="container">
+		  <div class="form-group">
+		  	<label for="exampleInputEmail1">First Name</label>
+		  	<input class="form-control" type="text" placeholder="Name" name="name">
+		  	<label for="exampleInputEmail1">Last Name</label>
+		  	<input class="form-control" type="text" placeholder="Last Name" name="lastName">
+		  	<label for="exampleInputEmail1">Nick Name</label>
+		  	<input class="form-control" type="text" placeholder="Enter a Nick Name" name="nickName">
+		    <label for="exampleInputEmail1">Email address</label>
+		    <input type="email"  name="email" class="form-control" id="" aria-describedby="" placeholder="Enter email">
+		    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+		  </div>
+		  <div class="form-group">
+		    <label for="exampleInputPassword1">Password</label>
+		    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password" name="password">
+		    <label for="exampleInputPassword1" name="password">Confirm Your Password</label>
+		    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Must be equals" name="confirmation">
+		  </div>
+		  <div class="form-check">
+		    <label class="form-check-label">
+		      <input type="checkbox" class="form-check-input" name="checkAdmin">
+		      Admin?
+		    </label>
+		  </div>
+		  <input type="submit" class="btn btn-lg btn-primary btn-block" value="Create Account"/>
+		  <input type="hidden" name="_csrf" value="<%= _csrf %>" />
+		  <span class="textoMain spanSign">Do you have acount?</span>
+	      <a class="textoMain linkA" href="/login">Sign In here!</a>
+	</div>
+</form>
