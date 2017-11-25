@@ -6,7 +6,7 @@ var gameOptions = {
   cardSheetWidth: 65,
   cardSheetHeight: 81,
   cardScaleOff: 0.5,
-  cardScaleOn: 1.2,
+  cardScaleOn: 1.7,
   circleScale: 0.4,
   alertScale: 0.45,
   checkScale: 0.4,
@@ -34,22 +34,22 @@ class cardGUI {
     this.card.animations.updateIfVisible = this.update;
     this.card.isFlipping = false;
   }
-  flip(card, zoom, size){
+  flip(card){
     this.card.isFlipping = true;
 
     var flipTween = game.add.tween(this.card.scale).to({
       x: 0,
-      y: zoom, //gameOptions.flipZoom
+      y: gameOptions.flipZoom
     }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
     flipTween.onComplete.add(function(){
-      this.card.loadTexture('card'+ 1);//card.index);
+      this.card.loadTexture('card'+card.index);
       backFlipTween.start();
     }, this);
 
     var backFlipTween = game.add.tween(this.card.scale).to({
-      x: size,//gameOptions.cardScaleOn,
-      y: size, //gameOptions.cardScaleOn
+      x: gameOptions.cardScaleOn,
+      y: gameOptions.cardScaleOn
     }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
     
     backFlipTween.onComplete.add(function(){
@@ -68,6 +68,7 @@ class cardGUI {
       x: posX,
       y: posY
     }, 500, Phaser.Easing.Cubic.Out, true);
+    //game.time.events.add(Phaser.Timer.SECOND*time, this.fade, this);
   }
   fade(){
     for(var i = 0; i < 2; i++){
@@ -75,6 +76,8 @@ class cardGUI {
           alpha: 0
       }, 500, Phaser.Easing.Linear.None, true);
     }
+    game.time.events.add(Phaser.Timer.SECOND, function(){
+    }, this) 
   }
   destroy(){
     this.card.destroy();
@@ -114,7 +117,8 @@ var playGame = {
     this.nCards = 0;
     this.foo = false;
     game.stage.disableVisibilityChange = true;
-
+    // FICHAAAAAA
+    // game.load.image('ID', 'ruta/archivo.png');
     game.load.image('table', 'assets/table.png');
     game.load.image('circle', 'assets/circle.png');
     game.load.image('checkRed', 'assets/checkRed.png');
@@ -165,10 +169,7 @@ var playGame = {
       new cardGUI(game.width*0.5875, game.height/2),
       new cardGUI(game.width*0.675, game.height/2)
     );
-    //this.cardArray[this.nCards].make();
-
-    this.firstCard = new cardGUI(game.width/2, game.height/2);
-    this.firstCard.make();
+    this.cardArray[this.nCards].make();
 
     this.playerArray = new Array(
       new playerGUI(1, game.width*0.2, game.height/2),
@@ -184,13 +185,14 @@ var playGame = {
       this.addText(game.width/2, game.height*0.15+60,'500', 0.5),
       this.addText(game.width*0.8, game.height/2+60,'500', 0.5)
     );
+    // AÑADIR AL JUEGO FICHAAAA
+    // this.addsprite(POSX, POSY, 'ID', coordenada referencia X, coordref Y, escalar imagen);
     
     this.nameText = this.addText(game.width/2, game.height/3-5,'',0.5);
     this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
     this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
-    this.suitText = this.addText(game.width/2, game.height*0.3,'',0.5);
     this.suits = new Array();
     for(var i = 0; i<4 ; i++){
       this.suits.push(this.addSuits(game.width*(0.35 + i*0.1), game.height/2,i));
@@ -199,10 +201,8 @@ var playGame = {
   pickSuit: function(item){
     if(item.variable == 0)
       console.log('Picked: CLUBS');
-    if(item.variable == 1){
+    if(item.variable == 1)
       console.log('Picked: SPADES');
-      this.showCard(true,0,0);
-    }
     if(item.variable == 2)
       console.log('Picked: HEARTS');
     if(item.variable == 3)
@@ -272,32 +272,19 @@ var playGame = {
     this.playerArray[playerIndex].check(color, true);
     this.playerArray[playerIndex].alert(false);
   },
-  showCard: function(first, card, suit) {
-    if(!first){
-      this.cardArray[this.nCards].flip(card, gameOptions.flipZoom, gameOptions.cardScaleOn);
-      this.printWinColor(card);
-      this.cardArray[this.nCards].move(true, 0,0);
-      this.nCards++;
-      this.cardArray.push(new cardGUI());
-      if(this.nCards!=this.maxRounds){
-        this.cardArray[this.nCards].make();
-        this.showWinSuit(suit);
-      }
-      //game.time.events.add(Phaser.Timer.SECOND*time, this.cardArray[nCards].move, this);
-      //this.cardArray[nCards].move();
-      this.colorText.text = '';
-      this.winnerText.text = '';
-    }else{
+  showCard: function(card) {
+    this.cardArray[this.nCards].flip(card);
+    this.printWinColor(card);
+    this.cardArray[this.nCards].move(true, 0,0);
+    this.nCards++;
+    this.cardArray.push(new cardGUI());
+    if(this.nCards!=this.maxRounds){
       this.cardArray[this.nCards].make();
-      this.firstCard.flip(0, 1, 2);
-      this.firstCard.move(true,0,0);
-      game.time.events.add(Phaser.Timer.SECOND, function(){
-        this.firstCard.fade()
-      }, this) 
-      //game.time.events.add(Phaser.Timer.SECOND*2, this.firstCard.fade(), this);
-      //this.firstCard.fade();
     }
-
+    //game.time.events.add(Phaser.Timer.SECOND*time, this.cardArray[nCards].move, this);
+    //this.cardArray[nCards].move();
+    this.colorText.text = '';
+    this.winnerText.text = '';
   },
   printWinColor: function(card) {
     this.nameText.text = '';
@@ -307,16 +294,6 @@ var playGame = {
     else{
       this.colorText.text = '¡BLACK!';
     }
-  },
-  printWinSuit: function(suit){
-    if(suit == 0)
-      console.log('CLUBS');
-    if(suit == 0)
-      console.log('CLUBS');
-    if(suit == 0)
-      console.log('CLUBS');
-    if(suit == 0)
-      console.log('CLUBS');
   },
   updateWinners: function(winText, prize){
     if(prize != 0){
