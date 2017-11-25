@@ -1,0 +1,28 @@
+
+<div class="container">
+	<form action="/profile/<%= user.nickName %>/update" method="POST" class="form-signin">
+		<h2> Edit profile </h2>
+		<label for="exampleInputEmail1">Name:</label>
+		<input value="<%= user.name %>" name="name" type="text" class="form-control"/>
+		<label for="exampleInputEmail1">Last Name:</label>
+		<input value="<%= user.lastName %>" name="lastName" type="text" class="form-control"/>
+		<label for="exampleInputEmail1">email:</label>
+		<input value="<%= user.email %>" name="email" type="text" class="form-control"/>
+		<!-- session. authenticated && -->
+		<% if (true) { %>
+			<% if (true) { %>
+				<label for="exampleInputEmail1">tokens:</label>
+				<input value="<%= user.tokens %>" name="tokens" type="text" class="form-control"/>
+				<label for="exampleInputEmail1">admin? check for true:</label>
+				<label class="form-check-label">
+		      		<input type="checkbox" class="form-check-input" name="checkAdmin">Admin?
+		      	</label>
+			<% } else { %>
+				<input type="hidden" name="admin" value="unchecked">
+				<label class="checkbox"><input type="checkbox" name="admin">Admin</label>
+			<% } %> 
+		<% } %> 
+		<input type="submit" value="Proceed" class="btn btn-lg btn-primary btn-block"/>
+		<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+	</form>
+</div>
