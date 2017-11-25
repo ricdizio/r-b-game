@@ -175,30 +175,40 @@ class Table{
     var self = this;
     this.chooseFirstCounter = 0;
 
-    for(var i = 0; i < this.maximumPlayers; i++){
+    for(var i = 0; i < this.maximumPlayers; i++){ // Asignamos event listener a todos los usuarios.
       io.sockets.sockets[this.players[i].socketId].on('suit', chooseFirstTurn);
     }
 
     function chooseFirstTurn(suit, socketId){
-      io.sockets.sockets[socketId].removeListener('suit', chooseFirstTurn);
+      io.sockets.sockets[socketId].removeListener('suit', chooseFirstTurn); // Quitamos el listener del usuario que eligio.
 
       for(var i = 0; i < self.maximumPlayers; i++){
-        if(self.players[i].socketId == socketId){
+        if(self.players[i].socketId == socketId){ // Revisamos que jugador lo hizo y guardamos la pinta (suit) en ese espacio del arreglo self.suits.
           self.suits[i] = suit;
+          break;
         }
       }
 
-      if(++this.chooseFirstCounter == this.maximumPlayers){
-        var card = dealCard(false);
-        io.sockets.to(self.socketRoom).emit('donePicking', card.suit);
+      io.sockets.to(self.socketRoom).emit('pickedSuit', self.suits); // Enviamos el arreglo con la pinta elegida por cada jugador. Mostrarlo en pantalla.
 
-        var setTime = setTimeout(function(){
+      if(++this.chooseFirstCounter == this.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
+        var card = dealCard(false);
+
+        io.sockets.to(self.socketRoom).emit('donePicking', card.suit);  // Enviamos el socket con la pinta de la carta.
+        
+        for(var i = 0; i < self.maximumPlayers; i++){ // Revisamos que jugador gano.
+          if(self.suits[i] == card.suit){
+            self.betTurn = i; // Le decimos que el turno es el i. Tengo que revisar esto. Si comentas esta linea el va a arrancar en el jugador 1 siempre.
+            break;
+          }
+        }
+
+        var setTime = setTimeout(function(){  // En ciertos segundos inicia la partida normalmente. 
           self.start();
         }, pickSuitDelay);
       }
-      else{
-        io.sockets.to(self.socketRoom).emit('pickedSuit', self.suits);
-      }
+
+      
     }
   }
 
@@ -237,8 +247,7 @@ class Table{
       this.betTurn = 0;
     }
 
-    var playCounter = 0;
-    this.play(previousBetTurn, playCounter);
+    this.play(previousBetTurn, 0);
   }
 
   bet(turn, betCounter){
@@ -288,7 +297,6 @@ class Table{
   }
 
   play(turn, playCounter){
-    console.log('pool en play: ' + this.pool);
     var self = this;
     var currentSocketId = this.players[turn].socketId;
 
