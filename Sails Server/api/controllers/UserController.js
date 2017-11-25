@@ -41,17 +41,22 @@ create: function(req, res, next) {
      // console.log(err);
       if (err) 
       {
-        // flash.js dont work for now
+        // flash.js 
         console.log(err);
         req.addFlash('err', err);
         return res.redirect('/signup');
       }
+
+       // Log user in
+      req.session.authenticated = true;
+      req.session.User = user;
+      
       // Change status to online
       user.online = true;
       user.save(function(err, user) 
       {
         if (err) return next(err);
-		    res.redirect('/');
+		    res.redirect('/profile/' + user.nickname);
       });
     });
   },

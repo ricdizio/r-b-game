@@ -29,17 +29,19 @@ module.exports = {
 
 			// Remember that err is the object being passed down (a.k.a. flash.err), whose value is another object with
 			// the key of usernamePasswordRequiredError
-			//req.session.flash = {
-			//	err: usernamePasswordRequiredError
-			//}
-			return res.serverError(usernamePasswordRequired);
-			//res.redirect('/session/new');
-			//return;
+			req.session.flash = {
+				err: usernamePasswordRequiredError
+			}
+			
+			//Return with flash error
+			
+			return res.redirect('/session/new');
 		}
 
 		// Try to find the user by there email address. 
 		// findOneByEmail() is a dynamic finder in that it searches the model by a particular attribute.
 		// User.findOneByEmail(req.param('email')).done(function(err, user) {
+
 		User.findOne({email: req.param('email')}).exec(function(err, user) {
 			if (err) return next(err);
 
@@ -49,12 +51,13 @@ module.exports = {
 					name: 'noAccount',
 					message: 'The email address ' + req.param('email') + ' not found.'
 				}]
-				//req.session.flash = {
-				//	err: noAccountError
-				//}
-				//res.redirect('/session/new');
-				//return;
-				return res.serverError(noAccountError);
+
+				//Flash Error
+				req.session.flash = {
+					err: noAccountError
+				}
+				//Return whith flash messege
+				return res.redirect('/login');
 			}
 
 			// Compare password from the form params to the encrypted password of the user found.
@@ -67,12 +70,15 @@ module.exports = {
 						name: 'usernamePasswordMismatch',
 						message: 'Invalid username and password combination.'
 					}]
-					//req.session.flash = {
-					//	err: usernamePasswordMismatchError
-					//}
-					//res.redirect('/session/new');
-					//return;
-					return res.serverError(usernamePasswordMismatchError);
+
+					//fLash Error
+					req.session.flash = {
+						err: usernamePasswordMismatchError
+					}
+
+					//Return with flash error
+					return res.redirect('login');; 
+
 				}
 
 				// Log user in
@@ -133,6 +139,7 @@ module.exports = {
 
 					if (err) return next(err);
 					console.log(updated);
+					
 					// Inform other sockets (e.g. connected sockets that are subscribed) that the session for this user has ended.
 					//User.publishUpdate(userId, {
 					//	loggedIn: false,
