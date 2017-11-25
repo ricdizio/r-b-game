@@ -53,10 +53,11 @@ create: function(req, res, next) {
       
       // Change status to online
       user.online = true;
+      var usertoSave = user;
       user.save(function(err, user) 
       {
         if (err) return next(err);
-		    res.redirect('/profile/' + user.nickname);
+		    res.redirect('/profile/' + usertoSave.nickName);
       });
     });
   },
