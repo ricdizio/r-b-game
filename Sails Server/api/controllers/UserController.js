@@ -17,11 +17,6 @@ new: function(req, res) {
     res.view("user/new",{title:"R&B - Sign up"});
   },
 
-initSesion: function(req, res) {
-    console.log(req.session);
-    res.view("user/login",{title:"R&B - login"});
-  },
-
 
 // Function that recived all param from the user
 // Metho POST
@@ -56,7 +51,7 @@ create: function(req, res, next) {
       user.save(function(err, user) 
       {
         if (err) return next(err);
-		    res.redirect('/user/');
+		    res.redirect('/');
       });
     });
   },
@@ -66,15 +61,16 @@ create: function(req, res, next) {
     var element = req.param('nickname');
     //Search in dataBase for (user v : Users){ if (v.nickName==element) return this.user}
     User.findOne({nickName: element}).exec(function(err, user) {
-        if (err) {return res.serverError(err);}
+        if (err) return next(err);
+        if (!user) return res.serverError('User doesn\'t exist.');
         //return res.json(user);
         console.log("elemento encontrado: " + element);
         console.log("elemento user: " + user.nickName);
-    
+        console.log(req.session);
+      
         //Send in object response obj user found
         var nameUser = user.nickName;
         return res.view('user/profile',{user: user, title:"profile " + nameUser});
-  
     });
   },
 
@@ -88,7 +84,7 @@ create: function(req, res, next) {
     // Find the user from the id passed in via params
     User.findOne({nickName: element}).exec(function(err, user) {
       if (err) return next(err);
-      if (!user) return next('User doesn\'t exist.');
+      if (!user) return res.serverError('User doesn\'t exist.');
       var nameUser = user.nickName;
       return res.view("user/edit", {user: user, title:nameUser +" edit"});
     });
@@ -133,7 +129,7 @@ create: function(req, res, next) {
     User.findOne({nickName: element}).exec(function(err, user) {
       if (err) return next(err);
 
-      if (!user) return next('User doesn\'t exist.');
+      if (!user) return res.serverError('User doesn\'t exist.');
 
       User.destroy(req.param('nickName')).exec(function(err) {
         if (err) return next(err);

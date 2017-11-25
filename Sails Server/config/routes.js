@@ -31,18 +31,17 @@ module.exports.routes = {
   * `assets` directory)                                                      *
   *                                                                          *
   ***************************************************************************/
+
+
+/*
+****************** User Controller
+*/
   "GET /": {
     view: "homepage"
   },
 
   "GET /signup": {
     controller: "UserController",
-    action: "new",
-    //view: "user/new"
-  },
-
-  "GET /login": {
-    controller: "SessionController",
     action: "new",
     //view: "user/new"
   },
@@ -70,7 +69,7 @@ module.exports.routes = {
   'POST /profile/:nickname/delete': {
     controller: "User", 
     action: "destroy"
-  },
+  }, 
 
   'GET /admin': {
     controller: "User", 
@@ -82,6 +81,29 @@ module.exports.routes = {
     action: "index"
   },
 
+/*
+****************** Sesion Controller
+*/
+
+//Login form
+  "GET /login": {
+    controller: "SessionController",
+    action: "new",
+    //view: "user/new"
+  },
+
+// Crear Sesion
+  "POST /login/new": {
+    controller: "SessionController",
+    action: "create",
+    //view: "user/new"
+  },
+
+//Cerrar sesion
+  "GET /signout": {
+    controller: "SessionController",
+    action: "destroy",
+  },
 
 
   /***************************************************************************

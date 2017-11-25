@@ -65,37 +65,28 @@
           <li class="nav-item">
             <a class="nav-link" href="/about">About Us</a>
           </li>
+          <% if (session.authenticated) { %>
           <li class="nav-item">
             <a class="nav-link" href="/user">List of Users</a>
           </li>
+          <% } %>
         </ul>
 
 
         <ul class="navbar-nav ">
-           <% if (true) { %>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Profile
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Something else here</a>
-              </div>
-            </li>
-          <% } %>
 
-          <% if (true) { %>
-            <li class="nav-item"><a class="nav-link" href="/profile">Ricardo</a> </li>
+          <% if (session.authenticated) { %>
+            <li class="nav-item"><a class="nav-link" href="/profile/<%= session.User.nickName %>"> <%= session.User.name %> </a> </li>
+            <li class="nav-item"><a class="nav-link" href="/signout">Logout</a> </li>
           <% } %>
 
           <!-- Si no esta logueado entonces sign in -->
-          <% if (false) { %>
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-1" placeholder="email" aria-label="Search">
-              <input class="form-control mr-sm-1" placeholder="password" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          <% if (!session.authenticated) { %>
+            <form action="/login/new" method="POST" class="form-inline my-2 my-lg-0">
+              <input type="text" class="form-control mr-sm-1" placeholder="Email address" name="email">
+              <input type="password" class="form-control mr-sm-1" placeholder="Password" name="password">
+              <input class="btn btn-outline-success my-2 my-sm-0" type="submit" value="Sign in">
+              <input type="hidden" name="_csrf" value="<%= _csrf %>" />
             </form>
           <% } %>
         </ul>
