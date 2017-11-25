@@ -11,6 +11,7 @@ var gameOptions = {
   alertScale: 0.45,
   checkScale: 0.4,
   buttonScale: 0.1,
+  suitScale: 0.2,
   flipZoom: 1.2,
   flipSpeed: 300
 }
@@ -29,10 +30,8 @@ class cardGUI {
     this.posY = posY;
   }
   make(){
-    this.card = game.add.sprite(game.width / 2, game.height*3/4, 'flip', 0);
+    this.card = playGame.addSprite(game.width / 2, game.height*3/4, 'flip', 0.5, 0.5, gameOptions.cardScaleOff);
     this.card.animations.updateIfVisible = this.update;
-    this.card.anchor.set(0.5);
-    this.card.scale.set(gameOptions.cardScaleOff);
     this.card.isFlipping = false;
   }
   flip(card){
@@ -92,15 +91,11 @@ class playerGUI {
     this.posY = posY;
   }
   init(){
-    this.circleTurn = game.add.sprite(this.posX, this.posY, 'circle');
-    this.circleTurn.scale.set(gameOptions.circleScale);
-    this.circleTurn.anchor.set(0.5);
+    this.circleTurn = playGame.addSprite(this.posX, this.posY, 'circle', 0.5, 0.5, gameOptions.circleScale);
   }
   check(color, bool){
     if(bool){
-      this.checkSprite = game.add.sprite(this.posX, this.posY, 'check'+color);
-      this.checkSprite.anchor.set(0.5);
-      this.checkSprite.scale.set(gameOptions.checkScale);
+      this.checkSprite = playGame.addSprite(this.posX, this.posY, 'check'+color, 0.5, 0.5, gameOptions.checkScale);
     }
     else{
       this.checkSprite.destroy();
@@ -108,14 +103,13 @@ class playerGUI {
   }
   alert(bool){
     if(bool){
-      this.alertSprite = game.add.sprite(this.posX, this.posY, 'alert');
-      this.alertSprite.scale.set(gameOptions.alertScale);
-      this.alertSprite.anchor.set(0.5);
+      this.alertSprite = playGame.addSprite(this.posX, this.posY,'alert', 0.5, 0.5, gameOptions.alertScale);
     } else{
       this.alertSprite.destroy();
     }
   }
 }
+
 var playGame = {
   preload: function() {
     this.maxPlayers = 3;
@@ -133,12 +127,16 @@ var playGame = {
     game.load.image('ButtonB', 'assets/buttonB.png');
     game.load.image('alert', 'assets/turnAlert.png');
     game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
+    game.load.spritesheet('suits', 'assets/suits.png',500,550);
     for(var i = 0; i < 52; i++){
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
     }
   },
-  addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false){
-    var auxSprite = game.add.sprite(posX, posY, spriteID);
+  addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false, index = 0){
+    if(!index)
+      var auxSprite = game.add.sprite(posX, posY, spriteID);
+    else
+      var auxSprite = game.add.sprite(posX, posY, spriteID, index -1);
     auxSprite.anchor.set(anchorX, anchorY);
     if(scale)
       auxSprite.scale.set(scale);
@@ -153,6 +151,13 @@ var playGame = {
       auxText.scale.set(scale);
 
     return auxText;
+  },
+  addSuits: function(posX, posY, index){
+    var auxSuit = this.addSprite(posX, posY, 'suits',0.5,0.5, gameOptions.suitScale, index+1);
+    auxSuit.variable = index;
+    auxSuit.inputEnabled = true;
+    auxSuit.events.onInputDown.add(this.pickSuit, this);
+    return auxSuit;
   },
   create: function() {
     game.add.sprite(0,0,'table');
@@ -188,6 +193,21 @@ var playGame = {
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
     this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
+    this.suits = new Array();
+    for(var i = 0; i<4 ; i++){
+      this.suits.push(this.addSuits(game.width*(0.35 + i*0.1), game.height/2,i));
+    }
+  },
+  pickSuit: function(item){
+    if(item.variable == 0)
+      console.log('Picked: CLUBS');
+    if(item.variable == 1)
+      console.log('Picked: SPADES');
+    if(item.variable == 2)
+      console.log('Picked: HEARTS');
+    if(item.variable == 3)
+      console.log('Picked: DIAMONDS');
+    this.suits[item.variable].destroy();
   },
   disableButtons: function(){
     this.auxR.destroy();
