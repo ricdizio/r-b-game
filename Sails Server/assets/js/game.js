@@ -191,13 +191,14 @@ var playGame = {
     this.buttonReady.anchor.set(0.5);
   },
   suitRequest: function(){
+    this.readyText.destroy();
     this.suitText.text = '¡Pick a Suit!'
     for(var i = 0; i<4 ; i++){
       this.suits.push(this.addSuits(game.width*(0.35 + i*0.1), game.height/2,i));
     }
   },
   readyPlayer: function(){
-    this.readyText.destroy();
+    this.readyText.text = 'Waiting for other Players';
     socket.emit('ready', socket.id);
     this.buttonReady.destroy();
   },
