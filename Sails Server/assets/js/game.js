@@ -201,7 +201,7 @@ var playGame = {
   },
   readyPlayer: function(){
     this.readyText.text = 'Waiting for other Players';
-    socket.emit('ready', socket.id);
+    socket.emit('join', "room1", 3);
     this.buttonReady.destroy();
   },
   pickSuit: function(item){

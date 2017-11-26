@@ -27,7 +27,6 @@ module.exports = {
 
 		var socket = req.socket;
 		var io = sails.io;
-		
 		io.sockets.on('connection', newConnection);
 
 
@@ -170,11 +169,11 @@ module.exports = {
 		  begin(){
 		    this.deck = this.shuffle(this.deck);
 		    
-		    /*setTimeout(function(){
+		    setTimeout(function(){
 		      self.chooseFirst();
-		    }, 20000);*/
+		    }, 2000);
 
-        this.waitReady();
+        //this.waitReady();
 		  }
 
       waitReady(){
@@ -526,7 +525,6 @@ module.exports = {
 		  socket.on('disconnect', function(){
 		  });
 		}
-
 		return res.view('game/index',{title:"R&B - Play"});
 	},
 };
