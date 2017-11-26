@@ -8,20 +8,25 @@
 		<input value="<%= user.lastName %>" name="lastName" type="text" class="form-control"/>
 		<label for="exampleInputEmail1">email:</label>
 		<input value="<%= user.email %>" name="email" type="text" class="form-control"/>
-		<!-- session. authenticated && -->
-		<% if (true) { %>
-			<% if (true) { %>
+		<!-- session. authenticated && user is admin-->
+		<% if (session.authenticated && session.User.admin) { %>
+			
 				<label for="exampleInputEmail1">tokens:</label>
 				<input value="<%= user.tokens %>" name="tokens" type="text" class="form-control"/>
+				<br>
 				<label for="exampleInputEmail1">admin? check for true:</label>
+				<br>
+			<% if (user.admin) { %>
 				<label class="form-check-label">
-		      		<input type="checkbox" class="form-check-input" name="checkAdmin">Admin?
+		      		<input type="checkbox" class="form-check-input" name="checkAdmin" checked>Admin?
 		      	</label>
 			<% } else { %>
-				<input type="hidden" name="admin" value="unchecked">
-				<label class="checkbox"><input type="checkbox" name="admin">Admin</label>
+				<label class="form-check-label">
+		      		<input type="checkbox" class="form-check-input" name="checkAdmin" unchecked>Admin?
+		      	</label>
 			<% } %> 
 		<% } %> 
+		<br>
 		<input type="submit" value="Proceed" class="btn btn-lg btn-primary btn-block"/>
 		<input type="hidden" name="_csrf" value="<%= _csrf %>" />
 	</form>
