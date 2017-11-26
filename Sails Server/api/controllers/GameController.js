@@ -89,8 +89,9 @@ module.exports = {
 		    this.players = this.initiatePlayers(players, initialMoney);
 		    this.suits = new Array();
 		    this.pool = 0;
-		    this.betTurn = 0;
+		    this.playTurn = 0;
 		    this.round = 0;
+        this.readyAnswer = 0;
 		    this.poolAccept = 0;
 		    this.poolAnswer = 0;
 		    this.timeoutTime = timeoutTime;
@@ -167,17 +168,33 @@ module.exports = {
 		  }
 
 		  begin(){
-		    var self = this;
 		    this.deck = this.shuffle(this.deck);
 		    
-		    setTimeout(function(){
+		    /*setTimeout(function(){
 		      self.chooseFirst();
-		    }, 20000);
+		    }, 20000);*/
+
+        this.waitReady();
 		  }
 
+      waitReady(){
+        var self = this;
+        for(var i = 0; i < this.maximumPlayers; i++){ // Asignamos event listener a todos los usuarios.
+          io.sockets.sockets[this.players[i].socketId].on('ready', ready);
+        }
+
+        function ready(socketId){
+          io.sockets.sockets[socketId].removeListener('ready', ready);
+          if(++self.readyAnswer == self.maximumPlayers){
+            self.readyAnswer = 0;
+            self.chooseFirst();
+          }
+        }
+      }
+
 		  chooseFirst(){
+        var self = this;
 		    this.suits = new Array();
-		    var self = this;
 		    this.chooseFirstCounter = 0;
 		    io.sockets.to(this.socketRoom).emit('suitRequest');
 		    for(var i = 0; i < this.maximumPlayers; i++){ // Asignamos event listener a todos los usuarios.
@@ -202,7 +219,7 @@ module.exports = {
 		          var card = self.dealCard(false);
 		          for(var i = 0; i < self.maximumPlayers; i++){ // Revisamos que jugador gano.
 		            if(self.suits[i] == card.suit){
-		              self.betTurn = i; // Le decimos que el turno es el i. Tengo que revisar esto. Si comentas esta linea el va a arrancar en el jugador 1 siempre.
+		              self.playTurn = i; // Le decimos que el turno es el i. Tengo que revisar esto. Si comentas esta linea el va a arrancar en el jugador 1 siempre.
 		              validSuit = false;
 		              break;
 		            }
@@ -247,10 +264,10 @@ module.exports = {
 		  }
 
 		  chooseColor(){
-		    var previousBetTurn = this.betTurn;
+		    var previousBetTurn = this.playTurn;
 
-		    if(++this.betTurn >= this.maximumPlayers){
-		      this.betTurn = 0;
+		    if(++this.playTurn >= this.maximumPlayers){
+		      this.playTurn = 0;
 		    }
 
 		    this.play(previousBetTurn, 0);
