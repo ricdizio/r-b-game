@@ -1,4 +1,4 @@
-var socket = io.connect('http://190.75.101.101:1337/');
+var socket = io.connect('http://190.75.101.101:1337');
 var bet = 0;
 
 class Card {
@@ -34,6 +34,26 @@ socket.on('bet', function(betId, playerIndex){
     console.log("Jugador " + (playerIndex + 1) + " esta apostando");
     //Colocar en pantalla "jugador playerindex+1 esta apostando"
   }
+});
+
+socket.on('suitRequest', function(){
+  playGame.suitRequest();
+});
+
+socket.on('pickedSuit', function(suit){
+  if(suit == 'Clubs')
+    playGame.pickedSuit(0);
+  if(suit == 'Spades')
+    playGame.pickedSuit(1);
+  if(suit == 'Hearts')
+    playGame.pickedSuit(2);
+  if(suit == 'Diamonds')
+    playGame.pickedSuit(3);
+});
+
+socket.on('donePicking', function(card){
+  console.log('Done Picking');
+  playGame.showFirst(card);
 });
 
 socket.on('play', function(betId, playerIndex, lastTurn){
