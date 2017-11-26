@@ -187,7 +187,7 @@ var playGame = {
     this.readyText = this.addText(game.width/2, game.height*0.3,'Ready?',0.5);
     this.suits = new Array();
 
-    this.buttonReady = game.add.button(game.width/2 + 100, game.height*0.8, 'foo', this.readyPlayer, this, 0, 0, 0);
+    this.buttonReady = game.add.button(game.width/2, game.height/2, 'ready', this.readyPlayer, this, 0, 0, 0);
     this.buttonReady.anchor.set(0.5);
   },
   suitRequest: function(){
