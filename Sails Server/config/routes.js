@@ -105,6 +105,16 @@ module.exports.routes = {
     action: "destroy",
   },
 
+/*
+******************play Controller
+*/
+
+// game
+  "GET /play": {
+    controller: "GameController",
+    action: "play",
+  },
+
 
   /***************************************************************************
   *                                                                          *
