@@ -89,20 +89,34 @@ module.exports = {
 				}
 
 				// Log user in
+
 				req.session.authenticated = true;
-				req.session.User = user;
+				// param
+
+				// control de cookie
+				req.session.User = 
+				{ 
+					 name: user.name,
+				     lastName: user.lastName,
+				     nickName: user.nickName,
+				     admin: user.admin,
+				     validated: user.validated,
+				     createdAt: user.createdAt,
+				     updatedAt: user.updatedAt,
+				     id: user.id
+				}
 
 				// Change status to online
 				user.online = true;
 
 				console.log("Antes de la funcion save");
-				console.log(user);
+				console.log(req.session.User);
 				if (req.session.User.admin) {
 					res.redirect('/user');
 					return;
 				}
 				console.log("Antes del redirect");
-				console.log(user);
+				console.log(req.session.User);
 				//Redirect to their profile page (e.g. /views/user/show.ejs)
 				res.redirect('/profile/' + user.nickName);
 

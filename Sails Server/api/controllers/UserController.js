@@ -13,7 +13,8 @@ module.exports = {
 new: function(req, res) {
 
     console.log(req.session);
-    if(req.session.authenticated){
+    if(req.session.authenticated)
+    {
       res.redirect("/");
     }
 
@@ -52,7 +53,20 @@ create: function(req, res, next) {
 
        // Log user in
       req.session.authenticated = true;
-      req.session.User = user;
+
+      // control de cookie
+      req.session.User = 
+        { 
+           name: user.name,
+             lastName: user.lastName,
+             nickName: user.nickName,
+             admin: user.admin,
+             validated: user.validated,
+             createdAt: user.createdAt,
+             updatedAt: user.updatedAt,
+             id: user.id
+        }
+
       
       // Change status to online
       user.online = true;
