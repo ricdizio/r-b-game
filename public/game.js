@@ -183,15 +183,24 @@ var playGame = {
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
     this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
-    this.suitText = this.addText(game.width/2, game.height*0.3,'¡Pick a Suit!',0.5);
-
+    this.suitText = this.addText(game.width/2, game.height*0.3,'',0.5);
+    this.readyText = this.addText(game.width/2, game.height*0.3,'Ready?',0.5);
     this.suits = new Array();
 
+    this.buttonReady = game.add.button(game.width/2, game.height/2, 'ready', this.readyPlayer, this, 0, 0, 0);
+    this.buttonReady.anchor.set(0.5);
   },
   suitRequest: function(){
+    this.readyText.destroy();
+    this.suitText.text = '¡Pick a Suit!'
     for(var i = 0; i<4 ; i++){
       this.suits.push(this.addSuits(game.width*(0.35 + i*0.1), game.height/2,i));
     }
+  },
+  readyPlayer: function(){
+    this.readyText.text = 'Waiting for other Players';
+    socket.emit('ready', socket.id);
+    this.buttonReady.destroy();
   },
   pickSuit: function(item){
     if(item.variable == 0){
