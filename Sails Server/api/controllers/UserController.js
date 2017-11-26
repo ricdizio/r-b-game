@@ -13,6 +13,9 @@ module.exports = {
 new: function(req, res) {
 
     console.log(req.session);
+    if(req.session.authenticated){
+      res.redirect("/");
+    }
 
     res.view("user/new",{title:"R&B - Sign up"});
   },
@@ -99,10 +102,15 @@ create: function(req, res, next) {
 
   // process the info from edit view
   update: function(req, res, next) {
+
     var validatedAdmin = false;
     console.log("Estado admin: " + req.param('checkAdmin'));
-    if(req.param('checkAdmin') == "on"){console.log("Entro al if");validatedAdmin=true;}
-    if (validatedAdmin) {
+    if(req.param('checkAdmin') == "on"){
+      console.log("Entro al if");
+      validatedAdmin=true;
+    }
+
+    if (req.session.User.admin) {
       var userObj = {
         name: req.param('name'),
         lastName: req.param('lastName'),

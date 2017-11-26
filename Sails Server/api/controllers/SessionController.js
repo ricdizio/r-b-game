@@ -11,12 +11,19 @@ module.exports = {
 
 	new: function(req, res, next) {
 		console.log(req.session);
-		res.view('session/new',{title:"R&B - Sign In"});
+		if(req.session.authenticated)
+	    {
+	      return res.redirect("/");
+	    }
+		return res.view('session/new',{title:"R&B - Sign In"});
 	},
 
 	create: function(req, res){
 		var userLog;
-
+		if(req.session.authenticated)
+	    {
+	      return res.redirect("/");
+	    }
 		// Check for email and password in params sent via the form, if none
 		// redirect the browser back to the sign-in form.
 		if (!req.param('email') || !req.param('password')) {
