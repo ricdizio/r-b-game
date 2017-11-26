@@ -167,14 +167,14 @@ class Table{
     
     setTimeout(function(){
       self.chooseFirst();
-    }, 10000);
+    }, 20000);
   }
 
   chooseFirst(){
     this.suits = new Array();
     var self = this;
     this.chooseFirstCounter = 0;
-
+    io.sockets.to(this.socketRoom).emit('suitRequest');
     for(var i = 0; i < this.maximumPlayers; i++){ // Asignamos event listener a todos los usuarios.
       io.sockets.sockets[this.players[i].socketId].on('suit', chooseFirstTurn);
     }

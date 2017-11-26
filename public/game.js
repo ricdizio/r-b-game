@@ -186,6 +186,9 @@ var playGame = {
     this.suitText = this.addText(game.width/2, game.height*0.3,'¡Pick a Suit!',0.5);
 
     this.suits = new Array();
+
+  },
+  suitRequest: function(){
     for(var i = 0; i<4 ; i++){
       this.suits.push(this.addSuits(game.width*(0.35 + i*0.1), game.height/2,i));
     }
@@ -208,11 +211,17 @@ var playGame = {
       socket.emit('suit', 'Diamonds', socket.id);
     }
     for(var i=0; i<4; i++){
-      this.suits[i].destroy();
+      if(i!=item.variable)
+        this.suits[i].destroy();
     }
   },
   pickedSuit: function(suitIndex){
+    game.time.events.add(Phaser.Timer.SECOND*2, function(){
       this.suits[suitIndex].destroy();
+    }, this) 
+    var fadeTween = game.add.tween(this.suits[suitIndex]).to({
+      alpha: 0
+    }, 500, Phaser.Easing.Linear.None, true);
   },
   disableButtons: function(){
     this.auxR.destroy();
@@ -299,7 +308,6 @@ var playGame = {
     this.firstCard.move(true,0,0);
     game.time.events.add(Phaser.Timer.SECOND*2, function(){
       this.firstCard.fade();
-
     }, this) 
   },
   printWinColor: function(card) {
@@ -337,9 +345,10 @@ var playGame = {
   updateRound: function(roundNumber){
     this.suitText.text = '';
     this.roundText.text = 'Round: '+ roundNumber;
-    for(var i =0; i<this.maxPlayers; i++){
-      this.playerArray[i].check(0, false);
-    }
+    if(roundNumber>1)
+      for(var i =0; i<this.maxPlayers; i++){
+        this.playerArray[i].check(0, false);
+      }
   },
   testFunction: function(item){
     console.log('Foo');

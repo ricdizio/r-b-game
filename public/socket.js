@@ -36,6 +36,10 @@ socket.on('bet', function(betId, playerIndex){
   }
 });
 
+socket.on('suitRequest', function(){
+  playGame.suitRequest();
+});
+
 socket.on('pickedSuit', function(suit){
   if(suit == 'Clubs')
     playGame.pickedSuit(0);
