@@ -11,10 +11,11 @@ module.exports = {
 
 	new: function(req, res, next) {
 		console.log(req.session);
-		if(req.session.authenticated)
-	    {
-	      return res.redirect("/");
-	    }
+		// Implementar despues
+		//if(req.session.authenticated)
+	    //{
+	    //  return res.redirect("/");
+	    //}
 		return res.view('session/new',{title:"R&B - Sign In"});
 	},
 
