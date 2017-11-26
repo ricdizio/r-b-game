@@ -122,7 +122,6 @@ var playGame = {
     game.load.image('alert', 'assets/turnAlert.png');
     game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
     game.load.spritesheet('suits', 'assets/suits.png',500,550);
-    game.load.spritesheet('ready', 'assets/ready.png',320,217);
     for(var i = 0; i < 52; i++){
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
     }

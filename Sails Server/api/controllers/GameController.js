@@ -27,7 +27,6 @@ module.exports = {
 
 		var socket = req.socket;
 		var io = sails.io;
-		
 		io.sockets.on('connection', newConnection);
 
 
@@ -526,7 +525,6 @@ module.exports = {
 		  socket.on('disconnect', function(){
 		  });
 		}
-
 		return res.view('game/index',{title:"R&B - Play"});
 	},
 };

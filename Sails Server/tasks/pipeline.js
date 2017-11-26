@@ -33,7 +33,10 @@ var jsFilesToInject = [
 
   // All of the rest of your client-side js files
   // will be injected here in no particular order.
-  'js/**/*.js'
+  //'js/**/*.js'popper.min.js
+  'js/jquery-3.2.1.min.js',
+  'js/popper.min.js',
+  'js/v4bootstrap.min.js'
 ];
 
 
