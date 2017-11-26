@@ -70,11 +70,9 @@ class cardGUI {
     }, 500, Phaser.Easing.Cubic.Out, true);
   }
   fade(){
-    for(var i = 0; i < 2; i++){
-      var fadeTween = game.add.tween(this.card).to({
-          alpha: 0
-      }, 500, Phaser.Easing.Linear.None, true);
-    }
+    var fadeTween = game.add.tween(this.card).to({
+        alpha: 0
+    }, 500, Phaser.Easing.Linear.None, true);
   }
   destroy(){
     this.card.destroy();
@@ -128,11 +126,8 @@ var playGame = {
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
     }
   },
-  addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false, index = 0){
-    if(!index)
-      var auxSprite = game.add.sprite(posX, posY, spriteID);
-    else
-      var auxSprite = game.add.sprite(posX, posY, spriteID, index -1);
+  addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false){
+    var auxSprite = game.add.sprite(posX, posY, spriteID);
     auxSprite.anchor.set(anchorX, anchorY);
     if(scale)
       auxSprite.scale.set(scale);
@@ -140,8 +135,7 @@ var playGame = {
     return auxSprite;
   },
   addText: function(posX, posY, text, anchorX = 0, scale = false){
-    var auxText;
-    auxText = game.add.text(posX, posY,text, { fontSize: '32px', fill: '#000' });
+    var auxText = game.add.text(posX, posY,text, { fontSize: '32px', fill: '#000' });
     auxText.anchor.set(anchorX,0);
     if(scale)
       auxText.scale.set(scale);
@@ -149,10 +143,10 @@ var playGame = {
     return auxText;
   },
   addSuits: function(posX, posY, index){
-    var auxSuit = this.addSprite(posX, posY, 'suits',0.5,0.5, gameOptions.suitScale, index+1);
+    var auxSuit = game.add.button(posX, posY,'suits',this.pickSuit, this, index, index, index);
+    auxSuit.scale.set(gameOptions.suitScale);
+    auxSuit.anchor.set(0.5);
     auxSuit.variable = index;
-    auxSuit.inputEnabled = true;
-    auxSuit.events.onInputDown.add(this.pickSuit, this);
     return auxSuit;
   },
   create: function() {
@@ -165,7 +159,6 @@ var playGame = {
       new cardGUI(game.width*0.5875, game.height/2),
       new cardGUI(game.width*0.675, game.height/2)
     );
-    //this.cardArray[this.nCards].make();
 
     this.firstCard = new cardGUI(game.width/2, game.height/2);
     this.firstCard.make();
@@ -190,7 +183,8 @@ var playGame = {
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
     this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
-    this.suitText = this.addText(game.width/2, game.height*0.3,'',0.5);
+    this.suitText = this.addText(game.width/2, game.height*0.3,'¡Pick a Suit!',0.5);
+
     this.suits = new Array();
     for(var i = 0; i<4 ; i++){
       this.suits.push(this.addSuits(game.width*(0.35 + i*0.1), game.height/2,i));
@@ -201,7 +195,7 @@ var playGame = {
       console.log('Picked: CLUBS');
     if(item.variable == 1){
       console.log('Picked: SPADES');
-      this.showCard(true,0,0);
+      this.showFirst(true);
     }
     if(item.variable == 2)
       console.log('Picked: HEARTS');
@@ -253,6 +247,7 @@ var playGame = {
   alertTurn: function(select, playerIndex, playerText){
     this.winnerText.text = '';
     this.colorText.text = '';
+    this.suitText.text = '';
     this.nameText.text = playerText;
     this.playerArray[playerIndex].alert(true);
     if(select){
@@ -272,32 +267,29 @@ var playGame = {
     this.playerArray[playerIndex].check(color, true);
     this.playerArray[playerIndex].alert(false);
   },
-  showCard: function(first, card, suit) {
-    if(!first){
-      this.cardArray[this.nCards].flip(card, gameOptions.flipZoom, gameOptions.cardScaleOn);
-      this.printWinColor(card);
-      this.cardArray[this.nCards].move(true, 0,0);
-      this.nCards++;
-      this.cardArray.push(new cardGUI());
-      if(this.nCards!=this.maxRounds){
-        this.cardArray[this.nCards].make();
-        this.showWinSuit(suit);
-      }
-      //game.time.events.add(Phaser.Timer.SECOND*time, this.cardArray[nCards].move, this);
-      //this.cardArray[nCards].move();
-      this.colorText.text = '';
-      this.winnerText.text = '';
-    }else{
+  showCard: function(card, suit) {
+    this.cardArray[this.nCards].flip(card, gameOptions.flipZoom, gameOptions.cardScaleOn);
+    this.printWinColor(card);
+    this.cardArray[this.nCards].move(true, 0,0);
+    this.nCards++;
+    this.cardArray.push(new cardGUI());
+    if(this.nCards!=this.maxRounds){
       this.cardArray[this.nCards].make();
-      this.firstCard.flip(0, 1, 2);
-      this.firstCard.move(true,0,0);
-      game.time.events.add(Phaser.Timer.SECOND, function(){
-        this.firstCard.fade()
-      }, this) 
-      //game.time.events.add(Phaser.Timer.SECOND*2, this.firstCard.fade(), this);
-      //this.firstCard.fade();
+      this.showWinSuit(suit);
     }
-
+    //game.time.events.add(Phaser.Timer.SECOND*time, this.cardArray[nCards].move, this);
+    //this.cardArray[nCards].move();
+    this.colorText.text = '';
+    this.winnerText.text = '';
+  },
+  showFirst: function(card){
+    this.suitText.text = '¡'+'Clubs'+'!'
+    this.cardArray[this.nCards].make();
+    this.firstCard.flip(0, 1, 2);
+    this.firstCard.move(true,0,0);
+    game.time.events.add(Phaser.Timer.SECOND*2, function(){
+      this.firstCard.fade()
+    }, this) 
   },
   printWinColor: function(card) {
     this.nameText.text = '';
@@ -336,7 +328,8 @@ var playGame = {
       this.playerArray[i].check(0, false);
     }
   },
-  foo: function(){
-    this.foo = true;
+  testFunction: function(item){
+    console.log('Foo');
+    console.log(item.variable);
   }
 }
