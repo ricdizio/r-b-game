@@ -169,11 +169,11 @@ module.exports = {
 		  begin(){
 		    this.deck = this.shuffle(this.deck);
 		    
-		    /*setTimeout(function(){
+		    setTimeout(function(){
 		      self.chooseFirst();
-		    }, 20000);*/
+		    }, 2000);
 
-        this.waitReady();
+        //this.waitReady();
 		  }
 
       waitReady(){
