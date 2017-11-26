@@ -13,13 +13,11 @@ module.exports = {
 new: function(req, res) {
 
     console.log(req.session);
+    if(req.session.authenticated){
+      res.redirect("/");
+    }
 
     res.view("user/new",{title:"R&B - Sign up"});
-  },
-
-initSesion: function(req, res) {
-    console.log(req.session);
-    res.view("user/login",{title:"R&B - login"});
   },
 
 
@@ -46,17 +44,23 @@ create: function(req, res, next) {
      // console.log(err);
       if (err) 
       {
-        // flash.js dont work for now
+        // flash.js 
         console.log(err);
         req.addFlash('err', err);
         return res.redirect('/signup');
       }
+
+       // Log user in
+      req.session.authenticated = true;
+      req.session.User = user;
+      
       // Change status to online
       user.online = true;
+      var usertoSave = user;
       user.save(function(err, user) 
       {
         if (err) return next(err);
-		    res.redirect('/user/');
+		    res.redirect('/profile/' + usertoSave.nickName);
       });
     });
   },
@@ -66,15 +70,16 @@ create: function(req, res, next) {
     var element = req.param('nickname');
     //Search in dataBase for (user v : Users){ if (v.nickName==element) return this.user}
     User.findOne({nickName: element}).exec(function(err, user) {
-        if (err) {return res.serverError(err);}
+        if (err) return next(err);
+        if (!user) return res.serverError('User doesn\'t exist.');
         //return res.json(user);
         console.log("elemento encontrado: " + element);
         console.log("elemento user: " + user.nickName);
-    
+        console.log(req.session);
+      
         //Send in object response obj user found
         var nameUser = user.nickName;
         return res.view('user/profile',{user: user, title:"profile " + nameUser});
-  
     });
   },
 
@@ -88,7 +93,7 @@ create: function(req, res, next) {
     // Find the user from the id passed in via params
     User.findOne({nickName: element}).exec(function(err, user) {
       if (err) return next(err);
-      if (!user) return next('User doesn\'t exist.');
+      if (!user) return res.serverError('User doesn\'t exist.');
       var nameUser = user.nickName;
       return res.view("user/edit", {user: user, title:nameUser +" edit"});
     });
@@ -97,10 +102,15 @@ create: function(req, res, next) {
 
   // process the info from edit view
   update: function(req, res, next) {
+
     var validatedAdmin = false;
     console.log("Estado admin: " + req.param('checkAdmin'));
-    if(req.param('checkAdmin') == "on"){console.log("Entro al if");validatedAdmin=true;}
-    if (true) {
+    if(req.param('checkAdmin') == "on"){
+      console.log("Entro al if");
+      validatedAdmin=true;
+    }
+
+    if (req.session.User.admin) {
       var userObj = {
         name: req.param('name'),
         lastName: req.param('lastName'),
@@ -133,7 +143,7 @@ create: function(req, res, next) {
     User.findOne({nickName: element}).exec(function(err, user) {
       if (err) return next(err);
 
-      if (!user) return next('User doesn\'t exist.');
+      if (!user) return res.serverError('User doesn\'t exist.');
 
       User.destroy(req.param('nickName')).exec(function(err) {
         if (err) return next(err);

@@ -28,13 +28,18 @@
 </style>
 <div class="container" style="margin-top: 8px;">
   <div class="jumbotron mx-auto">
-    <h1 class="textoMain">Red & Black</h1>
+  	<% if (!session.authenticated) { %>
+	    <h1 class="textoMain">Red & Black</h1>
 
-    <h2 class="textoMain">...This is a betatester app.</h2>
-    <a href="/signup" class="btn btn-primary btn-lg btCenter" role="button">Sign up now!</a>
-    <div class="box">  
-	    <span class="textoMain spanSign">Do you have acount?</span>
-	    <a class="textoMain linkA" href="/login">Sign in</a>
-    </div>
+	    <h2 class="textoMain">...This is a betatester app.</h2>
+	    <a href="/signup" class="btn btn-primary btn-lg btCenter" role="button">Sign up now!</a>
+	    <div class="box">  
+		    <span class="textoMain spanSign">Do you have acount?</span>
+		    <a class="textoMain linkA" href="/login">Sign in</a>
+	    </div>
+    <% }else{ %>
+    	<h1 class="textoMain">Welcome</h1>
+    	<h2 class="textoMain">...You are logged in</h2>
+    <% } %>
   </div>
 </div>

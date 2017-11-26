@@ -7,26 +7,26 @@
 </style>
 
 
-<form action="/signup/new" method="POST" id="sign-up-form" class="form-signin">
+<form action="/login/new" method="POST" id="sign-up-form" class="form-signin">
 	<h2 class="form-signin-heading textCenter">Login form</h2>
 <!--
 
 	this is the information recived from the server when the fields of the form are wrongs
-
-	Dont work for now ... error with json variables
-
-
-
-	<t% if(flash && flash.err) { %t>
-		<ul class="alert alert-success">
-	<t% Object.keys(flash.err).forEach(function(error) { %t>
-		<li> <t%- JSON.stringify(flash.err[error]) %> </li>
-	<t% }) %t>
-		</ul>
-	<t% } %t>
-
+	
+	fLASH error
 
 -->
+
+
+	<% if(flash && flash.err) { %>
+		<ul class="alert alert-success">
+	<% Object.keys(flash.err).forEach(function(error) { %>
+		<li> <%- JSON.stringify(flash.err[error]) %> </li>
+	<% }) %>
+		</ul>
+	<% } %>
+
+
 
 	<div class="container">
 		<div class="form-group">

@@ -12,10 +12,18 @@
 <!--
 
 	this is the information recived from the server when the fields of the form are wrongs
-
-	Dont work for now ... error with json variables
+	
+	fLASH error
 
 -->
+
+	<% if(flash && flash.err) { %>
+		<ul class="alert alert-success">
+	<% Object.keys(flash.err).forEach(function(error) { %>
+		<li><%- JSON.stringify(flash.err[error]) %></li>
+	<% }) %>
+	</ul>
+	<% } %>
 
 
 	<div class="container">
