@@ -192,13 +192,13 @@ class Table{
       io.sockets.to(self.socketRoom).emit('pickedSuit', suit); // Enviamos el arreglo con la pinta elegida por cada jugador. Mostrarlo en pantalla.
       if(++self.chooseFirstCounter == self.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
 
-        var validSuit = false;
+        var validSuit = true;
         while(validSuit){
           var card = self.dealCard(false);
           for(var i = 0; i < self.maximumPlayers; i++){ // Revisamos que jugador gano.
             if(self.suits[i] == card.suit){
               self.betTurn = i; // Le decimos que el turno es el i. Tengo que revisar esto. Si comentas esta linea el va a arrancar en el jugador 1 siempre.
-              validSuit = true;
+              validSuit = false;
               break;
             }
           }
