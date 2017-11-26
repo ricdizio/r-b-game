@@ -36,7 +36,7 @@ var jsFilesToInject = [
   //'js/**/*.js'popper.min.js
   'js/jquery-3.2.1.min.js',
   'js/popper.min.js',
-  'js/v4bootstrap.min.js'
+  'js/bootstrap.bundle.min.js'
 ];
 
 
