@@ -122,6 +122,8 @@ var playGame = {
     game.load.image('alert', 'assets/turnAlert.png');
     game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
     game.load.spritesheet('suits', 'assets/suits.png',500,550);
+    game.load.spritesheet('ready', 'assets/ready.png',320,217);
+    game.load.spritesheet('poolR', 'assets/yesno.png',358,313);
     for(var i = 0; i < 52; i++){
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
     }
@@ -253,10 +255,12 @@ var playGame = {
   poolRequest: function(req){
     if(req){
       this.poolText.text = 'Accumulate Bet?'
-      poolYes = game.add.button(game.width/2 + 100, game.height*0.8, 'poolY', this.poolAccept, this, 0, 0, 0);
-      poolNo = game.add.button(game.width/2 - 100, game.height*0.8, 'poolN', this.poolDenied, this, 0, 0, 0);    
+      poolYes = game.add.button(game.width*0.65, game.height*0.8, 'poolR', this.poolAccept, this, 0, 0, 0);
+      poolNo = game.add.button(game.width*0.35, game.height*0.8, 'poolR', this.poolDenied, this, 1, 1, 1);    
       poolYes.anchor.set(0.5);
       poolNo.anchor.set(0.5);
+      poolYes.scale.set(0.35);
+      poolNo.scale.set(0.35);
       poolYes.input.useHandCursor = true;
       poolNo.input.useHandCursor = true;
     }else{
