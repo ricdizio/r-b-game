@@ -144,10 +144,9 @@ socket.on('substractConstantBet', function(balance){
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 
-
 socket.on('end', function(){
   console.log('Table is over');
 });
 
-socket.emit('join', "room1", 3);
+
 
