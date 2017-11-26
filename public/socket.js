@@ -36,6 +36,22 @@ socket.on('bet', function(betId, playerIndex){
   }
 });
 
+socket.on('pickedSuit', function(suit){
+  if(suit == 'Clubs')
+    playGame.pickedSuit(0);
+  if(suit == 'Spades')
+    playGame.pickedSuit(1);
+  if(suit == 'Hearts')
+    playGame.pickedSuit(2);
+  if(suit == 'Diamonds')
+    playGame.pickedSuit(3);
+});
+
+socket.on('donePicking', function(card){
+  console.log('Done Picking');
+  playGame.showFirst(card);
+});
+
 socket.on('play', function(betId, playerIndex, lastTurn){
   //if(!lastTurn){
     if(betId == socket.id){

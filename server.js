@@ -181,7 +181,7 @@ class Table{
 
     function chooseFirstTurn(suit, socketId){
       io.sockets.sockets[socketId].removeListener('suit', chooseFirstTurn); // Quitamos el listener del usuario que eligio.
-
+      console.log('picked: '+suit);
       for(var i = 0; i < self.maximumPlayers; i++){
         if(self.players[i].socketId == socketId){ // Revisamos que jugador lo hizo y guardamos la pinta (suit) en ese espacio del arreglo self.suits.
           self.suits[i] = suit;
@@ -189,12 +189,13 @@ class Table{
         }
       }
 
-      io.sockets.to(self.socketRoom).emit('pickedSuit', self.suits); // Enviamos el arreglo con la pinta elegida por cada jugador. Mostrarlo en pantalla.
+      io.sockets.to(self.socketRoom).emit('pickedSuit', suit); // Enviamos el arreglo con la pinta elegida por cada jugador. Mostrarlo en pantalla.
+      console.log(self.chooseFirstCounter)
+      console.log(self.maximumPlayers)
+      if(++self.chooseFirstCounter == self.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
+        var card = self.dealCard(false);
 
-      if(++this.chooseFirstCounter == this.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
-        var card = dealCard(false);
-
-        io.sockets.to(self.socketRoom).emit('donePicking', card.suit);  // Enviamos el socket con la pinta de la carta.
+        io.sockets.to(self.socketRoom).emit('donePicking', card);  // Enviamos el socket con la pinta de la carta.
         
         for(var i = 0; i < self.maximumPlayers; i++){ // Revisamos que jugador gano.
           if(self.suits[i] == card.suit){

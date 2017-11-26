@@ -43,7 +43,7 @@ class cardGUI {
     }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
 
     flipTween.onComplete.add(function(){
-      this.card.loadTexture('card'+ 1);//card.index);
+      this.card.loadTexture('card'+card.index);
       backFlipTween.start();
     }, this);
 
@@ -191,17 +191,28 @@ var playGame = {
     }
   },
   pickSuit: function(item){
-    if(item.variable == 0)
+    if(item.variable == 0){
       console.log('Picked: CLUBS');
+      socket.emit('suit', 'Clubs', socket.id);
+    }
     if(item.variable == 1){
       console.log('Picked: SPADES');
-      this.showFirst(true);
+      socket.emit('suit', 'Spades', socket.id);
     }
-    if(item.variable == 2)
+    if(item.variable == 2){
       console.log('Picked: HEARTS');
-    if(item.variable == 3)
+      socket.emit('suit', 'Hearts', socket.id);
+    }
+    if(item.variable == 3){
       console.log('Picked: DIAMONDS');
-    this.suits[item.variable].destroy();
+      socket.emit('suit', 'Diamonds', socket.id);
+    }
+    for(var i=0; i<4; i++){
+      this.suits[i].destroy();
+    }
+  },
+  pickedSuit: function(suitIndex){
+      this.suits[suitIndex].destroy();
   },
   disableButtons: function(){
     this.auxR.destroy();
@@ -275,7 +286,6 @@ var playGame = {
     this.cardArray.push(new cardGUI());
     if(this.nCards!=this.maxRounds){
       this.cardArray[this.nCards].make();
-      this.showWinSuit(suit);
     }
     //game.time.events.add(Phaser.Timer.SECOND*time, this.cardArray[nCards].move, this);
     //this.cardArray[nCards].move();
@@ -283,12 +293,13 @@ var playGame = {
     this.winnerText.text = '';
   },
   showFirst: function(card){
-    this.suitText.text = '¡'+'Clubs'+'!'
+    this.printWinSuit(card.suit);
     this.cardArray[this.nCards].make();
-    this.firstCard.flip(0, 1, 2);
+    this.firstCard.flip(card, 1, 2);
     this.firstCard.move(true,0,0);
     game.time.events.add(Phaser.Timer.SECOND*2, function(){
-      this.firstCard.fade()
+      this.firstCard.fade();
+
     }, this) 
   },
   printWinColor: function(card) {
@@ -301,6 +312,7 @@ var playGame = {
     }
   },
   printWinSuit: function(suit){
+    this.suitText.text = '¡'+suit+'!'
     if(suit == 0)
       console.log('CLUBS');
     if(suit == 0)
@@ -323,6 +335,7 @@ var playGame = {
     this.balanceText[i].text = balance[i];
   },
   updateRound: function(roundNumber){
+    this.suitText.text = '';
     this.roundText.text = 'Round: '+ roundNumber;
     for(var i =0; i<this.maxPlayers; i++){
       this.playerArray[i].check(0, false);
