@@ -190,20 +190,20 @@ class Table{
       }
 
       io.sockets.to(self.socketRoom).emit('pickedSuit', suit); // Enviamos el arreglo con la pinta elegida por cada jugador. Mostrarlo en pantalla.
-      console.log(self.chooseFirstCounter)
-      console.log(self.maximumPlayers)
       if(++self.chooseFirstCounter == self.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
-        var card = self.dealCard(false);
 
-        io.sockets.to(self.socketRoom).emit('donePicking', card);  // Enviamos el socket con la pinta de la carta.
-        
-        for(var i = 0; i < self.maximumPlayers; i++){ // Revisamos que jugador gano.
-          if(self.suits[i] == card.suit){
-            self.betTurn = i; // Le decimos que el turno es el i. Tengo que revisar esto. Si comentas esta linea el va a arrancar en el jugador 1 siempre.
-            break;
+        var validSuit = false;
+        while(validSuit){
+          var card = self.dealCard(false);
+          for(var i = 0; i < self.maximumPlayers; i++){ // Revisamos que jugador gano.
+            if(self.suits[i] == card.suit){
+              self.betTurn = i; // Le decimos que el turno es el i. Tengo que revisar esto. Si comentas esta linea el va a arrancar en el jugador 1 siempre.
+              validSuit = true;
+              break;
+            }
           }
         }
-
+        io.sockets.to(self.socketRoom).emit('donePicking', card);  // Enviamos el socket con la pinta de la carta.
         var setTime = setTimeout(function(){  // En ciertos segundos inicia la partida normalmente. 
           self.start();
         }, pickSuitDelay);
