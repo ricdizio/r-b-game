@@ -11,7 +11,6 @@ module.exports = {
 
 	new: function(req, res, next) {
 		console.log(req.session);
-		// Implementar despues
 		//if(req.session.authenticated)
 	    //{
 	    //  return res.redirect("/");
@@ -43,7 +42,7 @@ module.exports = {
 			
 			//Return with flash error
 			
-			return res.redirect('/session/new');
+			return res.redirect('/login');
 		}
 
 		// Try to find the user by there email address. 
