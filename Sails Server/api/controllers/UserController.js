@@ -12,7 +12,7 @@ module.exports = {
 
 new: function(req, res) {
 
-    console.log(req.session);
+    //console.log(req.session);
     if(req.session.authenticated)
     {
       res.redirect("/");
