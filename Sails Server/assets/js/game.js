@@ -115,6 +115,7 @@ var playGame = {
     this.maxRounds = 5;
     this.nCards = 0;
     this.foo = false;
+    game.config.setForceTimeOut = true;
     game.stage.disableVisibilityChange = true;
 
     game.load.image('table', 'assets/table.png');
@@ -321,9 +322,10 @@ var playGame = {
       buttonB.input.useHandCursor = true;
     }
   },
-  checkPlayer: function(playerIndex, color){//quitar card
+  checkPlayer: function(playerIndex, color){
     this.timerOn = false;
     this.timerBar.stop();
+    angle.max = 0;
     this.radialProgressBar.clear();
     this.playerArray[playerIndex].check(color, true);
     this.playerArray[playerIndex].alert(false);
