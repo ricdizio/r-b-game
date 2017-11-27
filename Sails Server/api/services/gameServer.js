@@ -51,7 +51,7 @@ const pickSuitDelay = 5000;
 	    
 	    class Table{
 	      constructor(player, socketRoom, maximumPlayers, maximumRounds, initialMoney, timeoutTime, constantMoneyBet){
-	    
+					console.log('Se creo la mesa');
 	        this.socketRoom = socketRoom;
 	        this.initialMoney = initialMoney;
 	        this.maximumPlayers = maximumPlayers;
@@ -79,10 +79,13 @@ const pickSuitDelay = 5000;
 	      }
 	    
 	      addPlayer(player){
-	        this.players.push(player);
+					this.players.push(player);
+					console.log('jugador añadido');
 	        if(this.players.length == this.maximumPlayers){
 	          this.players = this.initiatePlayers(this.players, this.initialMoney);
-	          this.waitReady();
+						console.log('this.waitReady');
+						this.waitReady();
+						
 	        }
 	      }
 	    
@@ -162,8 +165,10 @@ const pickSuitDelay = 5000;
 	        }
 	    
 	        function ready(socketId){
-	          io.sockets.sockets[socketId].removeListener('ready', ready);
+						console.log('Sumamos a readyAnswer');
+						io.sockets.sockets[socketId].removeListener('ready', ready);
 	          if(++self.readyAnswer == self.maximumPlayers){
+							console.log('Iniciamos');
 	            self.readyAnswer = 0;
 	            self.chooseFirst();
 	          }
@@ -493,7 +498,8 @@ const pickSuitDelay = 5000;
 	    function newConnection(socket){
 	      socket.on('join', function(room, roomCapacity){
 	        socket.join(room);
-	        
+					console.log('Esto es table0: ' + table[0]);
+					
 	        if(table[0]){
 	          table[1].addPlayer(socket.id);
 	          console.log(socket.id + ' added');
@@ -514,7 +520,7 @@ const pickSuitDelay = 5000;
 	      });
 	    }
 
-console.log("Se ejecuto")
+console.log("Se ejecuto");
 
 module.exports = {
 	socket : io.sockets
