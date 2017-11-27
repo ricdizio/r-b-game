@@ -122,7 +122,7 @@ var playGame = {
     game.load.image('alert', 'assets/turnAlert.png');
     game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
     game.load.spritesheet('suits', 'assets/suits.png',500,550);
-    game.load.spritesheet('ready', 'assets/ready.png',320,217);
+    game.load.spritesheet('ready', 'assets/ready.png',318,318);
     game.load.spritesheet('poolR', 'assets/yesno.png',358,313);
     for(var i = 0; i < 52; i++){
       game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
@@ -174,23 +174,31 @@ var playGame = {
       this.playerArray[i].init();
     }
 
+    this.playerID = new Array(
+      this.addText(game.width*0.2, game.height/2+60,'Player 1', 0.5),
+      this.addText(game.width/2, game.height*0.15+60,'Player 2', 0.5),
+      this.addText(game.width*0.8, game.height/2+60,'Player 3', 0.5)
+    );
+
     this.balanceText = new Array(
-      this.addText(game.width*0.2, game.height/2+60,'500', 0.5),
-      this.addText(game.width/2, game.height*0.15+60,'500', 0.5),
-      this.addText(game.width*0.8, game.height/2+60,'500', 0.5)
+      this.addText(game.width*0.2, game.height/2+90,'500', 0.5),
+      this.addText(game.width/2, game.height*0.15+90,'500', 0.5),
+      this.addText(game.width*0.8, game.height/2+90,'500', 0.5)
     );
     
     this.nameText = this.addText(game.width/2, game.height/3-5,'',0.5);
     this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
-    this.poolText = this.addText(game.width/2, game.height*0.3,'',0.5);
-    this.suitText = this.addText(game.width/2, game.height*0.3,'',0.5);
-    this.readyText = this.addText(game.width/2, game.height*0.3,'Ready?',0.5);
+    this.poolText = this.addText(game.width/2, game.height*0.35,'',0.5);
+    this.suitText = this.addText(game.width/2, game.height*0.35,'',0.5);
+    this.readyText = this.addText(game.width/2, game.height*0.35,'Ready?',0.5);
     this.suits = new Array();
 
     this.buttonReady = game.add.button(game.width/2, game.height/2, 'ready', this.readyPlayer, this, 0, 0, 0);
-    this.buttonReady.anchor.set(0.5);
+    this.buttonReady.scale.set(0.35);
+    this.buttonReady.anchor.set(0.5, 0.5);
+
   },
   suitRequest: function(){
     this.readyText.destroy();
@@ -201,7 +209,7 @@ var playGame = {
   },
   readyPlayer: function(){
     this.readyText.text = 'Waiting for other Players';
-    socket.emit('join', "room1", 3);
+    socket.emit('ready', socket.id);
     this.buttonReady.destroy();
   },
   pickSuit: function(item){
