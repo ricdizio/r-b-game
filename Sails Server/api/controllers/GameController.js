@@ -30,6 +30,7 @@ module.exports = {
 		io.sockets.on('connection', newConnection);
 		
 		var table = new Array();
+		table.push(false);
 		var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 		var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
 		var decks = 1;
