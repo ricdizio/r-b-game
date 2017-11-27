@@ -1,5 +1,6 @@
 
 var io = require('socket.io').listen(3000);
+//var io = sails.io;
 //var socket = req.socket;
 io.sockets.on('connection', newConnection);
 var table = new Array();
@@ -62,7 +63,9 @@ const pickSuitDelay = 5000;
 	        //this.players = this.initiatePlayers(players, initialMoney);
 	    
 	        this.players = new Array();
-	        this.players.push(player);
+					this.addPlayer(player);
+					//player es un ID.
+					//players es un arreglo de IDS.
 	    
 	        this.suits = new Array();
 	        this.pool = 0;
@@ -80,13 +83,24 @@ const pickSuitDelay = 5000;
 	      }
 	    
 	      addPlayer(player){
+					var self = this;
 					this.players.push(player);
 					console.log('jugador añadido');
+
+					io.sockets.sockets[player].on('ready', ready);
+			
+					function ready(socketId){
+						io.sockets.sockets[socketId].removeListener('ready', ready);
+						if(++self.readyAnswer == self.maximumPlayers){
+							console.log('Iniciamos');
+							self.readyAnswer = 0;
+							self.chooseFirst();
+						}
+					}
+
 	        if(this.players.length == this.maximumPlayers){
 	          this.players = this.initiatePlayers(this.players, this.initialMoney);
-						console.log('this.waitReady');
-						this.waitReady();
-						
+						console.log('Esperando por los ready');
 	        }
 	      }
 	    
@@ -151,29 +165,9 @@ const pickSuitDelay = 5000;
 	    
 	      begin(){
 	        this.deck = this.shuffle(this.deck);
-	        
-	        /*setTimeout(function(){
-	          self.chooseFirst();
-	        }, 2000);
-	    
-	        //this.waitReady();*/
 	      }
 	    
 	      waitReady(){
-	        var self = this;
-	        for(var i = 0; i < this.maximumPlayers; i++){ // Asignamos event listener a todos los usuarios.
-	          io.sockets.sockets[this.players[i].socketId].on('ready', ready);
-	        }
-	    
-	        function ready(socketId){
-						console.log('Sumamos a readyAnswer');
-						io.sockets.sockets[socketId].removeListener('ready', ready);
-	          if(++self.readyAnswer == self.maximumPlayers){
-							console.log('Iniciamos');
-	            self.readyAnswer = 0;
-	            self.chooseFirst();
-	          }
-	        }
 	      }
 	    
 	      chooseFirst(){

@@ -345,7 +345,7 @@ var playGame = {
   showFirst: function(card){
     this.printWinSuit(card.suit);
     this.cardArray[this.nCards].make();
-    this.firstCard.flip(card, 1, 2);
+    this.firstCard.flip(card, 1, 1.4);
     this.firstCard.move(true,0,0);
     game.time.events.add(Phaser.Timer.SECOND*2, function(){
       this.firstCard.fade();
