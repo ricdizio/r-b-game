@@ -1,4 +1,4 @@
-var socket = io.connect('http://200.84.44.5:1337');
+var socket = io.connect('http://200.84.44.5:3000');
 var bet = 0;
 
 class Card {
