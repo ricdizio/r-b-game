@@ -148,5 +148,4 @@ socket.on('end', function(){
   console.log('Table is over');
 });
 
-
-
+socket.emit('join', "room1", 3);
