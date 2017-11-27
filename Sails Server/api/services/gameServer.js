@@ -6,6 +6,7 @@ var table = new Array();
 var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
 var decks = 1;
+var nickNum = 0;
 var deck = new Array();
 var tables = new Array();
 const players = 3;
@@ -499,7 +500,7 @@ const pickSuitDelay = 5000;
 	      socket.on('join', function(room, roomCapacity){
 	        socket.join(room);
 					console.log('Esto es table0: ' + table[0]);
-					
+					playGame.nickName(nickNum++);
 	        if(table[0]){
 	          table[1].addPlayer(socket.id);
 	          console.log(socket.id + ' added');

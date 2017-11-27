@@ -21,7 +21,11 @@ window.onload = function() {
   game.state.add("PlayGame", playGame);
   game.state.start("PlayGame");
 }
-var aux;
+
+var angle = { min: 0, max: 0 };
+var color2 = 0xff0000;
+var color1 = 0x80ff00;
+var alertWidth = 12
 
 class cardGUI {
   constructor(posX, posY){
@@ -165,6 +169,8 @@ var playGame = {
     this.firstCard = new cardGUI(game.width/2, game.height/2);
     this.firstCard.make();
 
+    this.timerX;
+    this.timerY;
     this.playerArray = new Array(
       new playerGUI(1, game.width*0.2, game.height/2),
       new playerGUI(2, game.width/2,   game.height*0.15),
@@ -175,9 +181,9 @@ var playGame = {
     }
 
     this.playerID = new Array(
-      this.addText(game.width*0.2, game.height/2+60,'Player 1', 0.5),
-      this.addText(game.width/2, game.height*0.15+60,'Player 2', 0.5),
-      this.addText(game.width*0.8, game.height/2+60,'Player 3', 0.5)
+      this.addText(game.width*0.2, game.height/2+60,'', 0.5),
+      this.addText(game.width/2, game.height*0.15+60,'', 0.5),
+      this.addText(game.width*0.8, game.height/2+60,'', 0.5)
     );
 
     this.balanceText = new Array(
@@ -199,6 +205,7 @@ var playGame = {
     this.buttonReady.scale.set(0.35);
     this.buttonReady.anchor.set(0.5, 0.5);
 
+    this.radialProgressBar = game.add.graphics(0, 0);
   },
   suitRequest: function(){
     this.readyText.destroy();
@@ -290,7 +297,17 @@ var playGame = {
     this.colorText.text = '';
     this.suitText.text = '';
     this.nameText.text = playerText;
-    this.playerArray[playerIndex].alert(true);
+
+    this.playTime = 15;
+    this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false);
+    this.timerOn = true;
+    this.timerBar.onComplete.add(function(){
+      this.timerOn = false;
+      this.radialProgressBar.clear();
+    }, this);
+    this.timerX = this.playerArray[playerIndex].posX;
+    this.timerY = this.playerArray[playerIndex].posY;
+    //this.playerArray[playerIndex].alert(true);
     if(select){
       this.auxR = this.addSprite(game.width/2 - 100, game.height*0.9,'ButtonR',0.5,0.5,gameOptions.buttonScale);
       this.auxB = this.addSprite(game.width/2 + 100, game.height*0.9,'ButtonB',0.5,0.5,gameOptions.buttonScale);
@@ -304,7 +321,10 @@ var playGame = {
       buttonB.input.useHandCursor = true;
     }
   },
-  checkPlayer: function(playerIndex, color, card){
+  checkPlayer: function(playerIndex, color){//quitar card
+    this.timerOn = false;
+    this.timerBar.stop();
+    this.radialProgressBar.clear();
     this.playerArray[playerIndex].check(color, true);
     this.playerArray[playerIndex].alert(false);
   },
@@ -371,8 +391,23 @@ var playGame = {
         this.playerArray[i].check(0, false);
       }
   },
-  testFunction: function(item){
-    console.log('Foo');
-    console.log(item.variable);
+  nickName: function(names){
+    for(var i = 0; i<names.length();i++){
+      this.playerID[i].text = names[i];
+    }
+  },
+  alertTimer: function(){
+    if(this.timerOn){
+      this.radialProgressBar.clear();
+      this.radialProgressBar.lineStyle(alertWidth, 0xffffff);
+
+      this.radialProgressBar.lineColor = Phaser.Color.interpolateColor(color1, color2, 360, angle.max, 1);
+
+      this.radialProgressBar.arc(this.timerX, this.timerY, 55, angle.min, game.math.degToRad(angle.max), false);
+      this.radialProgressBar.endFill();
+    }
+  },
+  update: function(){
+    this.alertTimer();
   }
 }
