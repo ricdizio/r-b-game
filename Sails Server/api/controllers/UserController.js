@@ -87,9 +87,9 @@ create: function(req, res, next) {
         if (err) return next(err);
         if (!user) return res.serverError('User doesn\'t exist.');
         //return res.json(user);
-        console.log("elemento encontrado: " + element);
-        console.log("elemento user: " + user.nickName);
-        console.log(req.session);
+        //console.log("elemento encontrado: " + element);
+        //console.log("elemento user: " + user.nickName);
+        //console.log(req.session);
       
         //Send in object response obj user found
         var nameUser = user.nickName;
@@ -120,7 +120,6 @@ create: function(req, res, next) {
     var validatedAdmin = false;
     console.log("Estado admin: " + req.param('checkAdmin'));
     if(req.param('checkAdmin') == "on"){
-      console.log("Entro al if");
       validatedAdmin=true;
     }
 
