@@ -177,5 +177,20 @@ create: function(req, res, next) {
       res.view("user/index",{users: users,title:"List Users"});
     });
   },
+
+  getdata: function(req, res) {
+    
+    //if (!req.isSocket) {
+    //  return res.badRequest();
+    //}
+
+    //if(!req.session.authenticated){
+    //  return res.badRequest();
+    //}
+
+    return res.json({
+      nickName: req.session.User.nickName,
+    });
+  },
 };
 

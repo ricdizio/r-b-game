@@ -81,6 +81,13 @@ module.exports.routes = {
     action: "index"
   },
 
+
+  'GET /user/getdata': {
+    controller: "User", 
+    action: "getdata"
+  },
+
+
 /*
 ****************** Sesion Controller
 */
