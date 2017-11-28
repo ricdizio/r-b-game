@@ -36,8 +36,7 @@ module.exports = {
 		
 		   if(user.tokens < 500){
 			console.log("mandar error no posee credito");
-		   };
-		   console.log('Se conecto: ' + user.nickName);
+		   }
 		   gameServer.chupalo({nickName : user.nickName});
 		  });
 		  return res.view('game/index',{title:"R&B - Play"});

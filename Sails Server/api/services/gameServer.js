@@ -92,7 +92,6 @@ class Table{
 		for(var i = 0; i < playersArray.length; i++){
 			nicks[i] = playersArray[i].nickName;
 		}
-		console.log('nicks dentro de addplayer: ');
 		console.log(nicks);
 
 		io.sockets.to(this.socketRoom).emit('nickNames', nicks);
@@ -516,7 +515,6 @@ function newConnection(socket){
 				players, maximumRounds, initialMoney, timeoutTime, constantBet);
 			table[1].begin();
 			console.log('Table created');
-			console.log(socket.id + ' added');
 		}
 	});
 
