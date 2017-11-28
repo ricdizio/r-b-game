@@ -4,5 +4,6 @@ $('form').submit(function(){
     return false;
   });
   socket.on('chat', function(id, msg){
+  	console.log(id);
     $('#messages').append($('<li>').text(id + ": " + msg));
   });
