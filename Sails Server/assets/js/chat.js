@@ -3,6 +3,6 @@ $('form').submit(function(){
     $('#m').val('');
     return false;
   });
-  socket.on('chat', function(msg){
-    $('#messages').append($('<li>').text(msg));
+  socket.on('chat', function(id, msg){
+    $('#messages').append($('<li>').text(id + ": " + msg));
   });

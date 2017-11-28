@@ -88,6 +88,7 @@ class Table{
 		this.players.push(player);
 
 		io.sockets.sockets[player].on('ready', ready);
+		io.sockets.sockets[player].on('chat', chat);
 
 		function ready(socketId){
 			io.sockets.sockets[socketId].removeListener('ready', ready);
@@ -107,6 +108,17 @@ class Table{
 			}
 		}
 
+		function chat(message, socketId){
+			for(var i = 0; i < self.maximumPlayers; i++){
+				if(self.players[i].socketId == socketId){
+					var id = playersArray[i] + ": ";
+					console.log(playersArray[i]);
+					break;
+				}
+			}
+			io.sockets.to(self.socketRoom).emit('chat', id + message);
+		}
+
 		if(this.players.length == this.maximumPlayers){
 			this.players = this.initiatePlayers(this.players, this.initialMoney);
 			console.log('Esperando por los ready');
@@ -120,7 +132,7 @@ class Table{
 			temporalObjectArray[i] = new Player(playersId[i], initialMoney, i);
 		}
 
-		this.addChat(temporalObjectArray);
+		//this.addChat(temporalObjectArray);
 
 		return temporalObjectArray;
 	}
@@ -134,11 +146,12 @@ class Table{
 		function chat(message, socketId){
 			for(var i = 0; i < self.maximumPlayers; i++){
 				if(self.players[i].socketId == socketId){
-					var message = playersArray[i] + ": ";
+					var id = playersArray[i];
+					console.log(playersArray[i]);
 					break;
 				}
 			}
-			io.sockets.to(self.socketRoom).emit('chat', id + message);
+			io.sockets.to(self.socketRoom).emit('chat', id, message);
 		}
 	}
 	generateDeck(){
