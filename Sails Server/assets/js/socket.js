@@ -41,14 +41,22 @@ socket.on('suitRequest', function(){
 });
 
 socket.on('pickedSuit', function(suit, player){
-  if(suit == 'Clubs')
+  if(suit == 'Clubs'){
     playGame.pickedSuit(0);
-  if(suit == 'Spades')
+    suit = 0;
+  }
+  if(suit == 'Spades'){
     playGame.pickedSuit(1);
-  if(suit == 'Hearts')
+    suit = 1;
+  }
+  if(suit == 'Hearts'){
     playGame.pickedSuit(2);
-  if(suit == 'Diamonds')
+    suit = 2;
+  }
+  if(suit == 'Diamonds'){
     playGame.pickedSuit(3);
+    suit = 1;
+  }
   playGame.checkSuit(suit, player);
 });
 

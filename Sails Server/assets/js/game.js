@@ -214,7 +214,6 @@ var playGame = {
     this.buttonReady.anchor.set(0.5, 0.5);
 
     this.radialProgressBar = game.add.graphics(0, 0);
-    this.playerArray[2].pick(1, true);
   },
   suitRequest: function(){
     this.readyText.destroy();
