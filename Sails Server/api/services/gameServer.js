@@ -335,7 +335,7 @@ class Table{
 			}
 		}
 		//io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
-		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime);
+		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, playersArray[i].nickName[turn]);
 
 		var setTime = setTimeout(function(){
 			var randomPick = self.randomColor();
