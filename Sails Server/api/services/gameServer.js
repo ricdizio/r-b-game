@@ -9,7 +9,7 @@ var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
 var decks = 1;
 var nickNum = 0;
 var deck = new Array();
-var tables = new Array();
+var playersArray = new Array();
 const players = 3;
 const maximumRounds = 5;
 const initialMoney = 500;
@@ -518,5 +518,6 @@ const pickSuitDelay = 5000;
 console.log("Se ejecuto");
 
 module.exports = {
-	socket : io.sockets
+	socket : io.sockets,
+	playersArray : playersArray
 }
