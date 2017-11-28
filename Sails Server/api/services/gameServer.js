@@ -144,20 +144,15 @@ class Table{
 				}
 			}
 		}
-		console.log('Mazo: ');
-		console.log(temporalArray);
 		return temporalArray;
 	}
 
 	dealCard(remove){
 		var random = Math.floor(Math.random() * this.deck.length);
 		var card = this.deck[random];
-		console.log(card);
 		if(remove){
 			this.deck.splice(this.deck.indexOf(card), 1);
 		}
-		console.log(this.deck);
-		console.log(this.deck.length);
 		return card;
 	}
 
@@ -456,6 +451,9 @@ class Table{
 			}
 			this.pool = 0;
 			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false);
+		}
+		else{
+			io.sockets.to(this.socketRoom).emit('poolAccepted');
 		}
 
 		console.log('pool luego de sendreward: ' + this.pool);
