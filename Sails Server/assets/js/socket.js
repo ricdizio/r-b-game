@@ -1,4 +1,4 @@
-var socket = io.connect('http://200.84.44.5:3000');
+var socket = io.connect('http://192.168.1.112:3000');
 var bet = 0;
 
 class Card {
@@ -60,12 +60,12 @@ socket.on('play', function(betId, playerIndex, playTimer, nickName){
   //if(!lastTurn){
     if(betId == socket.id){
       console.log("Te toca elegir!");
-      playGame.alertTurn(true, playerIndex, '¡Te toca elegir!', playTimer);
+      playGame.alertTurn(true, playerIndex, "It's your turn!", playTimer);
       // Colocar en pantalla "te toca elegir"
     }
     else{
-      console.log(nickName + " esta eligiendo!");
-      playGame.alertTurn(false, playerIndex, nickName + " esta eligiendo!", playTimer);
+      console.log(nickName + " is Picking!");
+      playGame.alertTurn(false, playerIndex, nickName + " is Picking!", playTimer);
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
