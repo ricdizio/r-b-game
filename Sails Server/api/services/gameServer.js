@@ -550,7 +550,6 @@ console.log("Se ejecuto");
 module.exports = {
 	socket : io.sockets,
 	chupalo: function(nickName){
-		console.log('Entro en chupalo');
 		console.log(nickName);
 		playersArray.push(nickName);
 	}
