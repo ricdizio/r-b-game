@@ -293,13 +293,13 @@ var playGame = {
     this.poolRequest(false);
     socket.emit('getPoolAnswer', false, socket.id);
   },
-  alertTurn: function(select, playerIndex, playerText){
+  alertTurn: function(select, playerIndex, playerText, time){
     this.winnerText.text = '';
     this.colorText.text = '';
     this.suitText.text = '';
     this.nameText.text = playerText;
 
-    this.playTime = 15;
+    this.playTime = time;
     this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false);
     this.timerOn = true;
     this.timerBar.onComplete.add(function(){
