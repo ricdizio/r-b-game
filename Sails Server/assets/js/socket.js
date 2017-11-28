@@ -92,6 +92,10 @@ socket.on('deal', function(card){
   logCard(card);
 });
 
+socket.on('poolAccepted', function(){
+  playGame.updateWinners('pool Aceepted!', 0);
+});
+
 socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
   console.log('premio: ' + prize);
   var winText = new String();
