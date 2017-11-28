@@ -55,7 +55,7 @@ socket.on('pickedSuit', function(suit, player){
   }
   if(suit == 'Diamonds'){
     playGame.pickedSuit(3);
-    suit = 1;
+    suit = 3;
   }
   playGame.checkSuit(suit, player);
 });
