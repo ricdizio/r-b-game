@@ -131,8 +131,14 @@ class Table{
 			io.sockets.sockets[players[i].socketId].on('chat', chat);
 		}
 
-		function chat(message){
-			io.sockets.to(self.socketRoom).emit('chat', message);
+		function chat(message, socketId){
+			for(var i = 0; i < self.maximumPlayers; i++){
+				if(self.players[i].socketId == socketId){
+					var message = playersArray[i] + ": ";
+					break;
+				}
+			}
+			io.sockets.to(self.socketRoom).emit('chat', id + message);
 		}
 	}
 	generateDeck(){
