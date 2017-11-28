@@ -193,7 +193,7 @@ var playGame = {
       this.addText(game.width*0.8, game.height/2+85,'500', 0.5)
     );
     
-    this.nameText = this.addText(game.width/2, game.height/3-8,'',0.5);
+    this.nameText = this.addText(game.width/2, game.height/3,'',0.5);
     this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
