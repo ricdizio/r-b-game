@@ -1,14 +1,23 @@
 
 <style>
-    body { font: 14px Helvetica, Arial; }
-    form { background: white; padding: 3px; position: bottom; bottom: 0; width: 45%; }
-    form input { border: 0; padding: 10px; width: 60%; margin-right: .5%; }
-    form button { width: 10%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-    #messages { list-style-type: none; margin-top: 10px; padding: 0; width: 30%; max-height:300px; 
-      overflow-y: scroll; height: 300px}
     #messages li { padding: 5px 10px; }
     #messages li:nth-child(odd) { background: #eee; }
     #messages { margin-bottom: 10px }
+
+    .container{
+        margin-top: 20px !important;
+        margin-left: 20px !important;
+        margin-right: 20px !important;
+    }
+
+    .mensajes{
+        border-style: solid;
+        border-color: black;
+        border:2px;
+        overflow-y: scroll; 
+        height: 400px;
+        width: 300px;
+    }
 </style>
 
 
@@ -19,11 +28,27 @@
 <script src="js/phaser.min.js"></script>
 <script src="js/game.js"></script>
 <script src="js/socket.js"></script>
+
+<div class = "container">
+    <div class="row">
+        <div class= "col-sm-10">
+            <div id="phaser-game"></div>
+        </div>
+        <div class="col-sm-2">
+            <div class="container">
+                <div class="row">
+                    <ul class="mensajes" id="messages"></ul>
+                </div>
+                <div class="row">
+                    <form action="">
+                        <input id="m" autocomplete="off"/> <button>send</button>
+                    </form>   
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="js/chat.js"></script>
 
-<div class = "container" id="phaser-game">
-    <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
-    </form>
-</div>
+

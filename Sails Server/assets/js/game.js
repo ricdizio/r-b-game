@@ -1,7 +1,7 @@
 var game;
 
 var gameOptions = {
-  gameWidth: 1000,
+  gameWidth: 900,
   gameHeight: 600,
   cardSheetWidth: 65,
   cardSheetHeight: 81,
