@@ -12,7 +12,7 @@ var gameOptions = {
   checkScale: 0.4,
   buttonScale: 0.1,
   suitScale: 0.2,
-  flipZoom: 1.2,
+  flipZoom: 0.8,
   flipSpeed: 500
 }
 
