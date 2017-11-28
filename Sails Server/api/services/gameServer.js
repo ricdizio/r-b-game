@@ -150,6 +150,7 @@ class Table{
 	dealCard(remove){
 		var random = Math.floor(Math.random() * this.deck.length);
 		var card = this.deck[random];
+		console.log(card);
 		if(remove){
 			this.deck.splice(deck.indexOf(card), 1);
 		}
@@ -334,7 +335,7 @@ class Table{
 			}
 		}
 		//io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
-		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime);
+		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, playersArray[i].nickName[turn]);
 
 		var setTime = setTimeout(function(){
 			var randomPick = self.randomColor();

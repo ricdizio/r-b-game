@@ -112,13 +112,15 @@ module.exports = {
 				//console.log("Antes de la funcion save");
 				//console.log(req.session.User);
 				if (req.session.User.admin) {
-					res.redirect('/user');
+					//res.redirect('/user');
+					res.redirect('/');
 					return;
 				}
 				//console.log("Antes del redirect");
 				//console.log(req.session.User);
 				//Redirect to their profile page (e.g. /views/user/show.ejs)
-				res.redirect('/profile/' + user.nickName);
+				//res.redirect('/profile/' + user.nickName);
+				res.redirect('/');
 
 				/*
 				user.save(function(err, user) {
