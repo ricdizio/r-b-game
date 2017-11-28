@@ -87,19 +87,20 @@ class Table{
 		var self = this;
 		this.players.push(player);
 
-		var nicks = new Array();
-
-		for(var i = 0; i < playersArray.length; i++){
-			nicks[i] = playersArray[i].nickName;
-		}
-		console.log(nicks);
-
-		io.sockets.to(this.socketRoom).emit('nickNames', nicks);
 		io.sockets.sockets[player].on('ready', ready);
 
 		function ready(socketId){
 			io.sockets.sockets[socketId].removeListener('ready', ready);
 			if(++self.readyAnswer == self.maximumPlayers){
+				var nicks = new Array();
+				
+				for(var i = 0; i < playersArray.length; i++){
+					nicks[i] = playersArray[i].nickName;
+				}
+				console.log(nicks);
+		
+				io.sockets.to(self.socketRoom).emit('nickNames', nicks);
+
 				console.log('Iniciamos');
 				self.readyAnswer = 0;
 				self.chooseFirst();

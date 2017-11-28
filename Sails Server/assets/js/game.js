@@ -188,9 +188,9 @@ var playGame = {
     );
 
     this.balanceText = new Array(
-      this.addText(game.width*0.2, game.height/2+70,'500', 0.5),
-      this.addText(game.width/2, game.height*0.15+70,'500', 0.5),
-      this.addText(game.width*0.8, game.height/2+70,'500', 0.5)
+      this.addText(game.width*0.2, game.height/2+80,'500', 0.5),
+      this.addText(game.width/2, game.height*0.15+80,'500', 0.5),
+      this.addText(game.width*0.8, game.height/2+80,'500', 0.5)
     );
     
     this.nameText = this.addText(game.width/2, game.height/3-5,'',0.5);
@@ -393,7 +393,7 @@ var playGame = {
       }
   },
   nickName: function(names){
-    for(var i = 0; i<names.length();i++){
+    for(var i = 0; i < names.length; i++){
       if(names[i])
         this.playerID[i].text = names[i];
     }
