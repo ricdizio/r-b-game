@@ -182,24 +182,24 @@ var playGame = {
     }
 
     this.playerID = new Array(
-      this.addText(game.width*0.2, game.height/2+60,'', 0.5),
-      this.addText(game.width/2, game.height*0.15+60,'', 0.5),
-      this.addText(game.width*0.8, game.height/2+60,'', 0.5)
+      this.addText(game.width*0.2, game.height/2+55,'', 0.5),
+      this.addText(game.width/2, game.height*0.15+55,'', 0.5),
+      this.addText(game.width*0.8, game.height/2+55,'', 0.5)
     );
 
     this.balanceText = new Array(
-      this.addText(game.width*0.2, game.height/2+80,'500', 0.5),
-      this.addText(game.width/2, game.height*0.15+80,'500', 0.5),
-      this.addText(game.width*0.8, game.height/2+80,'500', 0.5)
+      this.addText(game.width*0.2, game.height/2+85,'500', 0.5),
+      this.addText(game.width/2, game.height*0.15+85,'500', 0.5),
+      this.addText(game.width*0.8, game.height/2+85,'500', 0.5)
     );
     
-    this.nameText = this.addText(game.width/2, game.height/3-5,'',0.5);
+    this.nameText = this.addText(game.width/2, game.height/3,'',0.5);
     this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
     this.roundText = this.addText(20, game.height-40,'Round: 0');
     this.winnerText = this.addText(game.width/2, 15,'',0.5);
-    this.poolText = this.addText(game.width/2, game.height*0.35,'',0.5);
-    this.suitText = this.addText(game.width/2, game.height*0.35,'',0.5);
-    this.readyText = this.addText(game.width/2, game.height*0.35,'Ready?',0.5);
+    this.poolText = this.addText(game.width/2, game.height*0.35+5,'',0.5);
+    this.suitText = this.addText(game.width/2, game.height*0.35+5,'',0.5);
+    this.readyText = this.addText(game.width/2, game.height*0.35+5,'Ready?',0.5);
     this.suits = new Array();
 
     this.buttonReady = game.add.button(game.width/2, game.height/2, 'ready', this.readyPlayer, this, 0, 0, 0);
