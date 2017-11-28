@@ -29,7 +29,7 @@ module.exports = {
   	},
     tokens:{
       type: 'integer',
-      defaultsTo: 0
+      defaultsTo: 500
     },
 
   	email: {
