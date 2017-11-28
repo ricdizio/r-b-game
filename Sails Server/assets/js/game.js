@@ -48,7 +48,7 @@ class cardGUI {
 
     flipTween.onComplete.add(function(){
       this.card.loadTexture('card'+card.index);
-      this.card.scale.set(gameOptions.cardScaleOn);
+      this.card.scale.set(gameOptions.cardScaleOn*0.1);
       backFlipTween.start();
     }, this);
 
