@@ -12,7 +12,7 @@ var gameOptions = {
   checkScale: 0.4,
   buttonScale: 0.1,
   suitScale: 0.2,
-  flipZoom: 0.8,
+  flipZoom: 0.65,
   flipSpeed: 500
 }
 
@@ -48,6 +48,7 @@ class cardGUI {
 
     flipTween.onComplete.add(function(){
       this.card.loadTexture('card'+card.index);
+      this.card.scale.set(gameOptions.cardScaleOn);
       backFlipTween.start();
     }, this);
 
