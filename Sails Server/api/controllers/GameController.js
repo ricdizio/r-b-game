@@ -38,8 +38,7 @@ module.exports = {
 			console.log("mandar error no posee credito");
 		   };
 		   console.log('Se conecto: ' + user.nickName);
-		   var nickName = user.nickName
-		   gameServer.chupalo(nickName);
+		   gameServer.chupalo({nickName : user.nickName});
 		  });
 		  return res.view('game/index',{title:"R&B - Play"});
 		 },
