@@ -111,12 +111,12 @@ class Table{
 		function chat(message, socketId){
 			for(var i = 0; i < self.maximumPlayers; i++){
 				if(self.players[i].socketId == socketId){
-					var id = playersArray[i] + ": ";
-					console.log(playersArray[i]);
+					var id = playersArray[i].nickName;
+					console.log(playersArray[i].nickName);
 					break;
 				}
 			}
-			io.sockets.to(self.socketRoom).emit('chat', id + message);
+			io.sockets.to(self.socketRoom).emit('chat', id, message);
 		}
 
 		if(this.players.length == this.maximumPlayers){
@@ -146,7 +146,7 @@ class Table{
 		function chat(message, socketId){
 			for(var i = 0; i < self.maximumPlayers; i++){
 				if(self.players[i].socketId == socketId){
-					var id = playersArray[i];
+					var id = playersArray[i].nickName;
 					console.log(playersArray[i]);
 					break;
 				}
