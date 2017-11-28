@@ -394,7 +394,8 @@ var playGame = {
   },
   nickName: function(names){
     for(var i = 0; i<names.length();i++){
-      this.playerID[i].text = names[i];
+      if(names[i])
+        this.playerID[i].text = names[i];
     }
   },
   alertTimer: function(){
