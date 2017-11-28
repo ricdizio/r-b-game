@@ -65,7 +65,7 @@ socket.on('play', function(betId, playerIndex, playTimer){
     }
     else{
       console.log("Jugador " + (playerIndex + 1) + " esta eligiendo!");
-      playGame.alertTurn(false, playerIndex, "Jugador " + (playerIndex + 1) + " esta eligiendo!");
+      playGame.alertTurn(false, playerIndex, "Jugador " + (playerIndex + 1) + " esta eligiendo!", playTimer);
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
@@ -142,6 +142,10 @@ socket.on('timedOut', function(playerIndex){
 socket.on('substractConstantBet', function(balance){
   playGame.updateBalane(balance);
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
+});
+
+socket.on('nickNames', function(nicks){
+  playGame.nickName(nicks);
 });
 
 socket.on('end', function(){
