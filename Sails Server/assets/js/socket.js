@@ -40,7 +40,7 @@ socket.on('suitRequest', function(){
   playGame.suitRequest();
 });
 
-socket.on('pickedSuit', function(suit){
+socket.on('pickedSuit', function(suit, player){
   if(suit == 'Clubs')
     playGame.pickedSuit(0);
   if(suit == 'Spades')
@@ -49,6 +49,7 @@ socket.on('pickedSuit', function(suit){
     playGame.pickedSuit(2);
   if(suit == 'Diamonds')
     playGame.pickedSuit(3);
+  playGame.checkSuit(suit, player);
 });
 
 socket.on('donePicking', function(card){

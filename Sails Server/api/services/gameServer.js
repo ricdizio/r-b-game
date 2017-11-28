@@ -109,9 +109,10 @@ class Table{
 		}
 
 		function chat(message, socketId){
-			for(var i = 0; i < self.maximumPlayers; i++){
+			var id;
+			for(var i = 0; i < playersArray.length; i++){
 				if(self.players[i].socketId == socketId){
-					var id = playersArray[i].nickName;
+					id = playersArray[i].nickName;
 					console.log(playersArray[i].nickName);
 					break;
 				}
@@ -217,7 +218,7 @@ class Table{
 				}
 			}
 
-			io.sockets.to(self.socketRoom).emit('pickedSuit', suit); // Enviamos el arreglo con la pinta elegida por cada jugador. Mostrarlo en pantalla.
+			io.sockets.to(self.socketRoom).emit('pickedSuit', suit, i); 
 			if(++self.chooseFirstCounter == self.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
 
 				var validSuit = true;

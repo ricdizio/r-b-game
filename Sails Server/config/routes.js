@@ -40,6 +40,10 @@ module.exports.routes = {
     view: "homepage"
   },
 
+  "GET /about": {
+    view: "about"
+  },
+
   "GET /signup": {
     controller: "UserController",
     action: "new",
