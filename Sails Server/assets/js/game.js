@@ -365,10 +365,10 @@ var playGame = {
     this.firstCard.move(true,0,0);
     game.time.events.add(Phaser.Timer.SECOND*2, function(){
       this.firstCard.fade();
+      for(var i=0; i<3; i++){
+        this.playerArray[i].pick(false, false);
+      }
     }, this) 
-    for(var i=0; i<3; i++){
-      this.playerArray[i].pick(false, false);
-    }
   },
   printWinColor: function(card) {
     this.nameText.text = '';
