@@ -1,4 +1,4 @@
-<!--
+
 <style>
     body { font: 14px Helvetica, Arial; }
     form { background: white; padding: 3px; position: bottom; bottom: 0; width: 45%; }
@@ -10,18 +10,20 @@
     #messages li:nth-child(odd) { background: #eee; }
     #messages { margin-bottom: 10px }
 </style>
--->
+
+
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script src="js/jquery-1.11.1.js"></script>
-<!--
-<ul id="messages"></ul>
-<form action="">
-  <input id="m" autocomplete="off" /><button>Send</button>
-</form>
--->
+
+
 <script src="js/phaser.min.js"></script>
 <script src="js/game.js"></script>
 <script src="js/socket.js"></script>
 <script src="js/chat.js"></script>
 
-<div class = "container" id="phaser-game"> </div>
+<div class = "container" id="phaser-game">
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+</div>
