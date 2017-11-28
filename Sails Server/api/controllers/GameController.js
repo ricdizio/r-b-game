@@ -34,6 +34,8 @@ module.exports = {
 		   if(user.tokens < 500){
 			console.log("mandar error no posee credito");
 		   };
+
+		   playersArray.push({nickName : user.nickName});
 		  });
 		  return res.view('game/index',{title:"R&B - Play"});
 		 },
