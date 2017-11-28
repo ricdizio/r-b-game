@@ -1,14 +1,28 @@
 
 <style>
-    body { font: 14px Helvetica, Arial; }
-    form { background: white; padding: 3px; position: bottom; bottom: 0; width: 45%; }
-    form input { border: 0; padding: 10px; width: 60%; margin-right: .5%; }
-    form button { width: 10%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-    #messages { list-style-type: none; margin-top: 10px; padding: 0; width: 30%; max-height:300px; 
-      overflow-y: scroll; height: 300px}
     #messages li { padding: 5px 10px; }
     #messages li:nth-child(odd) { background: #eee; }
     #messages { margin-bottom: 10px }
+
+    .caja{
+        display: inline-flex; !important;
+    }
+    .caja ul{
+        display: inherit;
+        border-color: black;
+        border:2px;
+        list-style-type: none; 
+        margin-top: 10px;
+        padding: 0; 
+        max-width: 200px;
+        max-height:300px; 
+        overflow-y: scroll; 
+        height: 300px
+        width: 200px;
+    }
+    .caja form{
+        margin-top: 400px;
+    }
 </style>
 
 
@@ -21,9 +35,12 @@
 <script src="js/socket.js"></script>
 <script src="js/chat.js"></script>
 
-<div class = "container" id="phaser-game">
+
+<div class = "container caja">
+    <div id="phaser-game"></div>
     <ul id="messages"></ul>
-    <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+    <form>
+        <input id="m" autocomplete="off"/> <button>send</button>
     </form>
 </div>
+
