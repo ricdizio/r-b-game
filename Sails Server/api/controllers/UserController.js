@@ -178,6 +178,18 @@ create: function(req, res, next) {
     });
   },
 
+
+  //List of users
+  home: function(req, res, next) {
+    var element= req.session.User.nickName;
+    // Get an array of all users in the User collection(e.g. table)
+    UUser.findOne({nickName: element}).exec(function(err, user) {
+      if (err) return next(err);
+      // pass the array down to the /views/index.ejs page
+      res.view("homepage",{user: user,title:"Home"});
+    });
+  },
+
   getdata: function(req, res) {
     
     //if (!req.isSocket) {
