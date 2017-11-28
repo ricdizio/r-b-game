@@ -5,11 +5,8 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-<<<<<<< HEAD
+
 var gameServer = require('../services/gameServer');
-=======
- var gameServer = require('../services/gameServer');
->>>>>>> 710a9124ea25974b4aa751f9bccc678eb69202dd
 
 module.exports = {
 
