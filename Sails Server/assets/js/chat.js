@@ -1,5 +1,5 @@
 $('form').submit(function(){
-    socket.emit('chat', $('#m').val());
+    socket.emit('chat', $('#m').val(), socket.id);
     $('#m').val('');
     return false;
   });
