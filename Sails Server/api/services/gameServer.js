@@ -421,6 +421,7 @@ class Table{
 					for(var i = 0; i < self.maximumPlayers; i++){ // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
 						io.sockets.sockets[self.players[i].socketId].removeListener('getPoolAnswer', poolAnswer);
 					}
+					io.sockets.to(this.socketRoom).emit('poolAccepted');
 					self.sendReward(colorArray, counter, true, card, balance);
 				}
 
@@ -451,9 +452,6 @@ class Table{
 			}
 			this.pool = 0;
 			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false);
-		}
-		else{
-			io.sockets.to(this.socketRoom).emit('poolAccepted');
 		}
 
 		console.log('pool luego de sendreward: ' + this.pool);
