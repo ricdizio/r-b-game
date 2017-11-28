@@ -101,6 +101,12 @@ class playerGUI {
       this.checkSprite.destroy();
     }
   }
+  pick(suitIndex, bool){
+    if(bool)
+      this.suit = playGame.addSuits(this.posX, this.posY, suitIndex, 0.12);
+    else
+      this.suit.destroy();
+  }
   alert(bool){
     if(bool){
       this.alertSprite = playGame.addSprite(this.posX, this.posY,'alert', 0.5, 0.5, gameOptions.alertScale);
@@ -150,9 +156,9 @@ var playGame = {
 
     return auxText;
   },
-  addSuits: function(posX, posY, index){
+  addSuits: function(posX, posY, index, scale = gameOptions.suitScale){
     var auxSuit = game.add.button(posX, posY,'suits',this.pickSuit, this, index, index, index);
-    auxSuit.scale.set(gameOptions.suitScale);
+    auxSuit.scale.set(scale);
     auxSuit.anchor.set(0.5);
     auxSuit.variable = index;
     return auxSuit;
@@ -335,6 +341,9 @@ var playGame = {
     this.playerArray[playerIndex].check(color, true);
     //this.playerArray[playerIndex].alert(false);
   },
+  checkSuit: function(suit, playerIndex){
+    this.playerArray[playerIndex].pick(suit, true);
+  },
   showCard: function(card, suit) {
     this.cardArray[this.nCards].flip(card, gameOptions.flipZoom, gameOptions.cardScaleOn);
     this.printWinColor(card);
@@ -357,6 +366,9 @@ var playGame = {
     game.time.events.add(Phaser.Timer.SECOND*2, function(){
       this.firstCard.fade();
     }, this) 
+    for(var i=0; i<3; i++){
+      this.playerArray[i].pick(false, false);
+    }
   },
   printWinColor: function(card) {
     this.nameText.text = '';
