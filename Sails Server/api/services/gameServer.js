@@ -150,6 +150,7 @@ class Table{
 	dealCard(remove){
 		var random = Math.floor(Math.random() * this.deck.length);
 		var card = this.deck[random];
+		console.log(card);
 		if(remove){
 			this.deck.splice(deck.indexOf(card), 1);
 		}
