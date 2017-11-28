@@ -251,6 +251,7 @@ var playGame = {
     }, 500, Phaser.Easing.Linear.None, true);
   },
   disableButtons: function(){
+    this.buttonOn = false;
     this.auxR.destroy();
     this.auxB.destroy();
     buttonR.destroy();
@@ -309,6 +310,7 @@ var playGame = {
     this.timerY = this.playerArray[playerIndex].posY;
     //this.playerArray[playerIndex].alert(true);
     if(select){
+      this.buttonOn = true;
       this.auxR = this.addSprite(game.width/2 - 100, game.height*0.9,'ButtonR',0.5,0.5,gameOptions.buttonScale);
       this.auxB = this.addSprite(game.width/2 + 100, game.height*0.9,'ButtonB',0.5,0.5,gameOptions.buttonScale);
       buttonR = game.add.button(game.width/2 - 100, game.height*0.9, 'buttonR', this.onClickR, this, 0, 0, 0);
@@ -322,8 +324,9 @@ var playGame = {
     }
   },
   checkPlayer: function(playerIndex, color){
-    if(this.buttonB)
+    if(this.buttonOn){
       this.disableButtons();
+    }
     this.timerOn = false;
     this.timerBar.stop();
     angle.max = 0;
