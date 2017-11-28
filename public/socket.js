@@ -1,4 +1,4 @@
-var socket = io.connect('http://localhost:3000');
+var socket = io.connect('http://200.84.44.5:3000');
 var bet = 0;
 
 class Card {
@@ -56,11 +56,11 @@ socket.on('donePicking', function(card){
   playGame.showFirst(card);
 });
 
-socket.on('play', function(betId, playerIndex, lastTurn){
+socket.on('play', function(betId, playerIndex, playTimer){
   //if(!lastTurn){
     if(betId == socket.id){
       console.log("Te toca elegir!");
-      playGame.alertTurn(true, playerIndex, '¡Te toca elegir!');
+      playGame.alertTurn(true, playerIndex, '¡Te toca elegir!', playTimer);
       // Colocar en pantalla "te toca elegir"
     }
     else{
@@ -144,10 +144,8 @@ socket.on('substractConstantBet', function(balance){
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 
-
 socket.on('end', function(){
   console.log('Table is over');
 });
 
 socket.emit('join', "room1", 3);
-

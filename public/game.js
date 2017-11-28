@@ -293,13 +293,13 @@ var playGame = {
     this.poolRequest(false);
     socket.emit('getPoolAnswer', false, socket.id);
   },
-  alertTurn: function(select, playerIndex, playerText){
+  alertTurn: function(select, playerIndex, playerText, time){
     this.winnerText.text = '';
     this.colorText.text = '';
     this.suitText.text = '';
     this.nameText.text = playerText;
 
-    this.playTime = 15;
+    this.playTime = time;
     this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false);
     this.timerOn = true;
     this.timerBar.onComplete.add(function(){
@@ -329,7 +329,6 @@ var playGame = {
     this.radialProgressBar.clear();
     this.playerArray[playerIndex].check(color, true);
     this.playerArray[playerIndex].alert(false);
-
   },
   showCard: function(card, suit) {
     this.cardArray[this.nCards].flip(card, gameOptions.flipZoom, gameOptions.cardScaleOn);
@@ -348,7 +347,7 @@ var playGame = {
   showFirst: function(card){
     this.printWinSuit(card.suit);
     this.cardArray[this.nCards].make();
-    this.firstCard.flip(card, 1, 2);
+    this.firstCard.flip(card, 1, 1.4);
     this.firstCard.move(true,0,0);
     game.time.events.add(Phaser.Timer.SECOND*2, function(){
       this.firstCard.fade();
