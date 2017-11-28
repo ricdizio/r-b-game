@@ -17,7 +17,7 @@ var gameOptions = {
 }
 
 window.onload = function() {
-  game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeight);
+  game = new Phaser.Game(gameOptions.gameWidth, gameOptions.gameHeigh, Phaser.AUTO, 'phaser-game');
   game.state.add("PlayGame", playGame);
   game.state.start("PlayGame");
 }
