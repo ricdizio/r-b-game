@@ -48,7 +48,7 @@ class cardGUI {
 
     flipTween.onComplete.add(function(){
       this.card.loadTexture('card'+card.index);
-      this.card.scale.set(gameOptions.cardScaleOn*1.1);
+      this.card.scale.set(size*1.05);
       backFlipTween.start();
     }, this);
 
@@ -352,7 +352,7 @@ var playGame = {
   showFirst: function(card){
     this.printWinSuit(card.suit);
     this.cardArray[this.nCards].make();
-    this.firstCard.flip(card, 0.7, 1.4);
+    this.firstCard.flip(card, 0.6, 1.4);
     this.firstCard.move(true,0,0);
     game.time.events.add(Phaser.Timer.SECOND*2, function(){
       this.firstCard.fade();
