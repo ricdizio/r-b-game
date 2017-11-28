@@ -144,6 +144,8 @@ class Table{
 				}
 			}
 		}
+		console.log('Mazo: ');
+		console.log(temporalArray);
 		return temporalArray;
 	}
 
@@ -152,7 +154,7 @@ class Table{
 		var card = this.deck[random];
 		console.log(card);
 		if(remove){
-			this.deck.splice(deck.indexOf(card), 1);
+			this.deck.splice(this.deck.indexOf(card), 1);
 		}
 		console.log(this.deck);
 		console.log(this.deck.length);
@@ -335,7 +337,7 @@ class Table{
 			}
 		}
 		//io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
-		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, playersArray[i].nickName[turn]);
+		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, playersArray[turn].nickName);
 
 		var setTime = setTimeout(function(){
 			var randomPick = self.randomColor();
