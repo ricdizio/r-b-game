@@ -259,12 +259,12 @@ var playGame = {
     buttonB.inputEnabled = false;
   },
   onClickR: function(){
-    //this.disableButtons();
+    this.disableButtons();
     console.log("RED BUTTON");
     socket.emit('getPlay', true);
   },
   onClickB: function(){
-    //this.disableButtons();
+    this.disableButtons();
     socket.emit('getPlay', false);
     console.log("BLACK BUTTON");
   },
@@ -322,7 +322,8 @@ var playGame = {
     }
   },
   checkPlayer: function(playerIndex, color){
-    this.disableButtons();
+    if(this.buttonB)
+      this.disableButtons();
     this.timerOn = false;
     this.timerBar.stop();
     angle.max = 0;
