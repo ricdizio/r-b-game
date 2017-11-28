@@ -5,7 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
- var gamerServer = require('..service/gameServer.js');
+var gameServer = require('../services/gameServer');
 
 module.exports = {
 
