@@ -300,7 +300,7 @@ var playGame = {
     this.nameText.text = playerText;
 
     this.playTime = time;
-    this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false);
+    this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false);
     this.timerOn = true;
     this.timerBar.onComplete.add(function(){
       this.timerOn = false;
