@@ -27,14 +27,14 @@ module.exports = {
 		  
 		
 		  // Verificar si tiene credito en la base de datos para jugar
-		  var element = req.User.nickName;
+		  var element = req.session.User.nickName;
 		
 		  User.findOne({nickName: element}).exec(function(err, user) {
 		
 		   if(user.tokens < 500){
 			console.log("mandar error no posee credito");
 		   };
-
+		   console.log('Se conecto: ' + user.nickName);
 		   playersArray.push({nickName : user.nickName});
 		  });
 		  return res.view('game/index',{title:"R&B - Play"});
