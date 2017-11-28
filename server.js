@@ -34,7 +34,7 @@ var tables = new Array();
 const players = 3;
 const maximumRounds = 5;
 const initialMoney = 500;
-const timeoutTime = 30000;
+const playTimeoutTime = 30000;
 const timeBetweenRounds = 5000;
 const constantBet = 100;
 const poolTimeout = 30000;
@@ -73,7 +73,7 @@ const pickSuitDelay = 5000;
 	    }
 	    
 	    class Table{
-	      constructor(player, socketRoom, maximumPlayers, maximumRounds, initialMoney, timeoutTime, constantMoneyBet){
+	      constructor(player, socketRoom, maximumPlayers, maximumRounds, initialMoney, playTimeoutTime, constantMoneyBet){
 					console.log('Se creo la mesa');
 	        this.socketRoom = socketRoom;
 	        this.initialMoney = initialMoney;
@@ -95,7 +95,7 @@ const pickSuitDelay = 5000;
 	        this.readyAnswer = 0;
 	        this.poolAccept = 0;
 	        this.poolAnswer = 0;
-	        this.timeoutTime = timeoutTime;
+	        this.playTimeoutTime = playTimeoutTime;
 	        this.poolTimeoutVariable;
 	        this.chooseFirstTimeoutVariable;
 	    
@@ -315,7 +315,7 @@ const pickSuitDelay = 5000;
 	          else{
 	            self.chooseColor();
 	          }
-	        }, this.timeoutTime);
+	        }, this.playTimeoutTime);
 	      }
 	    
 	      play(turn, playCounter){
@@ -344,7 +344,7 @@ const pickSuitDelay = 5000;
 	          }
 	        }
 	        //io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
-	        io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn);
+	        io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime);
 	    
 	        var setTime = setTimeout(function(){
 	          var randomPick = self.randomColor();
@@ -364,7 +364,7 @@ const pickSuitDelay = 5000;
 	          else{
 	            self.reward(self.colorBets);
 	          }
-	        }, this.timeoutTime);
+	        }, this.playTimeoutTime);
 	      }
 	      reward(colorArray){
 	        var card = this.dealCard(true);
@@ -524,7 +524,7 @@ const pickSuitDelay = 5000;
 	          //io.sockets.adapter.rooms[room].sockets
 	          table[0] = true;
 	          table[1] = new Table(socket.id, room, 
-	            players, maximumRounds, initialMoney, timeoutTime, constantBet);
+	            players, maximumRounds, initialMoney, playTimeoutTime, constantBet);
 	          table[1].begin();
 	          console.log('Table created');
 	          console.log(socket.id + ' added');

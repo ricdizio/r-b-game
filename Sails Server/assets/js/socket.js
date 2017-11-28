@@ -56,11 +56,11 @@ socket.on('donePicking', function(card){
   playGame.showFirst(card);
 });
 
-socket.on('play', function(betId, playerIndex, lastTurn){
+socket.on('play', function(betId, playerIndex, playTimer){
   //if(!lastTurn){
     if(betId == socket.id){
       console.log("Te toca elegir!");
-      playGame.alertTurn(true, playerIndex, '¡Te toca elegir!');
+      playGame.alertTurn(true, playerIndex, '¡Te toca elegir!', playTimer);
       // Colocar en pantalla "te toca elegir"
     }
     else{
