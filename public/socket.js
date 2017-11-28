@@ -56,7 +56,7 @@ socket.on('donePicking', function(card){
   playGame.showFirst(card);
 });
 
-socket.on('play', function(betId, playerIndex, playTimer){
+socket.on('play', function(betId, playerIndex, playTimer, nickName){
   //if(!lastTurn){
     if(betId == socket.id){
       console.log("Te toca elegir!");
@@ -64,8 +64,8 @@ socket.on('play', function(betId, playerIndex, playTimer){
       // Colocar en pantalla "te toca elegir"
     }
     else{
-      console.log("Jugador " + (playerIndex + 1) + " esta eligiendo!");
-      playGame.alertTurn(false, playerIndex, "Jugador " + (playerIndex + 1) + " esta eligiendo!", playTimer);
+      console.log(nickName+ " esta eligiendo!");
+      playGame.alertTurn(false, playerIndex, nickName + " esta eligiendo!", playTimer);
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
     currentTurn = playerIndex;
