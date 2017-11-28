@@ -299,8 +299,7 @@ var playGame = {
     this.suitText.text = '';
     this.nameText.text = playerText;
 
-    this.playTime = time;
-    this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false);
+    this.timerBar = game.add.tween(angle).to( { max: 360 }, time, "Linear", true, 0, 0, false);
     this.timerOn = true;
     this.timerBar.onComplete.add(function(){
       this.timerOn = false;
@@ -328,7 +327,7 @@ var playGame = {
     angle.max = 0;
     this.radialProgressBar.clear();
     this.playerArray[playerIndex].check(color, true);
-    this.playerArray[playerIndex].alert(false);
+    //this.playerArray[playerIndex].alert(false);
   },
   showCard: function(card, suit) {
     this.cardArray[this.nCards].flip(card, gameOptions.flipZoom, gameOptions.cardScaleOn);
