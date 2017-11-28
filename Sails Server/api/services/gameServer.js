@@ -89,7 +89,7 @@ class Table{
 
 		var nicks = new Array();
 
-		for(var i = 0; i < this.maximumPlayers; i++){
+		for(var i = 0; i < playersArray.length; i++){
 			nicks[i] = playersArray[i].nickName;
 		}
 		console.log('nicks dentro de addplayer: ');
@@ -529,5 +529,9 @@ console.log("Se ejecuto");
 
 module.exports = {
 	socket : io.sockets,
-	playersArray : playersArray
+	chupalo: function(nickName){
+		console.log('Entro en chupalo');
+		console.log(nickName);
+		playersArray.push(nickName);
+	}
 }
