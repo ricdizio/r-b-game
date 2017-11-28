@@ -5,7 +5,11 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+<<<<<<< HEAD
 var gameServer = require('../services/gameServer');
+=======
+ var gameServer = require('../services/gameServer');
+>>>>>>> 710a9124ea25974b4aa751f9bccc678eb69202dd
 
 module.exports = {
 
@@ -37,7 +41,8 @@ module.exports = {
 			console.log("mandar error no posee credito");
 		   };
 		   console.log('Se conecto: ' + user.nickName);
-		   gameServer.playersArray.push({nickName : user.nickName});
+		   var nickName = user.nickName
+		   gameServer.chupalo(nickName);
 		  });
 		  return res.view('game/index',{title:"R&B - Play"});
 		 },
