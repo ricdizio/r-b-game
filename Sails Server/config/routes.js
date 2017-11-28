@@ -36,6 +36,9 @@ module.exports.routes = {
 /*
 ****************** User Controller
 */
+  "GET /": {
+    view: "homepage"
+  },
 
   "GET /signup": {
     controller: "UserController",
