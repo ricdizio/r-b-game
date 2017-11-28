@@ -33,11 +33,12 @@ module.exports = {
 		  var element = req.session.User.nickName;
 		
 		  User.findOne({nickName: element}).exec(function(err, user) {
-		
 		   if(user.tokens < 500){
 			console.log("mandar error no posee credito");
 		   }
+		   console.log(user.nickName);
 		   gameServer.chupalo({nickName : user.nickName});
+		   console.log(user.nickName);
 		  });
 		  return res.view('game/index',{title:"R&B - Play"});
 		 },
