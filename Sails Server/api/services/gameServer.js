@@ -153,6 +153,8 @@ class Table{
 		if(remove){
 			this.deck.splice(deck.indexOf(card), 1);
 		}
+		console.log(this.deck);
+		console.log(this.deck.length);
 		return card;
 	}
 
@@ -376,7 +378,7 @@ class Table{
 			this.pool = 0;
 			this.sendReward(0, 0, false, 0, 0);
 		}
-		else if(counter == this.maximumPlayers){
+		else if(counter == this.maximumPlayers && this.round != this.maximumRounds){
 
 			this.poolTimeoutVariable = setTimeout(function(){
 				poolAnswer(false, 0);
@@ -474,7 +476,7 @@ class Table{
 
 	end(){
 		console.log('Game Over');
-		tables.splice(tables.indexOf(this), 1);
+		//tables.splice(tables.indexOf(this), 1);
 		io.sockets.to(this.socketRoom).emit('tableEnd');
 
 		io.sockets.adapter.rooms[this.socketRoom].started == false;
