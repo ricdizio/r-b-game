@@ -499,7 +499,7 @@ class Table{
 		io.sockets.to(this.socketRoom).emit('tableEnd');
 
 		io.sockets.adapter.rooms[this.socketRoom].started == false;
-		playersArray = new Array();
+		//playersArray = new Array();
 		// Remover listeners de chat
 		// io.sockets.sockets[currentSocketId].removeListener('getChat', chat);
 		this.database();
