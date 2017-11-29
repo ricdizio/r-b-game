@@ -1,7 +1,16 @@
+// socket.rooms // salas donde esta unido el socket.
+// socket.rooms es un OBJETO. Los atributos son el nombre las salas, y contienen el nombre de la sala.
+// io.sockets.adapter.rooms // salas creadas en el servidor.
+
+// Cuidado: chequear siempre el socket.id antes de hacer algo con el, si no existe el server crashea. Esto aplica para las funciones que envien desde el cliente el socket.id
+
+/* Optimizaciones: 
+No mandar el socket id desde el cliente. Usar algun atributo que probablemente tenga socket.io
+Evitar usar self = this. Esto copiara toda la clase y no se utiliza toda, tratar de copiar solo lo necesario.
+*/
 
 var io = require('socket.io').listen(3000);
-//var io = sails.io;
-//var socket = req.socket;
+
 io.sockets.on('connection', newConnection);
 var table = new Array();
 var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
@@ -102,7 +111,6 @@ class Table{
 		
 				io.sockets.to(self.socketRoom).emit('nickNames', nicks);
 
-				console.log('Iniciamos');
 				self.readyAnswer = 0;
 				self.chooseFirst();
 			}
@@ -113,7 +121,6 @@ class Table{
 			for(var i = 0; i < playersArray.length; i++){
 				if(self.players[i].socketId == socketId){
 					id = playersArray[i].nickName;
-					console.log(playersArray[i].nickName);
 					break;
 				}
 			}
@@ -122,39 +129,19 @@ class Table{
 
 		if(this.players.length == this.maximumPlayers){
 			this.players = this.initiatePlayers(this.players, this.initialMoney);
-			console.log('Esperando por los ready');
 		}
 	}
 
-	initiatePlayers(playersId, initialMoney){
+	initiatePlayers(playersId, initialMoney){ // Convierte el array de socket IDS en array de Players.
 		var temporalObjectArray = new Array();
 
 		for(var i = 0; i < playersId.length; i++){
 			temporalObjectArray[i] = new Player(playersId[i], initialMoney, i);
 		}
 
-		//this.addChat(temporalObjectArray);
-
 		return temporalObjectArray;
 	}
 
-	addChat(players){
-		var self = this;
-		for(var i = 0; i < players.length; i++){
-			io.sockets.sockets[players[i].socketId].on('chat', chat);
-		}
-
-		function chat(message, socketId){
-			for(var i = 0; i < self.maximumPlayers; i++){
-				if(self.players[i].socketId == socketId){
-					var id = playersArray[i].nickName;
-					console.log(playersArray[i]);
-					break;
-				}
-			}
-			io.sockets.to(self.socketRoom).emit('chat', id, message);
-		}
-	}
 	generateDeck(){
 		var temporalArray = new Array();
 		for(var i = 0; i < decks; i++){
@@ -210,7 +197,6 @@ class Table{
 
 		function chooseFirstTurn(suit, socketId){
 			io.sockets.sockets[socketId].removeListener('suit', chooseFirstTurn); // Quitamos el listener del usuario que eligio.
-			console.log('picked: '+suit);
 			for(var i = 0; i < self.maximumPlayers; i++){
 				if(self.players[i].socketId == socketId){ // Revisamos que jugador lo hizo y guardamos la pinta (suit) en ese espacio del arreglo self.suits.
 					self.suits[i] = suit;
@@ -220,7 +206,6 @@ class Table{
 
 			io.sockets.to(self.socketRoom).emit('pickedSuit', suit, i); 
 			if(++self.chooseFirstCounter == self.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
-
 				var validSuit = true;
 				while(validSuit){
 					var card = self.dealCard(false);
@@ -246,19 +231,14 @@ class Table{
 		if(this.round < this.maximumRounds){
 			io.sockets.to(this.socketRoom).emit('round', ++this.round);
 			var betCounter = 0;
-
-			this.constantBet();
-			
+			this.constantBet();		
 		}
 		else{
 			this.end();
 		}
 	}
 
-	
-
-	constantBet(){
-		//this.pool = 0; // Ahora se hace en sendreward.
+	constantBet(){ // Funciona que apuesta automaticamente X cantidad de dinero.
 		var temporalArray = new Array();
 		for(var i = 0; i < this.maximumPlayers; i++){
 			this.players[i].substract(this.constantMoneyBet);
@@ -270,7 +250,7 @@ class Table{
 		this.chooseColor();
 	}
 
-	chooseColor(){
+	chooseColor(){ // Funcion que controla quien elige color.
 		var previousBetTurn = this.playTurn;
 
 		if(++this.playTurn >= this.maximumPlayers){
@@ -280,7 +260,7 @@ class Table{
 		this.play(previousBetTurn, 0);
 	}
 
-	bet(turn, betCounter){
+	bet(turn, betCounter){ // Funcion de apuesta no constante. Se utilizaria en mesas VIP.
 		var self = this;
 		var currentSocketId = this.players[turn].socketId;
 
@@ -298,7 +278,7 @@ class Table{
 				turn: turn
 			}
 
-			if(self.checkCounters(temporalObject, self.maximumPlayers)){
+			if(self.checkCounters(temporalObject, self.maximumPlayers)){ //checkCounters suma internamente los contadores.
 				self.bet(temporalObject.turn, temporalObject.counter);
 			}
 			else{
@@ -326,7 +306,7 @@ class Table{
 		}, this.playTimeoutTime);
 	}
 
-	play(turn, playCounter){
+	play(turn, playCounter){ // Funcion que controla el momento de jugar de cada jugador.
 		var self = this;
 		var currentSocketId = this.players[turn].socketId;
 
@@ -347,11 +327,9 @@ class Table{
 				self.play(temporalObject.turn, temporalObject.counter);
 			}
 			else{
-				//io.sockets.to(self.socketRoom).emit('play', currentSocketId, ++turn, true);
 				self.reward(self.colorBets);
 			}
 		}
-		//io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, false);
 		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, playersArray[turn].nickName);
 
 		var setTime = setTimeout(function(){
@@ -374,6 +352,7 @@ class Table{
 			}
 		}, this.playTimeoutTime);
 	}
+
 	reward(colorArray){
 		var card = this.dealCard(true);
 		var counter = 0;
@@ -397,7 +376,6 @@ class Table{
 			this.sendReward(0, 0, false, 0, 0);
 		}
 		else if(counter == this.maximumPlayers && this.round != this.maximumRounds){
-
 			this.poolTimeoutVariable = setTimeout(function(){
 				poolAnswer(false, 0);
 			}, poolTimeout);
@@ -405,51 +383,31 @@ class Table{
 			this.poolAnswer = 0;
 
 			for(var i = 0; i < this.maximumPlayers; i++){
-				io.sockets.sockets[this.players[i].socketId].on('getPoolAnswer', poolAnswer);//respuesta pool
+				io.sockets.sockets[this.players[i].socketId].on('getPoolAnswer', poolAnswer);
 			}
 
-			io.sockets.to(this.socketRoom).emit('poolRequest');// solicitud para acumular
+			io.sockets.to(this.socketRoom).emit('poolRequest'); // Solicitud para acumular
 
 			function poolAnswer(poolAnswerVar, socketId){
-				/*if(poolAnswerVar){
-					console.log('yes al pool');
-					self.poolAnswer++;
-					io.sockets.sockets[socketId].removeListener('getPoolAnswer', poolAnswer);
-					if(++self.poolAccept == self.maximumPlayers){ // Si todos dicen que si.
-						console.log('todos si');
-						self.sendReward(0, 0, false, 0, 0);
-					}
-				}
-				else if(++self.poolAnswer == self.maximumPlayers){ // Si uno se niega.
-					for(var i = 0; i < self.maximumPlayers; i++){ // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
-						io.sockets.sockets[self.players[i].socketId].removeListener('getPoolAnswer', poolAnswer);
-					}
-					self.sendReward(colorArray, counter, true, card, balance);
-				}*/
-
 				if(poolAnswerVar){
 					self.poolAccept++;
 				}
 				self.poolAnswer++;
 
 				if(self.poolAccept == self.maximumPlayers){ // Si todos dicen que si.
-					console.log('todos si');
 					self.sendReward(0, 0, false, 0, 0);
+					io.sockets.to(this.socketRoom).emit('poolAccepted');
 				}
-				else if(self.poolAnswer == self.maximumPlayers){
-					console.log('Pool Negado');
-					for(var i = 0; i < self.maximumPlayers; i++){ // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
+				else if(self.poolAnswer == self.maximumPlayers){ // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
+					for(var i = 0; i < self.maximumPlayers; i++){ 
 						io.sockets.sockets[self.players[i].socketId].removeListener('getPoolAnswer', poolAnswer);
 					}
-					io.sockets.to(this.socketRoom).emit('poolAccepted');
-					self.sendReward(colorArray, counter, true, card, balance);
+					self.sendReward(colorArray, counter, true, card, balance); // Enviamos reward normalmente.
 				}
-
 			}
-
 		}
 		else{
-			this.sendReward(colorArray, counter, true, card, balance);
+			this.sendReward(colorArray, counter, true, card, balance); // Enviamos reward normalmente.
 		}
 	}
 
@@ -474,8 +432,6 @@ class Table{
 			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false);
 		}
 
-		console.log('pool luego de sendreward: ' + this.pool);
-
 		setTimeout(function(){
 			self.start();
 		}, timeBetweenRounds);
@@ -495,11 +451,9 @@ class Table{
 
 	end(){
 		console.log('Game Over');
-		//tables.splice(tables.indexOf(this), 1);
 		io.sockets.to(this.socketRoom).emit('tableEnd');
 
 		io.sockets.adapter.rooms[this.socketRoom].started == false;
-		//playersArray = new Array();
 		// Remover listeners de chat
 		// io.sockets.sockets[currentSocketId].removeListener('getChat', chat);
 		this.database();
@@ -524,14 +478,11 @@ class Table{
 function newConnection(socket){
 	socket.on('join', function(room, roomCapacity){
 		socket.join(room);
-		console.log('Esto es table0: ' + table[0]);
-		//playGame.nickName(nickNum++);
 		if(table[0]){
 			table[1].addPlayer(socket.id);
 			console.log(socket.id + ' added');
 		}
 		else{
-			//io.sockets.adapter.rooms[room].sockets
 			table[0] = true;
 			table[1] = new Table(socket.id, room, 
 				players, maximumRounds, initialMoney, playTimeoutTime, constantBet);
@@ -549,8 +500,7 @@ console.log("Se ejecuto");
 
 module.exports = {
 	socket : io.sockets,
-	chupalo: function(nickName){
-		console.log(nickName);
+	addNick: function(nickName){
 		playersArray.push(nickName);
 	}
 }
