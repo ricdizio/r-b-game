@@ -19,6 +19,7 @@
     "grunt-contrib-watch": "^1.0.0",
     "grunt-sails-linker": "^0.10.1",
     "grunt-sync": "^0.5.2",
+    "hashmap": "^2.3.0",
     "include-all": "^1.0.8",
     "rc": "^1.0.1",
     "sails": "^0.12.14",

@@ -10,6 +10,9 @@ Evitar usar self = this. Esto copiara toda la clase y no se utiliza toda, tratar
 */
 
 var io = require('socket.io').listen(3000);
+const HashMap = require('hashmap');
+
+var hashMap = new HashMap();
 
 io.sockets.on('connection', newConnection);
 var table = new Array();
@@ -502,5 +505,6 @@ module.exports = {
 	socket : io.sockets,
 	addNick: function(nickName){
 		playersArray.push(nickName);
-	}
+	},
+	hashMap: hashMap
 }

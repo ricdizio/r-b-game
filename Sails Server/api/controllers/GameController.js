@@ -33,12 +33,29 @@ module.exports = {
 		  var element = req.session.User.nickName;
 		
 		  User.findOne({nickName: element}).exec(function(err, user) {
-		   if(user.tokens < 500){
-			console.log("mandar error no posee credito");
-		   }
-		   gameServer.addNick({nickName : user.nickName});
-		  });
-		  return res.view('game/index',{title:"R&B - Play"});
+			var roomName = 'room1'; // No se como obtener esto aun, a traves del request o algo.
+			if(user.tokens >= 500){
+				var object = gameServer.hashMap.get(roomName);
+				if(object.players.length < object.capacity){
+					var userTemp = {
+						nickName: user.nickName
+						//money: user.money,
+						//session: 
+					}
+					object.players.push(userTemp);
+					gameServer.hashMap.set(roomName, object);
+				}
+				else{
+					// Rechazar jugador
+				}
+			}
+			else{
+				console.log("mandar error no posee credito");
+				
+				//gameServer.addNick({nickName : user.nickName});
+			}
+			});
+			return res.view('game/index',{title:"R&B - Play"});
 		 },
 };
 
