@@ -1,8 +1,8 @@
 var game;
 
 var gameOptions = {
-  gameWidth: 1260,
-  gameHeight: 600,
+  gameWidth: 1133,
+  gameHeight: 853,
   cardSheetWidth: 65,
   cardSheetHeight: 81,
   cardScaleOff: 0.5,
@@ -13,7 +13,7 @@ var gameOptions = {
   buttonScale: 0.1,
   suitScale: 0.2,
   flipZoom: 1.2,
-  flipSpeed: 300
+  flipSpeed: 500
 }
 
 window.onload = function() {
@@ -23,9 +23,9 @@ window.onload = function() {
 }
 
 var angle = { min: 0, max: 0 };
-var color2 = 0xff0000;
-var color1 = 0x80ff00;
-var alertWidth = 12
+var color2 = 0x77e5f0;
+var color1 = 0x77e5f0;
+var alertWidth = 6;
 
 class cardGUI {
   constructor(posX, posY){
@@ -34,27 +34,26 @@ class cardGUI {
     this.posY = posY;
   }
   make(){
-    this.card = playGame.addSprite(game.width / 2, game.height*3/4, 'flip', 0.5, 0.5, gameOptions.cardScaleOff);
+    this.card = playGame.addSprite(644, 637, 'cardBack', 0, 0);
     this.card.animations.updateIfVisible = this.update;
-    this.card.isFlipping = false;
   }
-  flip(card, zoom, size){
+  flip(index, zoom, size){
     this.card.isFlipping = true;
 
     var flipTween = game.add.tween(this.card.scale).to({
       x: 0,
       y: zoom, //gameOptions.flipZoom
-    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+    }, gameOptions.flipSpeed, Phaser.Easing.Linear.None);
 
     flipTween.onComplete.add(function(){
-      this.card.loadTexture('card'+card.index);
+      this.card.loadTexture('card'+index);
       backFlipTween.start();
     }, this);
 
     var backFlipTween = game.add.tween(this.card.scale).to({
       x: size,//gameOptions.cardScaleOn,
       y: size, //gameOptions.cardScaleOn
-    }, gameOptions.flipSpeed / 2, Phaser.Easing.Linear.None);
+    }, gameOptions.flipSpeed, Phaser.Easing.Linear.None);
     
     backFlipTween.onComplete.add(function(){
       this.card.isFlipping = false;
@@ -89,9 +88,12 @@ class playerGUI {
     this.posX = posX;
     this.posY = posY;
   }
-  init(){
-    this.circleTurn = playGame.addSprite(this.posX, this.posY, 'circle', 0.5, 0.5, gameOptions.circleScale);
-  }
+  init(principal){
+    if(principal)
+      this.circleTurn = playGame.addSprite(this.posX, this.posY, 'fplayer', 0, 0);
+    else
+      this.circleTurn = playGame.addSprite(this.posX, this.posY, 'mplayers', 0, 0);
+    }
   check(color, bool){
     if(bool){
       this.checkSprite = playGame.addSprite(this.posX, this.posY, 'check'+color, 0.5, 0.5, gameOptions.checkScale);
@@ -109,28 +111,53 @@ class playerGUI {
   }
 }
 
+class balanceGUI {
+  constructor(posX, posY, balance){
+    this.posX = posX;
+    this.posY = posY;
+    this.balance = game.add.text(posX, posY,'', { fontSize: '18px', fill: '#fff', fontStyle:'italic' });
+  }
+  update(balance){
+    this.balance.text = balance;
+  }
+}
+
+class starGUI {
+  constructor(pX, pY){
+    this.pX = pX;
+    this.pY = pY;
+    this.star = game.add.sprite(pX, pY, 'starLose');
+  }
+  update(win){
+    if(win)
+      this.star.loadTexture("starWin");
+    else
+      this.star.loadTexture("starLose");
+  }
+}
+
+
 var playGame = {
   preload: function() {
-    this.maxPlayers = 3;
+    this.maxPlayers = 4;
     this.maxRounds = 5;
     this.nCards = 0;
     this.foo = false;
     game.config.setForceTimeOut = true;
     game.stage.disableVisibilityChange = true;
 
-    game.load.image('table', 'assets/table.png');
-    game.load.image('circle', 'assets/circle.png');
-    game.load.image('checkRed', 'assets/checkRed.png');
-    game.load.image('checkBlack', 'assets/checkBlack.png');
-    game.load.image('ButtonR', 'assets/buttonR.png');
-    game.load.image('ButtonB', 'assets/buttonB.png');
-    game.load.image('alert', 'assets/turnAlert.png');
-    game.load.spritesheet('flip', 'assets/flip.png', 167, 243);
-    game.load.spritesheet('suits', 'assets/suits.png',500,550);
-    game.load.spritesheet('ready', 'assets/ready.png',318,318);
-    game.load.spritesheet('poolR', 'assets/yesno.png',358,313);
-    for(var i = 0; i < 52; i++){
-      game.load.image("card" + i, "assets/card" + i + ".png", gameOptions.cardSheetWidth, gameOptions.cardSheetHeight);
+    game.load.image('table', 'assets_ico/mesa_ico.png');
+    game.load.image('mplayers', 'assets_ico/hombre_avatar_ico.png');
+    game.load.image('wplayers', 'assets_ico/avatar_hombre_ico.png');
+    game.load.image('fplayer', 'assets_ico/jugador_principal_ico.png');
+    game.load.image('starWin', 'assets_ico/star_ganador_ico.png');
+    game.load.image('starLose', 'assets_ico/star_perdedor_ico.png');
+    game.load.image('mSmall', 'assets_ico/hombre_small_ico.png');
+    game.load.image('wSmall', 'assets_ico/mujer_small_ico.png');
+    game.load.image('cardBack', 'assets_ico/carta_back_ico.png');
+
+    for(var i = 0; i < 5; i++){
+      game.load.image("card" + i, "assets_ico/carta_" + (i+1) + ".png");
     }
   },
   addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false){
@@ -157,29 +184,38 @@ var playGame = {
     return auxSuit;
   },
   create: function() {
-    game.add.sprite(0,0,'table');
+    game.add.sprite(161,144,'table');
+    game.stage.backgroundColor = 0x181818;
+    var graphics = game.add.graphics(0, 0);
+    var circleTimer = game.add.graphics(0,0);
+    this.posStarX = new Array(157, 197, 237, 277, 317);
+    this.posStarY = new Array(655, 683, 711, 739);
 
     this.cardArray = new Array(
-      new cardGUI(game.width*0.325, game.height/2),
-      new cardGUI(game.width*0.4125, game.height/2),
-      new cardGUI(game.width*0.5, game.height/2),
-      new cardGUI(game.width*0.5875, game.height/2),
-      new cardGUI(game.width*0.675, game.height/2)
+      new cardGUI(362, 304),
+      new cardGUI(444, 304),
+      new cardGUI(526, 304),
+      new cardGUI(608, 304),
+      new cardGUI(690, 304)
     );
 
-    this.firstCard = new cardGUI(game.width/2, game.height/2);
-    this.firstCard.make();
+    this.cardArray[0].make();
 
     this.timerX;
     this.timerY;
     this.playerArray = new Array(
-      new playerGUI(1, game.width*0.2, game.height/2),
-      new playerGUI(2, game.width/2,   game.height*0.15),
-      new playerGUI(3, game.width*0.8, game.height/2)
+      new playerGUI(1, 532, 546),
+      new playerGUI(2, 153.5, 337.5),
+      new playerGUI(3, 547, 129),
+      new playerGUI(4, 934, 337)
     );
-    for(var i = 0; i < this.maxPlayers ; i++){
-      this.playerArray[i].init();
-    }
+    //for(var i = 0; i < this.maxPlayers ; i++){
+    //  this.playerArray[i].init();
+    //}
+    this.playerArray[0].init(true);
+    this.playerArray[1].init(false);
+    this.playerArray[2].init(false);
+    this.playerArray[3].init(false);
 
     this.playerID = new Array(
       this.addText(game.width*0.2, game.height/2+55,'', 0.5),
@@ -187,26 +223,51 @@ var playGame = {
       this.addText(game.width*0.8, game.height/2+55,'', 0.5)
     );
 
-    this.balanceText = new Array(
-      this.addText(game.width*0.2, game.height/2+85,'500', 0.5),
-      this.addText(game.width/2, game.height*0.15+85,'500', 0.5),
-      this.addText(game.width*0.8, game.height/2+85,'500', 0.5)
+    this.balanceArray = new Array(
+      new balanceGUI(560, 478),
+      new balanceGUI(269, 353),
+      new balanceGUI(562, 213),
+      new balanceGUI(848, 353),
     );
-    
-    this.nameText = this.addText(game.width/2, game.height/3,'',0.5);
-    this.colorText = this.addText(game.width/2, game.height/3,'',0.5);
-    this.roundText = this.addText(20, game.height-40,'Round: 0');
-    this.winnerText = this.addText(game.width/2, 15,'',0.5);
-    this.poolText = this.addText(game.width/2, game.height*0.35+5,'',0.5);
-    this.suitText = this.addText(game.width/2, game.height*0.35+5,'',0.5);
-    this.readyText = this.addText(game.width/2, game.height*0.35+5,'Ready?',0.5);
-    this.suits = new Array();
+    for(var i=0; i< this.maxPlayers; i++){
+      this.balanceArray[i].update(500);
+    }
 
-    this.buttonReady = game.add.button(game.width/2, game.height/2, 'ready', this.readyPlayer, this, 0, 0, 0);
-    this.buttonReady.scale.set(0.35);
-    this.buttonReady.anchor.set(0.5, 0.5);
+    this.starsArray = new Array();
+    for(var i = 0; i < this.posStarY.length; i++){
+      for(var j = 0; j < this.posStarX.length; j++){
+        this.starsArray.push(new starGUI(this.posStarX[j],this.posStarY[i]));
+      }
+    }
 
+    graphics.beginFill(0xd8d8d8, 1);
+    graphics.drawCircle(this.playerArray[0].posX+33, this.playerArray[0].posY+44, 100);
+    for(var i=1; i< this.maxPlayers; i++){
+      graphics.drawCircle(this.playerArray[i].posX+23, this.playerArray[i].posY+30, 70);
+    }
+    graphics.endFill()
+    circleTimer.beginFill(0xffffff, 1);
+    circleTimer.drawCircle(689+23, 646, 46);
+    circleTimer.endFill()
+    game.world.bringToTop(circleTimer);
+
+    this.pSmall = new Array(
+      this.addSprite(46, 654, "mSmall"),
+      this.addSprite(46, 681, "mSmall"),
+      this.addSprite(46, 710, "wSmall"),
+      this.addSprite(46, 737, "mSmall")
+    );
+    this.timerOn = true;
+    this.playTime = 5;
     this.radialProgressBar = game.add.graphics(0, 0);
+    this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, -1, false);
+    this.timerOn = true;
+    game.time.events.add(Phaser.Timer.SECOND*5, function(){
+      for(var i=0; i< 5; i++){
+        this.cardArray[i].make();
+        this.cardArray[i].flip(i,1,1);
+      }
+    }, this);
   },
   suitRequest: function(){
     this.readyText.destroy();
@@ -401,11 +462,11 @@ var playGame = {
   alertTimer: function(){
     if(this.timerOn){
       this.radialProgressBar.clear();
-      this.radialProgressBar.lineStyle(alertWidth, 0xffffff);
+      this.radialProgressBar.lineStyle(alertWidth, 0x77e5f0);
 
       this.radialProgressBar.lineColor = Phaser.Color.interpolateColor(color1, color2, 360, angle.max, 1);
 
-      this.radialProgressBar.arc(this.timerX, this.timerY, 55, angle.min, game.math.degToRad(angle.max), false);
+      this.radialProgressBar.arc(712, 646, 26, angle.min, game.math.degToRad(angle.max), false);
       this.radialProgressBar.endFill();
     }
   },
