@@ -115,7 +115,7 @@ class balanceGUI {
   constructor(posX, posY, balance){
     this.posX = posX;
     this.posY = posY;
-    this.balance = game.add.text(posX, posY,'', { fontSize: '18px', fill: '#fff', fontStyle:'italic' });
+    this.balance = game.add.text(posX, posY,'', { fontSize: '16px', fill: '#fff', fontWeight: 'normal' });
   }
   update(balance){
     this.balance.text = balance;
@@ -155,6 +155,8 @@ var playGame = {
     game.load.image('mSmall', 'assets_ico/hombre_small_ico.png');
     game.load.image('wSmall', 'assets_ico/mujer_small_ico.png');
     game.load.image('cardBack', 'assets_ico/carta_back_ico.png');
+    game.load.image('coin', 'assets_ico/disponible_ico.png');
+    game.load.image('dupTime', 'assets_ico/duplicar_tiempo_ico.png');
 
     for(var i = 0; i < 5; i++){
       game.load.image("card" + i, "assets_ico/carta_" + (i+1) + ".png");
@@ -183,13 +185,69 @@ var playGame = {
     auxSuit.variable = index;
     return auxSuit;
   },
-  create: function() {
-    game.add.sprite(161,144,'table');
+  addDraw: function(){
     game.stage.backgroundColor = 0x181818;
     var graphics = game.add.graphics(0, 0);
-    var circleTimer = game.add.graphics(0,0);
+    var circleTimer = game.add.graphics(0, 0);
+
+    //0xb30202
+    graphics.beginFill(0x060606);
+    //bottomBar.lineStyle(5, 0xffffff, 1);
+    graphics.drawRect(0, 791, 1133, 62);
+    graphics.endFill();
+
+    graphics.beginFill(0x0a0a0a);
+    graphics.drawRoundedRect(40, 650, 300, 25, 18);
+    graphics.endFill();
+
+    graphics.beginFill(0xb30202,1);
+    graphics.drawRoundedRect(424, 801, 170, 42, 7);
+    graphics.beginFill(0x000,0);
+    graphics.lineStyle(1, 0xb30202);
+    graphics.drawRoundedRect(624, 800, 274, 42, 7);
+    graphics.drawRoundedRect(928, 800, 170, 42, 7);
+    graphics.endFill();
+
+    graphics.lineStyle(2, 0x202020);
+    graphics.moveTo(622, 639); graphics.lineTo(622, 743);
+    graphics.moveTo(246, 805); graphics.lineTo(246, 840);
+    graphics.moveTo(609, 805); graphics.lineTo(609, 840);
+    graphics.moveTo(913, 805); graphics.lineTo(913, 840);
+    graphics.lineStyle(1, 0x000, 0);
+
+    graphics.beginFill(0xd8d8d8, 1);
+    graphics.drawCircle(this.playerArray[0].posX+34, this.playerArray[0].posY+39, 100);
+    for(var i=1; i< this.maxPlayers; i++){
+      graphics.drawCircle(this.playerArray[i].posX+24, this.playerArray[i].posY+27, 70);
+    }
+    for(var i=0; i< this.maxPlayers; i++){
+      graphics.drawCircle(52.5, this.ratingPlayer[i]+10, 20);
+    }
+    graphics.endFill();
+    circleTimer.beginFill(0xffffff);
+    circleTimer.drawCircle(689+23, 646, 46);
+    circleTimer.endFill()
+    game.world.bringToTop(circleTimer);
+  },
+  addStaticText: function(){
+    game.add.text(693, 808, 'DUPLICAR TIEMPO DE JUGADA',{fontSize: '11px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(270, 808, 'MONTO DE INICIO DE PARTIDA',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(94, 808, 'TIP DE SALA',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(71, 628, 'RONDAS',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(161, 628, '1',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(200, 628, '2',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(240, 628, '3',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(280, 628, '4',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' });
+    game.add.text(320, 628, '5',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' });
+  },
+  create: function() {
+
+    game.add.sprite(161,144,'table');
+    
     this.posStarX = new Array(157, 197, 237, 277, 317);
     this.posStarY = new Array(655, 683, 711, 739);
+    this.ratingPlayer = new Array(652, 679, 707, 735);
+    this.ratingName = new Array(652, 679, 707, 735);
 
     this.cardArray = new Array(
       new cardGUI(362, 304),
@@ -205,13 +263,14 @@ var playGame = {
     this.timerY;
     this.playerArray = new Array(
       new playerGUI(1, 532, 546),
-      new playerGUI(2, 153.5, 337.5),
+      new playerGUI(2, 153, 337),
       new playerGUI(3, 547, 129),
       new playerGUI(4, 934, 337)
     );
     //for(var i = 0; i < this.maxPlayers ; i++){
     //  this.playerArray[i].init();
     //}
+    this.addDraw();
     this.playerArray[0].init(true);
     this.playerArray[1].init(false);
     this.playerArray[2].init(false);
@@ -220,18 +279,25 @@ var playGame = {
     this.playerID = new Array(
       this.addText(game.width*0.2, game.height/2+55,'', 0.5),
       this.addText(game.width/2, game.height*0.15+55,'', 0.5),
+      this.addText(game.width*0.8, game.height/2+55,'', 0.5),
       this.addText(game.width*0.8, game.height/2+55,'', 0.5)
     );
 
     this.balanceArray = new Array(
-      new balanceGUI(560, 478),
-      new balanceGUI(269, 353),
-      new balanceGUI(562, 213),
-      new balanceGUI(848, 353),
+      new balanceGUI(560, 480),
+      new balanceGUI(269, 355),
+      new balanceGUI(562, 215),
+      new balanceGUI(848, 355),
     );
     for(var i=0; i< this.maxPlayers; i++){
       this.balanceArray[i].update(500);
     }
+
+    this.addSprite(530, 479, 'coin');
+    this.addSprite(239, 354, 'coin');
+    this.addSprite(532, 214, 'coin');
+    this.addSprite(818, 354, 'coin');
+    this.addSprite(640, 809, 'dupTime');
 
     this.starsArray = new Array();
     for(var i = 0; i < this.posStarY.length; i++){
@@ -240,17 +306,6 @@ var playGame = {
       }
     }
 
-    graphics.beginFill(0xd8d8d8, 1);
-    graphics.drawCircle(this.playerArray[0].posX+33, this.playerArray[0].posY+44, 100);
-    for(var i=1; i< this.maxPlayers; i++){
-      graphics.drawCircle(this.playerArray[i].posX+23, this.playerArray[i].posY+30, 70);
-    }
-    graphics.endFill()
-    circleTimer.beginFill(0xffffff, 1);
-    circleTimer.drawCircle(689+23, 646, 46);
-    circleTimer.endFill()
-    game.world.bringToTop(circleTimer);
-
     this.pSmall = new Array(
       this.addSprite(46, 654, "mSmall"),
       this.addSprite(46, 681, "mSmall"),
@@ -258,13 +313,15 @@ var playGame = {
       this.addSprite(46, 737, "mSmall")
     );
     this.timerOn = true;
-    this.playTime = 5;
+    this.playTime = 30;
     this.radialProgressBar = game.add.graphics(0, 0);
     this.timerBar = game.add.tween(angle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, -1, false);
     this.timerOn = true;
+
+    this.addStaticText();
     game.time.events.add(Phaser.Timer.SECOND*5, function(){
       for(var i=0; i< 5; i++){
-        this.cardArray[i].make();
+       this.cardArray[i].make();
         this.cardArray[i].flip(i,1,1);
       }
     }, this);
