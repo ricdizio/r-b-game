@@ -52,8 +52,8 @@ class cardGUI {
   }
   move(){
     var moveUpTween = game.add.tween(this.card).to({
-      x: posX,
-      y: posY
+      x: this.posX,
+      y: this.posY
     }, gameOpt.moveSpeed, Phaser.Easing.Cubic.Out, true)
   }
   fade(){
@@ -72,11 +72,11 @@ class playerGUI {
     this.posX = posX
     this.posY = posY
   }
-  init(principal){
+  init(principal, gender){
     if(principal)
       this.circleTurn = playGame.addSprite(this.posX, this.posY, 'fplayer', 0, 0)
     else
-      this.circleTurn = playGame.addSprite(this.posX, this.posY, 'mplayers', 0, 0)
+      this.circleTurn = playGame.addSprite(this.posX, this.posY, gender+'player', 0, 0)
     }
   check(color, bool){
     if(bool){
@@ -117,30 +117,50 @@ var playGame = {
   btnEnum: Object.freeze({PICK: 0, POOL: 1, REQ:3 }),
   statusEnum: Object.freeze({ONLINE: 0, STANDBY: 1, OFF: 2}),
   nCards: 0,
-  timerOn: false,
-  gameParameters: function(players=4, rounds=5, time=30, nick, gender, money=500){
+  timerOn: true,
+  nRound: 0,
+  gameParameters: function(players=4, rounds=5, time=30, nick, gender=[1,0,1,0,1], money=500){
     if(players == 4){
       this.maxPlayers = 4
       this.balancePos = new Array({x:560,y:480},{x:269,y:355}, {x:562, y:215}, {x:848,y:355})
       this.playerPos = new Array({x:532,y:546},{x:153,y:337}, {x:547, y:129}, {x:934,y:337})
-      this.timerPos = new Array({x:712,y:646},{x:712,y:646},{x:712,y:646},{x:712,y:646})
-      this.nickPos = new Array({x:503,y:644},{x:49,y:342}, {x:541, y:21}, {x:1015,y:342})
       this.coinPos = new Array({x:530,y:479},{x:239,y:354}, {x:532, y:214}, {x:818,y:354})
+      this.nickPos = new Array({x:503,y:644},{x:49,y:342}, {x:541, y:21}, {x:1015,y:342})
+      this.timerPos = new Array({x:712,y:646},{x:712,y:646},{x:712,y:646},{x:712,y:646})
+      
+      this.nickStyle = new Array(
+        {font: "bold 20px Arial",fill:"#68c9d2",boundsAlignH:"right"},
+        {font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"right"},
+        {font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"center"},
+        {font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"left"}
+      )
+    }
+    if(players == 3){
+      this.nickStyle = new Array(
+        {font: "bold 20px Arial",fill:"#68c9d2",boundsAlignH:"right"},
+        {font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"right"},
+        {font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"left"}
+      )
     }
     if(rounds == 5){
       this.maxRounds = 5
       this.cardPos = new Array(362, 444, 526, 608, 690)
     }
+    if(rounds == 4){
+      this.maxRounds = 4
+    }
     this.currentTimer = this.timerPos[0]
     this.nickSmallPos = new Array(655, 682, 710, 738)
-    this.pSmallPos = new Array(654, 681, 710, 737)
-    this.posStarY = new Array(655, 683, 711, 739)
+    this.ratingPlayer = new Array(652, 679, 707, 735)
     this.posStarX = new Array(157, 197, 237, 277, 317)
     this.roudPos = new Array(161, 200, 240, 280, 320)
+    this.pSmallPos = new Array(654, 681, 710, 737)
+    this.posStarY = new Array(655, 683, 711, 739)
     this.pGender = new Array()
     this.iniMoney = money
     this.playTime = time
-    this.nicks = nick
+    //this.nicks = nick
+    this.nicks = ["Victor", "Gabriel", "Ricardo", "Maria"]
     for(i=0; i<this.maxPlayers; i++){
       if(gender[i])
         this.pGender.push('m')
@@ -149,12 +169,13 @@ var playGame = {
     }
   },
   preload: function() {
+    this.gameParameters()
     game.config.setForceTimeOut = true
     game.stage.disableVisibilityChange = true
 
     game.load.image('table', 'assets_ico/mesa_ico.png')
-    game.load.image('mplayers', 'assets_ico/hombre_avatar_ico.png')
-    game.load.image('wplayers', 'assets_ico/avatar_hombre_ico.png')
+    game.load.image('mplayer', 'assets_ico/hombre_avatar_ico.png')
+    game.load.image('wplayer', 'assets_ico/mujer_avatar_ico.png')
     game.load.image('fplayer', 'assets_ico/jugador_principal_ico.png')
     game.load.image('starWin', 'assets_ico/star_ganador_ico.png')
     game.load.image('starLose', 'assets_ico/star_perdedor_ico.png')
@@ -223,9 +244,9 @@ var playGame = {
     graphics.moveTo(913, 805); graphics.lineTo(913, 840)
 
     graphics.beginFill(0xd8d8d8, 1)
-    graphics.drawCircle(this.playerArray[0].posX+34, this.playerArray[0].posY+39, 100)
+    graphics.drawCircle(this.playerPos[0].x+34, this.playerPos[0].y+39, 100)
     for(i=1; i< this.maxPlayers; i++){
-      graphics.drawCircle(this.playerArray[i].posX+24, this.playerArray[i].posY+27, 70)
+      graphics.drawCircle(this.playerPos[i].x+24, this.playerPos[i].y+27, 70)
     }
     for(i=0; i< this.maxPlayers; i++){
       graphics.drawCircle(52.5, this.ratingPlayer[i]+10, 20)
@@ -244,85 +265,93 @@ var playGame = {
     this.timerCircle.beginFill(0xffffff)
     this.timerCircle.drawCircle(689+23, 646, 46)
     this.timerCircle.endFill()
-    game.world.bringToTop(this.timerCircle)
+    
 
     this.radialProgressBar = game.add.graphics(0, 0)
     this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false)
   },
   addGameTexts: function(){
-    var normalStyle = {fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' }
-    game.add.text(693, 808, 'DUPLICAR TIEMPO DE JUGADA',{fontSize: '11px', fill: '#FFF' ,fontWeight: 'normal' })
-    game.add.text(270, 808, 'MONTO DE INICIO DE PARTIDA',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' })
-    game.add.text(94, 808, 'TIP DE SALA',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' })
-    game.add.text(71, 628, 'RONDAS',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' })
+    var roundStyle = {fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' }
+    game.add.text(693, 808, 'DUPLICATE PLAY TIME',{fontSize: '11px', fill: '#FFF' ,fontWeight: 'normal' })
+    game.add.text(270, 808, 'INITIAL MONEY',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' })
+    game.add.text(94, 808, 'ROOM TYPE',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' })
+    game.add.text(71, 628, 'ROUNDS',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' })
 
     for(i=0; i<this.maxRounds; i++){
-      game.add.text(this.roudPos[i], 628, i+1,normalStyle)
+      game.add.text(this.roudPos[i], 628, i+1,roundStyle)
     }
+    this.timerText = game.add.text(704, 637,"",{fontSize: '15px', fill: '#4a4a4a',fontWeight:'normal'})
     this.turnText = game.add.text(754, 650,"",{fontSize: '20px', fill: '#c8c8c8',fontWeight:'normal'})
     this.turnText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
     this.turnText2 = game.add.text(754, 674,"",{fontSize: '14px', fill: '#c8c8c8',fontWeight:'normal'})
   },
   create: function() {
     game.add.sprite(161,144,'table')
-    this.ratingPlayer = new Array(652, 679, 707, 735)
-    this.cardArray = new Array()
-    for(i=0; i<this.maxRounds; i++){
-      this.cardArray.push(new cardGUI(this.cardPos[i],304))
-    }
-    this.cardArray[0].make()
-
-    for(i=0; i<this.maxPlayers; i++){
-      this.playerArray.push(new playerGUI(i+1, this.playerPos[i].x, this.playerPos[i].y))
-    }
-    this.addDraw()
-    this.playerArray[0].init(true)
-    for(i=1; i<this.maxPlayers; i++){
-      this.playerArray[i].init(false)
-    }
-
-    this.nickName = new Array(
-      game.add.text(0, 0,'Steeven\nCastellanos',{font: "bold 20px Arial",fill:"#68c9d2",boundsAlignH:"right", boundsAlignV:"middle" }),
-      game.add.text(0, 0,'Fernando\nGonzalez',{font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"right", boundsAlignV:"middle" }),
-      game.add.text(0, 0,'Lorena\nMijares',{font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"center", boundsAlignV:"middle" }),
-      game.add.text(0, 0,'Ivan\nArazazu',{font: "bold 18px Arial",fill:"#bdbbbb",boundsAlignH:"left", boundsAlignV:"middle" })
-    )
-
     var balanceStyle = { fontSize: '16px', fill: '#fff', fontWeight: 'normal' }
     var starNickStyle = { fontSize: '12px', fill: '#bdbdbd', fontWeight: 'normal' }
+    this.timer = game.time.create(false)
     this.balanceArray = new Array()
-    this.starsArray = new Array()
     this.playerSmall = new Array()
+    this.playerArray = new Array()
+    this.starsArray = new Array()
+    this.cardArray = new Array()
+    this.nickName = new Array()
+    this.addDraw()
+    this.addGameTexts()
     for(i=0; i<this.maxPlayers; i++){
-      this.balanceArray.push(game.add.text(this.balancePos.x, this.balancePos.y,'', balanceStyle))
-      this.balanceArray[i].text = this.iniMoney
-      this.addSprite(this.coinPos[i].x, this.coinPos[i].y, 'coin')
+      this.playerSmall.push(this.addSprite(46, this.pSmallPos[i], this.pGender[i]+'Small'))
+      this.balanceArray.push(game.add.text(this.balancePos[i].x, this.balancePos[i].y,'', balanceStyle))
+      this.playerArray.push(new playerGUI(i+1, this.playerPos[i].x, this.playerPos[i].y))
+      this.nickName.push(game.add.text(0, 0, this.nicks[i], this.nickStyle[i]))
       this.nickName[i].setTextBounds(this.nickPos[i].x, this.nickPos[i].y, 80, 46)
-      this.updateStatus(i,0)
-      this.playerSmall.push(this.addSprite(this.pSmallPos[i].x, this.pSmallPos[i].y, this.pGender[i]+'Small'))
+      this.addSprite(this.coinPos[i].x, this.coinPos[i].y, 'coin')
+      this.balanceArray[i].text = this.iniMoney
+      this.updateStatus(i,this.statusEnum.ONLINE)
       game.add.text(72, this.nickSmallPos[i],this.nickName[i].text, starNickStyle)
       for(var j = 0; j < this.maxRounds; j++){
         this.starsArray.push(new starGUI(this.posStarX[j],this.posStarY[i]))
       }
     }
-    //this.nickName[0].setTextBounds(503, 644, 107, 50)
-    //this.nickName[1].setTextBounds(49, 342, 77, 46)
-    this.addSprite(640, 809, 'dupTime')
 
-    this.addGameTexts()
+    this.playerArray[0].init(true, this.pGender[0])
+    for(i=1; i<this.maxPlayers; i++){
+      this.playerArray[i].init(false, this.pGender[i])
+    }
+    for(i=0; i<this.maxRounds; i++){
+      this.cardArray.push(new cardGUI(this.cardPos[i],304))
+      this.cardArray[i].make()
+    }
+
+    this.addSprite(640, 809, 'dupTime')
+    
+    var countDown = this.playTime
+    this.timer.loop(1000,function(){
+      this.timerText.text = countDown--
+      if(countDown<1){
+        this.timer.stop()
+        this.timerText.text = ''
+      }
+    }, this)
+    this.timerText.text = countDown--
+    this.timer.start()
+
     game.time.events.add(Phaser.Timer.SECOND*5, function(){
-      this.btnUpdate(btnEnum.PICK, true)
+      this.btnUpdate(this.btnEnum.PICK, true)
       this.timerOn = false
       for(i=0; i< 5; i++){
-        this.cardArray[i].make()
         this.cardArray[i].flip(i,1,1)
       }
+      this.timer.stop()
+      this.timerText.text = ''
+      this.timerCircle.clear()
     }, this)
   
     var winArr = new Array(1,3)
     this.updateWinners("",0,winArr,0)
     var winArr1 = new Array(0,1,3)
     this.updateWinners("",0,winArr1,4)
+    game.world.bringToTop(this.timerCircle)
+    game.world.bringToTop(this.timerText)
   },
   updateStatus: function(player, status){
     var posX, posY
@@ -428,7 +457,7 @@ var playGame = {
     }
   },
   onClickR: function(){
-    this.btnUpdate(btnEnum.PICK, false)
+    this.btnUpdate(this.btnEnum.PICK, false)
     console.log("RED BUTTON")
     //socket.emit('getPlay', true)
   },
@@ -436,21 +465,21 @@ var playGame = {
     this.timerBar.stop()
     this.timerOn = false
     this.timerCircle.destroy()
-    this.btnUpdate(btnEnum.PICK, false)
+    this.btnUpdate(this.btnEnum.PICK, false)
 
-    this.updateRound(2)
+    this.updateRound(++this.nRound)
     //socket.emit('getPlay', false)
     console.log("BLACK BUTTON")
   },
   poolRequest: function(req){
-    this.btnUpdate(btnEnum.POOL, true)
+    this.btnUpdate(this.btnEnum.POOL, true)
   },
   poolAccept: function(){
-    this.btnUpdate(btnEnum.POOL, false)
+    this.btnUpdate(this.btnEnum.POOL, false)
    socket.emit('getPoolAnswer', true, socket.id)
   },
   poolDenied: function(){
-    this.btnUpdate(btnEnum.POOL, false)
+    this.btnUpdate(this.btnEnum.POOL, false)
     socket.emit('getPoolAnswer', false, socket.id)
   },
   alertTurn: function(select, playerIndex, playerText, time){
@@ -464,13 +493,13 @@ var playGame = {
     }, this)
     this.currentTimer = this.timerPos[playerIndex]
     //this.playerArray[playerIndex].alert(true)
-    this.btnUpdate(btnEnum.PICK, true)
+    this.btnUpdate(this.btnEnum.PICK, true)
   },
   checkPlayer: function(playerIndex, color){
     this.timerOn = false
     this.timerBar.stop()
     this.timerAngle.max = 0
-    this.btnUpdate(btnEnum.PICK, false)
+    this.btnUpdate(this.btnEnum.PICK, false)
     this.radialProgressBar.clear()
     //this.playerArray[playerIndex].check(color, true)
     //this.playerArray[playerIndex].alert(false)
@@ -548,9 +577,9 @@ var playGame = {
   alertTimer: function(){
     if(this.timerOn){
       this.radialProgressBar.clear()
-      this.radialProgressBar.lineStyle(timerWidth, 0x77e5f0)
+      this.radialProgressBar.lineStyle(this.timerWidth, 0x77e5f0)
 
-      this.radialProgressBar.lineColor = Phaser.Color.interpolateColor(colorGreen, colorRed, 360, this.timerAngle.max, 1)
+      this.radialProgressBar.lineColor = Phaser.Color.interpolateColor(this.colorGreen, this.colorRed, 360, this.timerAngle.max, 1)
 
       this.radialProgressBar.arc(this.currentTimer.x, this.currentTimer.y, 26, this.timerAngle.min, game.math.degToRad(this.timerAngle.max), false)
       this.radialProgressBar.endFill()
