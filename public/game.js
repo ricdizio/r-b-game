@@ -110,30 +110,42 @@ class starGUI {
 }
 var i = 0
 var playGame = {
-  angle: { min: 0, max: 0 },
+  timerAngle: { min: 0, max: 0 },
   colorRed: 0x77e5f0,
   colorGreen: 0x77e5f0,
   timerWidth: 6,
   btnEnum: Object.freeze({PICK: 0, POOL: 1, REQ:3 }),
   statusEnum: Object.freeze({ONLINE: 0, STANDBY: 1, OFF: 2}),
   nCards: 0,
-  timerOn: true,
-  timerPos: {x=712,y=646},
-  gameParameters: function(players=4, rounds=5, time=30, nick, money=500){
-    this.iniMoney = money
-    this.playTime = time
+  timerOn: false,
+  gameParameters: function(players=4, rounds=5, time=30, nick, gender, money=500){
     if(players == 4){
       this.maxPlayers = 4
-      this.playerPos = new Array({x:532,y:546},{x:153,y:337}, {x:547, y:129}, {x:934,y:337})
       this.balancePos = new Array({x:560,y:480},{x:269,y:355}, {x:562, y:215}, {x:848,y:355})
-      tis.coinPos = new Array({x:530,y:479},{x:239,y:354}, {x:532, y:214}, {x:818,y:354})
+      this.playerPos = new Array({x:532,y:546},{x:153,y:337}, {x:547, y:129}, {x:934,y:337})
+      this.timerPos = new Array({x:712,y:646},{x:712,y:646},{x:712,y:646},{x:712,y:646})
       this.nickPos = new Array({x:503,y:644},{x:49,y:342}, {x:541, y:21}, {x:1015,y:342})
+      this.coinPos = new Array({x:530,y:479},{x:239,y:354}, {x:532, y:214}, {x:818,y:354})
     }
     if(rounds == 5){
       this.maxRounds = 5
-      this.posStarX = new Array(157, 197, 237, 277, 317)
-      this.posStarY = new Array(655, 683, 711, 739)
       this.cardPos = new Array(362, 444, 526, 608, 690)
+    }
+    this.currentTimer = this.timerPos[0]
+    this.nickSmallPos = new Array(655, 682, 710, 738)
+    this.pSmallPos = new Array(654, 681, 710, 737)
+    this.posStarY = new Array(655, 683, 711, 739)
+    this.posStarX = new Array(157, 197, 237, 277, 317)
+    this.roudPos = new Array(161, 200, 240, 280, 320)
+    this.pGender = new Array()
+    this.iniMoney = money
+    this.playTime = time
+    this.nicks = nick
+    for(i=0; i<this.maxPlayers; i++){
+      if(gender[i])
+        this.pGender.push('m')
+      else
+        this.pGender.push('w')
     }
   },
   preload: function() {
@@ -235,7 +247,7 @@ var playGame = {
     game.world.bringToTop(this.timerCircle)
 
     this.radialProgressBar = game.add.graphics(0, 0)
-    this.timerBar = game.add.tween(this.angle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false)
+    this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false)
   },
   addGameTexts: function(){
     var normalStyle = {fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' }
@@ -243,12 +255,10 @@ var playGame = {
     game.add.text(270, 808, 'MONTO DE INICIO DE PARTIDA',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' })
     game.add.text(94, 808, 'TIP DE SALA',{fontSize: '9px', fill: '#FFF' ,fontWeight: 'normal' })
     game.add.text(71, 628, 'RONDAS',{fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' })
-    game.add.text(161, 628, '1',normalStyle)
-    game.add.text(200, 628, '2',normalStyle)
-    game.add.text(240, 628, '3',normalStyle)
-    game.add.text(280, 628, '4',normalStyle)
-    game.add.text(320, 628, '5',normalStyle)
 
+    for(i=0; i<this.maxRounds; i++){
+      game.add.text(this.roudPos[i], 628, i+1,normalStyle)
+    }
     this.turnText = game.add.text(754, 650,"",{fontSize: '20px', fill: '#c8c8c8',fontWeight:'normal'})
     this.turnText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2)
     this.turnText2 = game.add.text(754, 674,"",{fontSize: '14px', fill: '#c8c8c8',fontWeight:'normal'})
@@ -279,39 +289,25 @@ var playGame = {
     )
 
     var balanceStyle = { fontSize: '16px', fill: '#fff', fontWeight: 'normal' }
+    var starNickStyle = { fontSize: '12px', fill: '#bdbdbd', fontWeight: 'normal' }
     this.balanceArray = new Array()
+    this.starsArray = new Array()
+    this.playerSmall = new Array()
     for(i=0; i<this.maxPlayers; i++){
       this.balanceArray.push(game.add.text(this.balancePos.x, this.balancePos.y,'', balanceStyle))
       this.balanceArray[i].text = this.iniMoney
       this.addSprite(this.coinPos[i].x, this.coinPos[i].y, 'coin')
       this.nickName[i].setTextBounds(this.nickPos[i].x, this.nickPos[i].y, 80, 46)
       this.updateStatus(i,0)
-    }
-    //this.nickName[0].setTextBounds(503, 644, 107, 50)
-    //this.nickName[1].setTextBounds(49, 342, 77, 46)
-    this.addSprite(640, 809, 'dupTime')
-
-    this.starsArray = new Array()
-    for(i = 0; i < this.maxPlayers; i++){
+      this.playerSmall.push(this.addSprite(this.pSmallPos[i].x, this.pSmallPos[i].y, this.pGender[i]+'Small'))
+      game.add.text(72, this.nickSmallPos[i],this.nickName[i].text, starNickStyle)
       for(var j = 0; j < this.maxRounds; j++){
         this.starsArray.push(new starGUI(this.posStarX[j],this.posStarY[i]))
       }
     }
-
-    var starNickStyle = { fontSize: '12px', fill: '#bdbdbd', fontWeight: 'normal' }
-    this.ratingNick = new Array(
-      game.add.text(72, 655,'Steeven C.', starNickStyle),
-      game.add.text(72, 682,'Fernando G.', starNickStyle),
-      game.add.text(72, 710,'Lorena M.', starNickStyle),
-      game.add.text(72, 738,'Ivan A.', starNickStyle)
-    )
-
-    this.pSmall = new Array(
-      this.addSprite(46, 654, "mSmall"),
-      this.addSprite(46, 681, "mSmall"),
-      this.addSprite(46, 710, "wSmall"),
-      this.addSprite(46, 737, "mSmall")
-    )
+    //this.nickName[0].setTextBounds(503, 644, 107, 50)
+    //this.nickName[1].setTextBounds(49, 342, 77, 46)
+    this.addSprite(640, 809, 'dupTime')
 
     this.addGameTexts()
     game.time.events.add(Phaser.Timer.SECOND*5, function(){
@@ -460,21 +456,20 @@ var playGame = {
   alertTurn: function(select, playerIndex, playerText, time){
 
     this.playTime = time
-    this.timerBar = game.add.tween(this.angle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
+    this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
     this.timerOn = true
     this.timerBar.onComplete.add(function(){
       this.timerOn = false
       this.radialProgressBar.clear()
     }, this)
-    this.timerPos.x = this.playerArray[playerIndex].posX
-    this.timerPos.y = this.playerArray[playerIndex].posY
+    this.currentTimer = this.timerPos[playerIndex]
     //this.playerArray[playerIndex].alert(true)
     this.btnUpdate(btnEnum.PICK, true)
   },
   checkPlayer: function(playerIndex, color){
     this.timerOn = false
     this.timerBar.stop()
-    this.angle.max = 0
+    this.timerAngle.max = 0
     this.btnUpdate(btnEnum.PICK, false)
     this.radialProgressBar.clear()
     //this.playerArray[playerIndex].check(color, true)
@@ -555,9 +550,9 @@ var playGame = {
       this.radialProgressBar.clear()
       this.radialProgressBar.lineStyle(timerWidth, 0x77e5f0)
 
-      this.radialProgressBar.lineColor = Phaser.Color.interpolateColor(colorGreen, colorRed, 360, this.angle.max, 1)
+      this.radialProgressBar.lineColor = Phaser.Color.interpolateColor(colorGreen, colorRed, 360, this.timerAngle.max, 1)
 
-      this.radialProgressBar.arc(this.timerPos.x, this.timerPos.y, 26, this.angle.min, game.math.degToRad(this.angle.max), false)
+      this.radialProgressBar.arc(this.currentTimer.x, this.currentTimer.y, 26, this.timerAngle.min, game.math.degToRad(this.timerAngle.max), false)
       this.radialProgressBar.endFill()
     }else{
       this.radialProgressBar.clear() 
