@@ -12,7 +12,8 @@ var gameOpt = {
 window.onload = function() {
   game = new Phaser.Game(gameOpt.gameWidth, gameOpt.gameHeight)
   game.state.add("PlayGame", playGame)
-  game.state.start("PlayGame")
+  game.state.add("waitRoom", waitRoom)
+  game.state.start("waitRoom")
 }
 
 class cardGUI {
@@ -117,6 +118,7 @@ class starGUI {
   }
 }
 var i = 0
+
 var playGame = {
   timerAngle: { min: 0, max: 0 },
   colorRed: 0x77e5f0,
@@ -605,5 +607,38 @@ var playGame = {
   },
   update: function(){
     this.alertTimer()
+  }
+}
+
+var waitRoom = {
+  preload: function() { 
+    game.config.setForceTimeOut = true
+    game.stage.disableVisibilityChange = true
+
+    game.load.image('return', 'assets_ico/arrow_back_ico.png')
+    game.load.image('cardBack', 'assets_ico/carta_back_ico.png')
+    game.load.image('mplayer', 'assets_ico/avatar_ico.png')
+    game.load.image('wplayer', 'assets_ico/avatar_ico_mujer.png')
+    game.load.image('private', 'assets_ico/privada_ico.png')
+    game.load.image('public', 'assets_ico/publica_ico.png')
+    game.load.image('betCoin', 'assets_ico/monto_apuesta_ico.png')
+    game.load.image('3players', 'assets_ico/3_jugadores_ico.png')
+    game.load.image('4players', 'assets_ico/4_jugadores_ico.png')
+    game.load.image('5hand', 'assets_ico/mano_5_ico.png')
+    game.load.image('9hand', 'assets_ico/mano_9_ico.png')
+    game.load.image('dupTime', 'assets_ico/duplicar_tiempo_ico.png')
+    game.load.image('changeBet', 'assets_ico/apuesta_ico.png')
+    game.load.image('previous', 'assets_ico/atras_ico.png')
+    game.load.image('next', 'assets_ico/siguiente_ico.png')
+    game.load.spritesheet('change', 'assets_ico/btn_cambiar_apuesta.png', 170, 42, 1)
+    game.load.spritesheet('bet', 'assets_ico/btn_cambiar_apuesta.png', 72, 42, 1)
+    game.load.spritesheet('create', 'assets_ico/btn_create_ico.png', 170, 42, 1)
+    game.load.spritesheet('start', 'assets_ico/btn_start_ico.png', 170, 42, 1)
+
+    for(i = 0; i < 5; i++){
+      game.load.image("card" + i, "assets_ico/carta_" + (i+1) + ".png")
+    }
+  },
+  create: function() {
   }
 }
