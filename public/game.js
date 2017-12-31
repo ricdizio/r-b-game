@@ -1,5 +1,4 @@
 var game
-
 var gameOpt = {
   gameWidth: 1133,
   gameHeight: 853,
@@ -610,17 +609,39 @@ var playGame = {
   }
 }
 
+class checkGUI {
+  constructor(posX, posY){
+    this.posX = posX
+    this.posY = posY
+    var graphic = game.add.graphics(0, 0)
+    this.point = game.add.graphics(0, 0)
+
+    graphic.beginFill(0xffffff)
+    graphic.drawCircle(posX, posY, 16)
+    graphic.endFill()
+    this.point.beginFill(0xd0021b)
+    this.point.drawCircle(posX, posY,8)
+    this.point.endFill()
+    this.update(false)
+  }
+  update(check){
+    this.point.alpha = check
+  }
+}
+
 var waitRoom = {
   preload: function() { 
+    game.stage.backgroundColor = 0x181818
     game.config.setForceTimeOut = true
     game.stage.disableVisibilityChange = true
+    game.add.plugin(PhaserInput.Plugin);
 
     game.load.image('return', 'assets_ico/arrow_back_ico.png')
     game.load.image('cardBack', 'assets_ico/carta_back_ico.png')
     game.load.image('mplayer', 'assets_ico/avatar_ico.png')
     game.load.image('wplayer', 'assets_ico/avatar_ico_mujer.png')
-    game.load.image('private', 'assets_ico/privada_ico.png')
-    game.load.image('public', 'assets_ico/publica_ico.png')
+    game.load.image('privateR', 'assets_ico/privada_ico.png')
+    game.load.image('publicR', 'assets_ico/publica_ico.png')
     game.load.image('betCoin', 'assets_ico/monto_apuesta_ico.png')
     game.load.image('3players', 'assets_ico/3_jugadores_ico.png')
     game.load.image('4players', 'assets_ico/4_jugadores_ico.png')
@@ -639,6 +660,74 @@ var waitRoom = {
       game.load.image("card" + i, "assets_ico/carta_" + (i+1) + ".png")
     }
   },
+  texts: function(){
+    var titleStyle = {fontSize: '18px', fill: '#f5a623' ,fontWeight: 'normal' }
+    var subTitleStyle = {fontSize: '16px', fill: '#bdbbbb' ,fontWeight: 'normal' }
+    var paramStyle = {fontSize: '15px', fill: '#bdbbbb' ,fontWeight: 'normal' }
+    var descriptionStyle = {fontSize: '12px', fill: '#ffffff' ,fontWeight: 'normal' }
+    game.add.text(38, 76, 'PICK A CARD',titleStyle)
+    game.add.text(38, 331, 'WAITING ROOM',titleStyle)
+    game.add.text(628, 76, 'GAME PARAMETERS ', titleStyle)
+    game.add.text(629, 114, 'ROOM\'S NAME',subTitleStyle)
+    game.add.text(629, 200, 'ROOM\'S TYPE',subTitleStyle)
+    game.add.text(629, 377, 'INITIAL BET',subTitleStyle)
+    game.add.text(629, 502, 'NUMBER OF PLAYERS',subTitleStyle)
+    game.add.text(629, 588, 'TURN TIME',subTitleStyle)
+    game.add.text(629, 677, 'NUMBER OF ROUNDS',subTitleStyle)
+  
+  },
   create: function() {
+    this.texts()
+    paramStyle = {
+      font: '16px Arial',
+      fill: '#bbbbbb',
+      fontWeight: 'normal',
+      padding: 13,
+      backgroundColor: '#4a4a4a',
+      borderColor: '#4a4a4a',
+      width: 438,
+      height: 0,
+      borderRadius: 5,
+      max: 40,
+      placeHolder: ''
+    }
+    betStyle = {
+      font: '18px Arial',
+      fill: '#d0021b',
+      fontWeight: 'normal',
+      padding: 12,
+      backgroundColor: '#ffffff',
+      width: 264,
+      height: 0,
+      borderRadius: 5,
+      max: 40,
+      type: 'numeric'
+    }
+    paramStyle.placeHolder = "Name of the Room"
+    var roomName = game.add.inputField(630, 140, paramStyle);
+    paramStyle.placeHolder = "Password"
+    var roomType = game.add.inputField(630, 262, paramStyle);
+    var roomBet = game.add.inputField(630, 406, betStyle);
+    roomBet.setText('  $ 1.860')
+
+    var checkTime = new Array(new checkGUI(639,636), new checkGUI(780,636),  new checkGUI(915, 636))
+    var checkType = new Array(new checkGUI(639,242), new checkGUI(780,242))
+    var checkRounds = new Array(new checkGUI(639,738), new checkGUI(780,738))
+    var checkPlayers = new Array(new checkGUI(639,552), new checkGUI(780,552))
+
+    var privSprite = game.add.sprite(660, 230, 'privateR')
+    var publSprite = game.add.sprite(798, 232, 'publicR')
+    var nplay3 = game.add.sprite(658, 542, '3players')
+    var nplay4 = game.add.sprite(794, 5402, '4players')
+    var nRound5 = game.add.sprite(655, 724, '5hand')
+    var nRound9 = game.add.sprite(797, 718, '9hand')
+
+    game.time.events.add(Phaser.Timer.SECOND*4, function(){
+      console.log("mesaje "+roomName.value)
+      checkType[0].update(true)
+      checkPlayers[1].update(true)
+      checkRounds[0].update(true)
+      checkTime[1].update(true)
+    }, this)
   }
 }
