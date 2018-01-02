@@ -680,8 +680,10 @@ var waitRoom = {
   create: function() {
     this.texts()
     this.num = 0
+    this.midCard = 293
     this.aux = game.add.text(20, 20, this.num,{fontSize: '12px', fill: '#ffffff' ,fontWeight: 'normal' })
     this.boolBtn = 0
+    this.boolScroll = 0
     paramStyle = {
       font: '16px Arial',
       fill: '#bbbbbb',
@@ -739,7 +741,14 @@ var waitRoom = {
     this.prev.onInputDown.add(function(){this.boolBtn = -1}, this);
     this.prev.onInputOut.add(function(){this.boolBtn = 0}, this);
 
-    this.card = game.add.sprite(243, 170, 'cardBackB')
+    //this.card = game.add.sprite(243, 170, 'cardBackB')
+    this.scrollCards = new Array()
+    for(var i=0; i<3; i++){
+      this.scrollCards.push(game.add.sprite(94+24*i, 240, 'cardBackB'))
+      this.scrollCards[i].scale.set(0.75)
+      this.scrollCards[i].anchor.set(0,0.5)
+
+    }
     game.time.events.add(Phaser.Timer.SECOND*4, function(){
       console.log("mesaje "+roomName.value)
       checkType[0].update(true)
@@ -757,14 +766,42 @@ var waitRoom = {
   update: function(){
     if(this.boolBtn){
       this.aux.text = this.num+=this.boolBtn
-      if(this.boolBtn>0)
+
+      if(this.boolBtn>0){
         this.next.scale.set(0.8)
-      else
+        if(this.boolScroll!=1){
+          for(var i=0; i<3; i++){
+            if(this.scrollCards[i].x > 200 && this.scrollCards[i].x < this.midCard-50)
+              this.scrollCards[i].x += ( this.midCard - this.scrollCards[i].x )*0.2
+            else
+              this.scrollCards[i].x += 5
+          }
+          console.log(this.scrollCards[0].x)
+        }
+      }else if(this.boolBtn<0){
         this.prev.scale.set(0.8)
+        if(this.boolScroll!=-1){
+          for(var i=0; i<3; i++){
+            if(this.scrollCards[i].x < 350 && this.scrollCards[i].x > this.midCard-50)
+             this.scrollCards[i].x -= (370 - this.scrollCards[i].x)*0.2
+            else
+              this.scrollCards[i].x -= 5
+          }
+        }
+      }
+
+      if(this.scrollCards[0].x<95)
+        this.boolScroll=-1
+      else if(this.scrollCards[2].x>420)
+        this.boolScroll=1
+      else
+        this.boolScroll=0
+
     }
     else{
       this.next.scale.set(1)
       this.prev.scale.set(1)
     }
+
   }
 }
