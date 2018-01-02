@@ -638,6 +638,7 @@ var waitRoom = {
 
     game.load.image('return', 'assets_ico/arrow_back_ico.png')
     game.load.image('cardBack', 'assets_ico/carta_back_ico.png')
+    game.load.image('cardBackB', 'assets_ico/carta_oculta_big_ico.png')
     game.load.image('mplayer', 'assets_ico/avatar_ico.png')
     game.load.image('wplayer', 'assets_ico/avatar_ico_mujer.png')
     game.load.image('privateR', 'assets_ico/privada_ico.png')
@@ -649,8 +650,8 @@ var waitRoom = {
     game.load.image('9hand', 'assets_ico/mano_9_ico.png')
     game.load.image('dupTime', 'assets_ico/duplicar_tiempo_ico.png')
     game.load.image('changeBet', 'assets_ico/apuesta_ico.png')
-    game.load.image('previous', 'assets_ico/atras_ico.png')
-    game.load.image('next', 'assets_ico/siguiente_ico.png')
+    game.load.spritesheet('previous', 'assets_ico/atras_ico.png',17,16,1)
+    game.load.spritesheet('next', 'assets_ico/siguiente_ico.png',17,16,1)
     game.load.spritesheet('change', 'assets_ico/btn_cambiar_apuesta.png', 170, 42, 1)
     game.load.spritesheet('bet', 'assets_ico/btn_cambiar_apuesta.png', 72, 42, 1)
     game.load.spritesheet('create', 'assets_ico/btn_create_ico.png', 170, 42, 1)
@@ -678,6 +679,9 @@ var waitRoom = {
   },
   create: function() {
     this.texts()
+    this.num = 0
+    this.aux = game.add.text(20, 20, this.num,{fontSize: '12px', fill: '#ffffff' ,fontWeight: 'normal' })
+    this.boolBtn = 0
     paramStyle = {
       font: '16px Arial',
       fill: '#bbbbbb',
@@ -722,6 +726,20 @@ var waitRoom = {
     var nRound5 = game.add.sprite(655, 724, '5hand')
     var nRound9 = game.add.sprite(797, 718, '9hand')
 
+    this.next = game.add.button(525, 242, 'next', this.btnNext, this, 0,0,0)
+    this.prev = game.add.button(50, 242, 'previous', this.btnPrev, this, 0,0,0)
+    
+    this.next.anchor.set(0.5, 0.5)
+    this.prev.anchor.set(0.5, 0.5)
+
+    this.next.onInputUp.add(function(){this.boolBtn = 0}, this);
+    this.next.onInputDown.add(function(){this.boolBtn = 1}, this);
+    this.next.onInputOut.add(function(){this.boolBtn = 0}, this);
+    this.prev.onInputUp.add(function(){this.boolBtn = 0}, this);
+    this.prev.onInputDown.add(function(){this.boolBtn = -1}, this);
+    this.prev.onInputOut.add(function(){this.boolBtn = 0}, this);
+
+    this.card = game.add.sprite(243, 170, 'cardBackB')
     game.time.events.add(Phaser.Timer.SECOND*4, function(){
       console.log("mesaje "+roomName.value)
       checkType[0].update(true)
@@ -729,5 +747,24 @@ var waitRoom = {
       checkRounds[0].update(true)
       checkTime[1].update(true)
     }, this)
+  },
+  btnPrev: function(){
+    //this.boolBtn = true
+  },
+  btnNext: function(){
+    //this.boolBtn = true
+  },
+  update: function(){
+    if(this.boolBtn){
+      this.aux.text = this.num+=this.boolBtn
+      if(this.boolBtn>0)
+        this.next.scale.set(0.8)
+      else
+        this.prev.scale.set(0.8)
+    }
+    else{
+      this.next.scale.set(1)
+      this.prev.scale.set(1)
+    }
   }
 }
