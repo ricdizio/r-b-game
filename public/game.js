@@ -558,15 +558,18 @@ var playGame = {
 }
 
 class checkGUI {
-  constructor(posX, posY){
-    this.posX = posX
-    this.posY = posY
-    var graphic = game.add.graphics(0, 0)
+  constructor(posX, posY, value){
+    var button = game.add.sprite(posX-8,posY-8,'btnCheck')// = game.add.graphics(0, 0)
     this.point = game.add.graphics(0, 0)
 
-    graphic.beginFill(0xffffff)
-    graphic.drawCircle(posX, posY, 16)
-    graphic.endFill()
+    //graphic.beginFill(0xffffff)
+    //graphic.drawCircle(posX, posY, 16)
+    //graphic.endFill()
+    
+    button.inputEnabled = true
+    button.value = value
+    button.events.onInputDown.add(waitRoom.btnCheck, this)
+    button.input.useHandCursor = true
     this.point.beginFill(0xd0021b)
     this.point.drawCircle(posX, posY,8)
     this.point.endFill()
@@ -583,8 +586,9 @@ var waitRoom = {
     game.stage.backgroundColor = 0x181818
     game.config.setForceTimeOut = true
     game.stage.disableVisibilityChange = true
-    game.add.plugin(PhaserInput.Plugin);
+    game.add.plugin(PhaserInput.Plugin)
 
+    game.load.image('card1', 'assets_ico/carta_1.png')
     game.load.image('cardBack', 'assets_ico/carta_back_ico.png')
     game.load.image('cardBackB', 'assets_ico/carta_oculta_big_ico.png')
     game.load.image('mPlayer', 'assets_ico/avatar_hombre_ico.png')
@@ -598,8 +602,8 @@ var waitRoom = {
     game.load.image('9hand', 'assets_ico/mano_9_ico.png')
     game.load.image('dupTime', 'assets_ico/duplicar_tiempo_ico.png')
     game.load.image('changeBet', 'assets_ico/apuesta_ico.png')
-    game.load.spritesheet('return', 'assets_ico/arrow_back_ico.png',24,24,1)
-    game.load.spritesheet('btnCheck', 'assets_ico/btn_check_ico.png',20,20,1)
+    game.load.image('btnCheck', 'assets_ico/btn_check_ico.png')
+    game.load.spritesheet('return', 'assets_ico/arrow_back_ico.png',24,24,1)    
     game.load.spritesheet('previous', 'assets_ico/atras_ico.png',17,16,1)
     game.load.spritesheet('next', 'assets_ico/siguiente_ico.png',17,16,1)
     game.load.spritesheet('change', 'assets_ico/btn_cambiar_apuesta.png', 170, 42, 1)
@@ -617,6 +621,10 @@ var waitRoom = {
     var subTitleStyle = {fontSize: '16px', fill: '#bdbbbb' ,fontWeight: 'normal' }
     var paramStyle = {fontSize: '15px', fill: '#bdbbbb' ,fontWeight: 'normal' }
     var descriptionStyle = {fontSize: '14px', fill: '#ffffff' ,fontWeight: 'normal' }
+    var timeStyle = {fontSize: '18px', fill: '#bdbbbb' ,fontWeight: 'normal' }
+    game.add.text(660, 627, '15 seg', returnStyle)
+    game.add.text(798, 627, '30 seg', returnStyle)
+    game.add.text(936, 627, '45 seg', returnStyle)
     game.add.text(51, 20, 'RETURN TO ROOMS', returnStyle)
     game.add.text(38, 76, 'PICK A CARD',titleStyle)
     game.add.text(38, 340, 'WAITING ROOM',titleStyle)
@@ -674,6 +682,15 @@ var waitRoom = {
     this.boolBtn = 0
     this.boolScroll = 0
     this.isBusy = false
+    this.gameParams = {
+      name: '',
+      pass: '',
+      type: 1,
+      bet: 500,
+      players: 4,
+      time: 30,
+      rounds: 5
+    }
     paramStyle = {
       font: '16px Arial',
       fill: '#bbbbbb',
@@ -710,15 +727,15 @@ var waitRoom = {
     this.stStyle = {fontSize:'12px',fontWeight: 'normal', fill: '#d0021b'}
     this.roomBet.setText('1.860')
 
-    var checkTime = new Array(new checkGUI(639,636), new checkGUI(780,636),  new checkGUI(915, 636))
-    var checkType = new Array(new checkGUI(639,242), new checkGUI(780,242))
-    var checkRounds = new Array(new checkGUI(639,738), new checkGUI(780,738))
-    var checkPlayers = new Array(new checkGUI(639,552), new checkGUI(780,552))
+    this.checkBtns = new Array(new checkGUI(639,636,1), new checkGUI(780,636,2), new checkGUI(915, 636,3),
+                               new checkGUI(639,242,4), new checkGUI(780,242,5),
+                               new checkGUI(639,738,6), new checkGUI(780,738,7),
+                               new checkGUI(639,552,8), new checkGUI(780,552,9))
 
-    game.add.sprite(660, 230, 'privateR')
+    game.add.sprite(660, 232, 'privateR')
     game.add.sprite(798, 232, 'publicR')
     game.add.sprite(658, 542, '3players')
-    game.add.sprite(794, 5402, '4players')
+    game.add.sprite(796, 542, '4players')
     game.add.sprite(655, 724, '5hand')
     game.add.sprite(797, 718, '9hand')
     game.add.sprite(642, 414, 'betCoin')
@@ -747,21 +764,24 @@ var waitRoom = {
     this.statusPlayer = game.add.graphics(0,0)
     this.statusText = new Array()
     for(var i=0; i<this.maxPlayers; i++){
-      this.statusText.push(game.add.text(505, this.statusPos[i]+15, 'status',{fontSize:'12px',fontWeight: 'normal', fill: '#d0021b'}))
+      this.statusText.push(game.add.text(505, this.statusPos[i]+15, 'status',{fontSize:'13px',fontWeight: 'normal', fill: '#d0021b'}))
       this.statusText[i].anchor.set(0.5)
-      this.updateStatus(i,i)
+      this.updateStatus(i,3-i)
     }
 
-
-    this.cardPosX = new Array(70,94,118,147,184,243,331,368,398,422,446)
-    this.cardPosY = new Array(198,197,196,196,195,170,195,196,196,197,198)
+    this.cardPosX = new Array(70,94,118,147,184,243+13.5,331,368,398,422,446)
+    this.cardPosY = new Array(198+53,197+53,196+53,196+53,195+53,170+72.5,195+53,196+53,196+53,197+53,198+53)
     this.scrollCards = new Array()
     for(var i=0; i<this.nCards; i++){
-      this.scrollCards.push(game.add.sprite(this.cardPosX[i+1], this.cardPosY[i+1], 'cardBackB')) 
+      this.scrollCards.push(game.add.sprite(this.cardPosX[i+1]+37, this.cardPosY[i+1], 'cardBackB'))
+      this.scrollCards[i].anchor.set(0.5,0.5)
     }
     for(var i=this.nCards-1; i>3; i--){
       this.scrollCards[i].bringToTop()
     }
+    this.scrollCards[4].inputEnabled = true
+    this.scrollCards[4].input.useHandCursor = true
+    this.scrollCards[4].events.onInputDown.add(this.pickCard, this)
     
     for(var i=0; i<this.nCards; i++){
       if(i!=4)
@@ -772,11 +792,43 @@ var waitRoom = {
 
     game.time.events.add(Phaser.Timer.SECOND*4, function(){
       console.log("mesaje "+roomName.value)
-      checkType[0].update(true)
-      checkPlayers[1].update(true)
-      checkRounds[0].update(true)
-      checkTime[1].update(true)
+      for(var i=0; i<this.maxPlayers; i++){
+        this.updateStatus(i,i)
+      }
     }, this)
+    this.checkBtns[1].update(true)
+    this.checkBtns[4].update(true)
+    this.checkBtns[5].update(true)
+    this.checkBtns[8].update(true)
+    console.log(waitRoom.gameParams)
+  },
+  btnCheck: function(button){
+    var i=0, j=0
+    if(button.value==1 || button.value==2 || button.value==3){
+      i=0; j=3
+      var time = new Array(15,30,45)
+      waitRoom.gameParams.time = time[button.value-1]
+    }
+    if(button.value==4 || button.value==5){
+      i=3; j=5
+      waitRoom.gameParams.type = button.value - 4
+    }
+    if(button.value==6 || button.value==7){
+      i=5; j=7
+      var rounds = new Array(5,9)
+      waitRoom.gameParams.rounds = rounds[button.value - 6]
+    }
+    if(button.value==8 || button.value==9){
+      i=7; j=9
+      waitRoom.gameParams.players = button.value - 5
+    }
+    console.log(waitRoom.gameParams)
+    for(; i<j; i++){
+      if(i==button.value-1)
+        waitRoom.checkBtns[i].update(true)
+      else
+        waitRoom.checkBtns[i].update(false)
+    }
   },
   btnNone: function(){
   },
@@ -793,7 +845,7 @@ var waitRoom = {
     if(!this.isBusy){
       this.isBusy = true
       this.scrollCards.unshift(this.extraCard)
-      this.scrollCards[0].x = this.cardPosX[0]
+      this.scrollCards[0].x = this.cardPosX[0]+37
 
       game.add.tween(this.scrollCards[0]).to({
         alpha: 1
@@ -811,7 +863,7 @@ var waitRoom = {
           }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
         }
         game.add.tween(this.scrollCards[i]).to({
-          x: this.cardPosX[Math.min(i+1,10)],
+          x: this.cardPosX[Math.min(i+1,10)]+37,
           y: this.cardPosY[Math.min(i+1,10)]
         }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
       }
@@ -842,7 +894,7 @@ var waitRoom = {
     if(!this.isBusy){
       this.isBusy = true
       this.scrollCards.push(this.extraCard)
-      this.scrollCards[this.nCards-1].x = this.cardPosX[this.nCards]
+      this.scrollCards[this.nCards-1].x = this.cardPosX[this.nCards]+37
 
       game.add.tween(this.scrollCards[this.nCards-1]).to({
         alpha: 1
@@ -860,7 +912,7 @@ var waitRoom = {
           }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
         }
         game.add.tween(this.scrollCards[i]).to({
-          x: this.cardPosX[i],
+          x: this.cardPosX[i]+37,
           y: this.cardPosY[i]
         }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
       }
@@ -887,19 +939,48 @@ var waitRoom = {
       this.extraCard = this.scrollCards.shift()
     }
   },
+  pickCard: function(){
+    var flipTween = game.add.tween(this.scrollCards[4].scale).to({
+      x: 0,
+      y: 1.1
+    }, 250, Phaser.Easing.Linear.None, true)
+
+    var backFlipTween = game.add.tween(this.scrollCards[4].scale).to({
+      x: 1.31,
+      y: 1.3
+    }, 250, Phaser.Easing.Linear.None)
+
+    flipTween.onComplete.add(function(){
+      this.scrollCards[4].loadTexture('card1')
+      backFlipTween.start()
+    }, this)
+    
+    backFlipTween.onComplete.add(function(){
+      this.scrollCards[4].inputEnabled = false
+      this.scrollCards[4].input.useHandCursor = false
+    }, this)
+
+    this.next.destroy()
+    this.prev.destroy()
+    flipTween.start()
+    this.move()
+  },
   updateStatus(player, status){
     var stColor, stColorHex
     if(status == 0){
       stColor = '#f5a623'
       stColorHex = 0xf5a623
+      this.statusText[player].text = 'owner'
     }
     if(status == 1){
       stColor = '#b8e986'
       stColorHex = 0xb8e986
+      this.statusText[player].text = 'ready'
     }
     if(status == 2 || status == 3){
       stColor = '#50e3c2'
       stColorHex = 0x50e3c2
+      this.statusText[player].text = 'waiting'
     }
     this.stStyle.fill = stColor
     this.statusPlayer.lineStyle(1, stColorHex)
@@ -912,10 +993,17 @@ var waitRoom = {
       if(this.boolBtn>0){
         this.next.scale.set(0.8)
         this.moveRight()
+        this.scrollCards[5].inputEnabled = false
+        //this.scrollCards[5].input.useHandCursor = false
       }else{
         this.prev.scale.set(0.8)
         this.moveLeft()
+        this.scrollCards[3].inputEnabled = false
+        //this.scrollCards[3].input.useHandCursor = false
       }
+      this.scrollCards[4].inputEnabled = true
+      this.scrollCards[4].input.useHandCursor = true
+      this.scrollCards[4].events.onInputDown.add(this.pickCard, this)
     }
     else{
       this.next.scale.set(1)
