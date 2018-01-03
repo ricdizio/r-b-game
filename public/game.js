@@ -10,7 +10,7 @@ var gameOpt = {
 
 window.onload = function() {
   game = new Phaser.Game(gameOpt.gameWidth, gameOpt.gameHeight)
-  game.state.add("PlayGame", playGame)
+  game.state.add("playGame", playGame)
   game.state.add("waitRoom", waitRoom)
   game.state.start("waitRoom")
 }
@@ -221,13 +221,6 @@ var playGame = {
 
     return auxText
   },
-  // addSuits: function(posX, posY, index){
-  //   var auxSuit = game.add.button(posX, posY,'suits',this.pickSuit, this, index, index, index)
-  //   auxSuit.scale.set(gameOpt.suitScale)
-  //   auxSuit.anchor.set(0.5)
-  //   auxSuit.variable = index
-  //   return auxSuit
-  // },
   addDraw: function(){
     game.stage.backgroundColor = 0x181818
     var graphics = game.add.graphics(0, 0)
@@ -388,46 +381,6 @@ var playGame = {
     this.statusCircle.endFill()
 
   },
-  // suitRequest: function(){
-
-  //   for(i = 0; i<4 ; i++){
-  //     this.suits.push(this.addSuits(game.width*(0.35 + i*0.1), game.height/2,i))
-  //   }
-  // },
-  // readyPlayer: function(){
-  //   socket.emit('ready', socket.id)
-  //   this.buttonReady.destroy()
-  // },
-  // pickSuit: function(item){
-  //   if(item.variable == 0){
-  //     console.log('Picked: CLUBS')
-  //     socket.emit('suit', 'Clubs', socket.id)
-  //   }
-  //   if(item.variable == 1){
-  //     console.log('Picked: SPADES')
-  //     socket.emit('suit', 'Spades', socket.id)
-  //   }
-  //   if(item.variable == 2){
-  //     console.log('Picked: HEARTS')
-  //     socket.emit('suit', 'Hearts', socket.id)
-  //   }
-  //   if(item.variable == 3){
-  //     console.log('Picked: DIAMONDS')
-  //     socket.emit('suit', 'Diamonds', socket.id)
-  //   }
-  //   for(i=0; i<4; i++){
-  //     if(i!=item.variable)
-  //       this.suits[i].destroy()
-  //   }
-  // },
-  // pickedSuit: function(suitIndex){
-  //   game.time.events.add(Phaser.Timer.SECOND*2, function(){
-  //     this.suits[suitIndex].destroy()
-  //   }, this) 
-  //   var fadeTween = game.add.tween(this.suits[suitIndex]).to({
-  //     alpha: 0
-  //   }, 500, Phaser.Easing.Linear.None, true)
-  // },
   btnUpdate: function(btn, display){
     if(btn == 0){
       if(display){
@@ -586,11 +539,6 @@ var playGame = {
         //this.playerArray[i].check(0, false)
       }
   },
-  //nickName: function(names){
-  //  for(var i = 0; i<names.length();i++){
-  //    this.playerID[i].text = names[i]
-  //  }
-  //},
   alertTimer: function(){
     if(this.timerOn){
       this.radialProgressBar.clear()
@@ -630,17 +578,17 @@ class checkGUI {
 }
 
 var waitRoom = {
+  statusEnum: Object.freeze({OWNER: 0, READY: 1, WAITING:3 }),
   preload: function() { 
     game.stage.backgroundColor = 0x181818
     game.config.setForceTimeOut = true
     game.stage.disableVisibilityChange = true
     game.add.plugin(PhaserInput.Plugin);
 
-    game.load.image('return', 'assets_ico/arrow_back_ico.png')
     game.load.image('cardBack', 'assets_ico/carta_back_ico.png')
     game.load.image('cardBackB', 'assets_ico/carta_oculta_big_ico.png')
-    game.load.image('mplayer', 'assets_ico/avatar_ico.png')
-    game.load.image('wplayer', 'assets_ico/avatar_ico_mujer.png')
+    game.load.image('mPlayer', 'assets_ico/avatar_hombre_ico.png')
+    game.load.image('wPlayer', 'assets_ico/avatar_ico_mujer.png')
     game.load.image('privateR', 'assets_ico/privada_ico.png')
     game.load.image('publicR', 'assets_ico/publica_ico.png')
     game.load.image('betCoin', 'assets_ico/monto_apuesta_ico.png')
@@ -650,6 +598,8 @@ var waitRoom = {
     game.load.image('9hand', 'assets_ico/mano_9_ico.png')
     game.load.image('dupTime', 'assets_ico/duplicar_tiempo_ico.png')
     game.load.image('changeBet', 'assets_ico/apuesta_ico.png')
+    game.load.spritesheet('return', 'assets_ico/arrow_back_ico.png',24,24,1)
+    game.load.spritesheet('btnCheck', 'assets_ico/btn_check_ico.png',20,20,1)
     game.load.spritesheet('previous', 'assets_ico/atras_ico.png',17,16,1)
     game.load.spritesheet('next', 'assets_ico/siguiente_ico.png',17,16,1)
     game.load.spritesheet('change', 'assets_ico/btn_cambiar_apuesta.png', 170, 42, 1)
@@ -663,11 +613,13 @@ var waitRoom = {
   },
   texts: function(){
     var titleStyle = {fontSize: '18px', fill: '#f5a623' ,fontWeight: 'normal' }
+    var returnStyle = {fontSize: '18px', fill: '#ffffff' ,fontWeight: 'normal' }
     var subTitleStyle = {fontSize: '16px', fill: '#bdbbbb' ,fontWeight: 'normal' }
     var paramStyle = {fontSize: '15px', fill: '#bdbbbb' ,fontWeight: 'normal' }
-    var descriptionStyle = {fontSize: '12px', fill: '#ffffff' ,fontWeight: 'normal' }
+    var descriptionStyle = {fontSize: '14px', fill: '#ffffff' ,fontWeight: 'normal' }
+    game.add.text(51, 20, 'RETURN TO ROOMS', returnStyle)
     game.add.text(38, 76, 'PICK A CARD',titleStyle)
-    game.add.text(38, 331, 'WAITING ROOM',titleStyle)
+    game.add.text(38, 340, 'WAITING ROOM',titleStyle)
     game.add.text(628, 76, 'GAME PARAMETERS ', titleStyle)
     game.add.text(629, 114, 'ROOM\'S NAME',subTitleStyle)
     game.add.text(629, 200, 'ROOM\'S TYPE',subTitleStyle)
@@ -675,15 +627,53 @@ var waitRoom = {
     game.add.text(629, 502, 'NUMBER OF PLAYERS',subTitleStyle)
     game.add.text(629, 588, 'TURN TIME',subTitleStyle)
     game.add.text(629, 677, 'NUMBER OF ROUNDS',subTitleStyle)
-  
+    game.add.text(40,114,'This is to select the first player. Who pick the highest card start.',descriptionStyle)
+    
+  },
+  draw: function(){
+    game.stage.backgroundColor = 0x181818
+    var graphics = game.add.graphics(0, 0)
+
+    graphics.beginFill(0x434343)
+    graphics.drawRect(0, 0, 1132, 62)
+
+    graphics.beginFill(0x060606)
+    graphics.drawRect(0, 791, 1132, 62)
+    graphics.endFill()
+    graphics.beginFill(0xffffff)
+    graphics.drawRoundedRect(630, 406, 70, 43, 5)
+
+    graphics.lineStyle(1, 0x353535)
+    graphics.moveTo(596, 0); graphics.lineTo(596, 853)
+    graphics.lineStyle(3, 0x141313)
+    graphics.moveTo(596, 354); graphics.lineTo(1113, 354)
+    graphics.moveTo(596, 476); graphics.lineTo(1113, 476)
+    graphics.moveTo(913, 805); graphics.lineTo(913, 840)
+
+
+    graphics.beginFill(0xd8d8d8)
+    graphics.drawRoundedRect(60, 373, 70, 70, 7)
+    graphics.drawRoundedRect(60, 472, 70, 70, 7)
+    graphics.drawRoundedRect(60, 570, 70, 70, 7)
+    graphics.drawRoundedRect(60, 669, 70, 70, 7)
+    graphics.endFill()
+
   },
   create: function() {
+    this.draw()
     this.texts()
     this.num = 0
-    this.midCard = 293
+    this.nCards = 10
+    this.maxPlayers = 4
+    this.zoomLimit = {min: 221, mid:294.5, max: 368}
+    this.scrollLimit = {min:94 , max: 422}
+    this.scrollPos = {min: 94, mid:243, max: 422}
+    this.scrollSpeed = 500
+    this.scrollStep = 24
     this.aux = game.add.text(20, 20, this.num,{fontSize: '12px', fill: '#ffffff' ,fontWeight: 'normal' })
     this.boolBtn = 0
     this.boolScroll = 0
+    this.isBusy = false
     paramStyle = {
       font: '16px Arial',
       fill: '#bbbbbb',
@@ -703,34 +693,47 @@ var waitRoom = {
       fontWeight: 'normal',
       padding: 12,
       backgroundColor: '#ffffff',
-      width: 264,
-      height: 0,
+      borderColor: '#ffffff',
+      width: 200,
+      height:0,
       borderRadius: 5,
       max: 40,
       type: 'numeric'
     }
+    
     paramStyle.placeHolder = "Name of the Room"
     var roomName = game.add.inputField(630, 140, paramStyle);
     paramStyle.placeHolder = "Password"
     var roomType = game.add.inputField(630, 262, paramStyle);
-    var roomBet = game.add.inputField(630, 406, betStyle);
-    roomBet.setText('  $ 1.860')
+    this.roomBet = game.add.inputField(682, 406, betStyle);
+    game.add.text(680, 416, '$',{fontSize: '20px', fill: '#d0021b' ,fontWeight: 'normal' })
+    this.stStyle = {fontSize:'12px',fontWeight: 'normal', fill: '#d0021b'}
+    this.roomBet.setText('1.860')
 
     var checkTime = new Array(new checkGUI(639,636), new checkGUI(780,636),  new checkGUI(915, 636))
     var checkType = new Array(new checkGUI(639,242), new checkGUI(780,242))
     var checkRounds = new Array(new checkGUI(639,738), new checkGUI(780,738))
     var checkPlayers = new Array(new checkGUI(639,552), new checkGUI(780,552))
 
-    var privSprite = game.add.sprite(660, 230, 'privateR')
-    var publSprite = game.add.sprite(798, 232, 'publicR')
-    var nplay3 = game.add.sprite(658, 542, '3players')
-    var nplay4 = game.add.sprite(794, 5402, '4players')
-    var nRound5 = game.add.sprite(655, 724, '5hand')
-    var nRound9 = game.add.sprite(797, 718, '9hand')
+    game.add.sprite(660, 230, 'privateR')
+    game.add.sprite(798, 232, 'publicR')
+    game.add.sprite(658, 542, '3players')
+    game.add.sprite(794, 5402, '4players')
+    game.add.sprite(655, 724, '5hand')
+    game.add.sprite(797, 718, '9hand')
+    game.add.sprite(642, 414, 'betCoin')
+    game.add.sprite(69, 379, 'mPlayer')
+    game.add.sprite(69, 483, 'wPlayer')
+    game.add.sprite(69, 576, 'mPlayer')
+    game.add.sprite(69, 680, 'wPlayer')
 
-    this.next = game.add.button(525, 242, 'next', this.btnNext, this, 0,0,0)
-    this.prev = game.add.button(50, 242, 'previous', this.btnPrev, this, 0,0,0)
-    
+    this.next = game.add.button(545, 242, 'next', this.bntNone, this, 0,0,0)
+    this.prev = game.add.button(50, 242, 'previous', this.btnNone, this, 0,0,0)
+    this.return = game.add.button(18, 19, 'return', this.btnReturn, this, 0,0,0)
+    this.create = game.add.button(928, 10, 'create', this.btnCreate, this, 0,0,0)
+    this.change = game.add.button(928, 406, 'change', this.btnChange, this, 0,0,0)
+    this.start = game.add.button(928, 802, 'start', this.btnStart, this, 0,0,0)
+
     this.next.anchor.set(0.5, 0.5)
     this.prev.anchor.set(0.5, 0.5)
 
@@ -740,15 +743,33 @@ var waitRoom = {
     this.prev.onInputUp.add(function(){this.boolBtn = 0}, this);
     this.prev.onInputDown.add(function(){this.boolBtn = -1}, this);
     this.prev.onInputOut.add(function(){this.boolBtn = 0}, this);
-
-    //this.card = game.add.sprite(243, 170, 'cardBackB')
-    this.scrollCards = new Array()
-    for(var i=0; i<3; i++){
-      this.scrollCards.push(game.add.sprite(94+24*i, 240, 'cardBackB'))
-      this.scrollCards[i].scale.set(0.75)
-      this.scrollCards[i].anchor.set(0,0.5)
-
+    this.statusPos = new Array(383, 484, 584, 684)
+    this.statusPlayer = game.add.graphics(0,0)
+    this.statusText = new Array()
+    for(var i=0; i<this.maxPlayers; i++){
+      this.statusText.push(game.add.text(505, this.statusPos[i]+15, 'status',{fontSize:'12px',fontWeight: 'normal', fill: '#d0021b'}))
+      this.statusText[i].anchor.set(0.5)
+      this.updateStatus(i,i)
     }
+
+
+    this.cardPosX = new Array(70,94,118,147,184,243,331,368,398,422,446)
+    this.cardPosY = new Array(198,197,196,196,195,170,195,196,196,197,198)
+    this.scrollCards = new Array()
+    for(var i=0; i<this.nCards; i++){
+      this.scrollCards.push(game.add.sprite(this.cardPosX[i+1], this.cardPosY[i+1], 'cardBackB')) 
+    }
+    for(var i=this.nCards-1; i>3; i--){
+      this.scrollCards[i].bringToTop()
+    }
+    
+    for(var i=0; i<this.nCards; i++){
+      if(i!=4)
+        this.scrollCards[i].scale.set(0.75)
+    }
+    this.scrollCards[this.nCards-1].alpha = 0
+    this.extraCard = this.scrollCards.pop()
+
     game.time.events.add(Phaser.Timer.SECOND*4, function(){
       console.log("mesaje "+roomName.value)
       checkType[0].update(true)
@@ -757,51 +778,152 @@ var waitRoom = {
       checkTime[1].update(true)
     }, this)
   },
-  btnPrev: function(){
-    //this.boolBtn = true
+  btnNone: function(){
   },
-  btnNext: function(){
-    //this.boolBtn = true
+  btnReturn: function(){
+  },
+  btnCreate: function(){
+  },
+  btnChange: function(){
+  },
+  btnStart: function(){
+    game.state.start("playGame")
+  },
+  moveRight: function(){
+    if(!this.isBusy){
+      this.isBusy = true
+      this.scrollCards.unshift(this.extraCard)
+      this.scrollCards[0].x = this.cardPosX[0]
+
+      game.add.tween(this.scrollCards[0]).to({
+        alpha: 1
+      }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+
+      for(var i=0; i<this.nCards; i++){
+        if(i==4){
+          game.add.tween(this.scrollCards[i].scale).to({
+            x: 1, y: 1
+          }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+        }
+        if(i==5){
+          game.add.tween(this.scrollCards[i].scale).to({
+            x: 0.75, y: 0.75
+          }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+        }
+        game.add.tween(this.scrollCards[i]).to({
+          x: this.cardPosX[Math.min(i+1,10)],
+          y: this.cardPosY[Math.min(i+1,10)]
+        }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+      }
+      var scrollTween = game.add.tween(this.scrollCards[this.nCards-1]).to({
+        alpha: 0
+      }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+      self = this
+      scrollTween.onComplete.add(function(){
+        self.isBusy = false
+        if(self.boolBtn>0){
+          self.scrollSpeed = 350
+        }
+        else{
+          self.scrollSpeed = 500
+        }
+        console.log(self.scrollSpeed)
+      })
+      for(var i=0; i<4; i++){
+        this.scrollCards[i].bringToTop()
+      }
+      for(var i=this.nCards-1; i>3; i--){
+        this.scrollCards[i].bringToTop()
+      }
+      this.extraCard = this.scrollCards.pop()
+    }
+  },
+  moveLeft: function(){
+    if(!this.isBusy){
+      this.isBusy = true
+      this.scrollCards.push(this.extraCard)
+      this.scrollCards[this.nCards-1].x = this.cardPosX[this.nCards]
+
+      game.add.tween(this.scrollCards[this.nCards-1]).to({
+        alpha: 1
+      }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+
+      for(var i=0; i<this.nCards; i++){
+        if(i==5){
+          game.add.tween(this.scrollCards[i].scale).to({
+            x: 1, y: 1
+          }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+        }
+        if(i==4){
+          game.add.tween(this.scrollCards[i].scale).to({
+            x: 0.75, y: 0.75
+          }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+        }
+        game.add.tween(this.scrollCards[i]).to({
+          x: this.cardPosX[i],
+          y: this.cardPosY[i]
+        }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+      }
+      var scrollTween = game.add.tween(this.scrollCards[0]).to({
+        alpha: 0
+      }, this.scrollSpeed, Phaser.Easing.Cubic.Out, true)
+      self = this
+      scrollTween.onComplete.add(function(){
+        self.isBusy = false
+        if(self.boolBtn<0){
+          self.scrollSpeed = 350
+        }
+        else{
+          self.scrollSpeed = 500
+        }
+        console.log(self.scrollSpeed)
+      })
+      for(var i=this.nCards-1; i>4; i--){
+        this.scrollCards[i].bringToTop()
+      }
+      for(var i=0; i<6; i++){
+        this.scrollCards[i].bringToTop()
+      }
+      this.extraCard = this.scrollCards.shift()
+    }
+  },
+  updateStatus(player, status){
+    var stColor, stColorHex
+    if(status == 0){
+      stColor = '#f5a623'
+      stColorHex = 0xf5a623
+    }
+    if(status == 1){
+      stColor = '#b8e986'
+      stColorHex = 0xb8e986
+    }
+    if(status == 2 || status == 3){
+      stColor = '#50e3c2'
+      stColorHex = 0x50e3c2
+    }
+    this.stStyle.fill = stColor
+    this.statusPlayer.lineStyle(1, stColorHex)
+    this.statusText[player].setStyle(this.stStyle)
+    this.statusPlayer.drawRoundedRect(446, this.statusPos[player],119,26, 5)
   },
   update: function(){
-    if(this.boolBtn){
+    if(this.boolBtn!=0){
       this.aux.text = this.num+=this.boolBtn
-
       if(this.boolBtn>0){
         this.next.scale.set(0.8)
-        if(this.boolScroll!=1){
-          for(var i=0; i<3; i++){
-            if(this.scrollCards[i].x > 200 && this.scrollCards[i].x < this.midCard-50)
-              this.scrollCards[i].x += ( this.midCard - this.scrollCards[i].x )*0.2
-            else
-              this.scrollCards[i].x += 5
-          }
-          console.log(this.scrollCards[0].x)
-        }
-      }else if(this.boolBtn<0){
+        this.moveRight()
+      }else{
         this.prev.scale.set(0.8)
-        if(this.boolScroll!=-1){
-          for(var i=0; i<3; i++){
-            if(this.scrollCards[i].x < 350 && this.scrollCards[i].x > this.midCard-50)
-             this.scrollCards[i].x -= (370 - this.scrollCards[i].x)*0.2
-            else
-              this.scrollCards[i].x -= 5
-          }
-        }
+        this.moveLeft()
       }
-
-      if(this.scrollCards[0].x<95)
-        this.boolScroll=-1
-      else if(this.scrollCards[2].x>420)
-        this.boolScroll=1
-      else
-        this.boolScroll=0
-
     }
     else{
       this.next.scale.set(1)
       this.prev.scale.set(1)
     }
-
+  },
+  shutdown: function(){
+    game.world.removeAll()
+    console.log("waitRoom FINISH")
   }
 }
