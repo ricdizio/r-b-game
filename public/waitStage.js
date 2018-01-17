@@ -292,7 +292,8 @@ var waitRoom = {
       this.playerInfo[this.nPlayers-1].sprite = game.add.sprite(60,this.playerPos[this.nPlayers],
                                                                 this.playerInfo[this.nPlayers-1].gender+'Player')
       j=this.nPlayers-1
-      this.playerInfo[0].st = this.statusEnum.OWNER                                                      
+      if(this.nPlayers == 1)
+        this.playerInfo[0].st = this.statusEnum.OWNER                                                      
     }
     else{
       this.nPlayers--
@@ -349,6 +350,7 @@ var waitRoom = {
   btnNone: function(){
   },
   btnReturn: function(){
+    socket.emit('getPlay', true)
   },
   btnCreate: function(){
   },

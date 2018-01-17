@@ -8,6 +8,7 @@ window.onload = function() {
   game = new Phaser.Game(gameOpt.gameWidth, gameOpt.gameHeight)
   game.state.add("playGame", playGame)
   game.state.add("waitRoom", waitRoom)
-  game.state.start("waitRoom")
+  game.state.add("roomsStage", roomsStage)
+  game.state.start("roomsStage")
 }
 
