@@ -17,7 +17,7 @@ module.exports = {
 		  if(!req.session.authenticated){
 		   var loginRequiredError = [{
 			name: 'loginRequired',
-			message: 'You must be loged to play.'
+			message: 'You must be logged to play.'
 		   }];
 		
 		   // Remember that err is the object being passed down (a.k.a. flash.err), whose value is another object with
@@ -33,7 +33,7 @@ module.exports = {
 		  var element = req.session.User.nickName;
 		
 		  User.findOne({nickName: element}).exec(function(err, user) {
-			var roomName = 'room1'; // No se como obtener esto aun, a traves del request o algo.
+			/*var roomName = 'room1'; // No se como obtener esto aun, a traves del request o algo.
 			if(user.tokens >= 500){
 				var object = gameServer.hashMap.get(roomName);
 				if(object.players.length < object.capacity){
@@ -53,7 +53,9 @@ module.exports = {
 				console.log("mandar error no posee credito");
 				
 				//gameServer.addNick({nickName : user.nickName});
-			}
+			}*/
+
+			gameServer.addNick(user.nickName);
 			});
 			return res.view('game/index',{title:"R&B - Play"});
 		 },
