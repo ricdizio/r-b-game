@@ -12,25 +12,24 @@ Evitar usar self = this. Esto copiara toda la clase y no se utiliza toda, tratar
 var io = require('socket.io').listen(3000);
 const HashMap = require('hashmap');
 
+// Variables globales
 var hashMap = new HashMap();
+var waitingRoomVar = 0;
+var globalTable;
+
+var newPlayersArray = new Array();
+var nickNamesArray = new Array();
+var globalDeck = generateDeck();
 
 io.sockets.on('connection', newConnection);
 var table = new Array();
 var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
 var decks = 1;
-var nickNum = 0;
-var deck = new Array();
-var playersArray = new Array();
-const players = 3;
-const maximumRounds = 5;
-const initialMoney = 500;
+
 const playTimeoutTime = 30000;
 const timeBetweenRounds = 5000;
-const constantBet = 100;
 const poolTimeout = 30000;
-const pickSuitTimeout = 10000;
-const pickSuitDelay = 5000;
 	    
 class Card{
 	constructor(index, number, suit){
@@ -38,6 +37,13 @@ class Card{
 		this.number = number;
 		this.suit = suit;
 
+		if(number == 'A'){
+			this.value = 11;
+		}
+		else{
+			this.value = parseInt(number);
+		}
+		
 		if(this.suit == "Hearts" || this.suit == "Diamonds"){
 			this.color = true;
 		}
@@ -48,10 +54,11 @@ class Card{
 }
 
 class Player{
-	constructor(socketId, money, playerIndex){
+	constructor(socketId, nickName){
 		this.socketId = socketId;
-		this.money = money;
-		this.playerIndex = playerIndex;
+		this.nickName = nickName;
+		this.money;
+		this.playerIndex;
 	}
 
 	add(money){
@@ -64,85 +71,43 @@ class Player{
 }
 
 class Table{
-	constructor(player, socketRoom, maximumPlayers, maximumRounds, initialMoney, playTimeoutTime, constantMoneyBet){
-		console.log('Se creo la mesa');
+	constructor(Players, socketRoom, type, maximumPlayers, maximumRounds, initialMoney, playTimeoutTime, constantMoneyBet){
 		this.socketRoom = socketRoom;
-		this.initialMoney = initialMoney;
+		this.type = type;
 		this.maximumPlayers = maximumPlayers;
 		this.maximumRounds = maximumRounds;
+		this.initialMoney = initialMoney;
+		this.playTimeoutTime = playTimeoutTime;
 		this.constantMoneyBet = constantMoneyBet;
-
-		//this.players = this.initiatePlayers(players, initialMoney);
-
-		this.players = new Array();
-		this.nickNames = new Array();
-		this.addPlayer(player);
-		//player es un ID.
-		//players es un arreglo de IDS.
-
-		this.suits = new Array();
-		this.pool = 0;
 		this.playTurn = 0;
+		
+		this.initiatePlayers(Players, initialMoney);
+		this.players = Players;
+
+		this.pool = 0;
+
 		this.round = 0;
-		this.readyAnswer = 0;
 		this.poolAccept = 0;
 		this.poolAnswer = 0;
-		this.playTimeoutTime = playTimeoutTime;
+		
 		this.poolTimeoutVariable;
 		this.chooseFirstTimeoutVariable;
-
-		this.deck = this.shuffle(this.generateDeck());
 		this.colorBets = new Array();
+
+		this.deck = this.shuffle(globalDeck);
+		this.deck = this.shuffle(this.deck);
+		this.start();
 	}
 
-	addPlayer(player){
-		var self = this;
-		this.players.push(player);
+	// Funciones iniciales.
 
-		io.sockets.sockets[player].on('ready', ready);
-		io.sockets.sockets[player].on('chat', chat);
+	initiatePlayers(players, initialMoney){
 
-		function ready(socketId){
-			io.sockets.sockets[socketId].removeListener('ready', ready);
-			if(++self.readyAnswer == self.maximumPlayers){
-				var nicks = new Array();
-				
-				for(var i = 0; i < playersArray.length; i++){
-					nicks[i] = playersArray[i].nickName;
-				}
-				console.log(nicks);
-		
-				io.sockets.to(self.socketRoom).emit('nickNames', nicks);
-
-				self.readyAnswer = 0;
-				self.chooseFirst();
-			}
+		for(var i = 0; i < players.length; i++){
+			//temporalObjectArray[i] = new Player(playersId[i], initialMoney, i);
+			players[i].money = initialMoney;
+			players[i].index = i;
 		}
-
-		function chat(message, socketId){
-			var id;
-			for(var i = 0; i < playersArray.length; i++){
-				if(self.players[i].socketId == socketId){
-					id = playersArray[i].nickName;
-					break;
-				}
-			}
-			io.sockets.to(self.socketRoom).emit('chat', id, message);
-		}
-
-		if(this.players.length == this.maximumPlayers){
-			this.players = this.initiatePlayers(this.players, this.initialMoney);
-		}
-	}
-
-	initiatePlayers(playersId, initialMoney){ // Convierte el array de socket IDS en array de Players.
-		var temporalObjectArray = new Array();
-
-		for(var i = 0; i < playersId.length; i++){
-			temporalObjectArray[i] = new Player(playersId[i], initialMoney, i);
-		}
-
-		return temporalObjectArray;
 	}
 
 	generateDeck(){
@@ -155,15 +120,6 @@ class Table{
 			}
 		}
 		return temporalArray;
-	}
-
-	dealCard(remove){
-		var random = Math.floor(Math.random() * this.deck.length);
-		var card = this.deck[random];
-		if(remove){
-			this.deck.splice(this.deck.indexOf(card), 1);
-		}
-		return card;
 	}
 
 	shuffle(array){
@@ -182,59 +138,13 @@ class Table{
 		return newArray;
 	}
 
-	begin(){
-		this.deck = this.shuffle(this.deck);
-	}
-
-	waitReady(){
-	}
-
-	chooseFirst(){
-		var self = this;
-		this.suits = new Array();
-		this.chooseFirstCounter = 0;
-		io.sockets.to(this.socketRoom).emit('suitRequest');
-		for(var i = 0; i < this.maximumPlayers; i++){ // Asignamos event listener a todos los usuarios.
-			io.sockets.sockets[this.players[i].socketId].on('suit', chooseFirstTurn);
-		}
-
-		function chooseFirstTurn(suit, socketId){
-			io.sockets.sockets[socketId].removeListener('suit', chooseFirstTurn); // Quitamos el listener del usuario que eligio.
-			for(var i = 0; i < self.maximumPlayers; i++){
-				if(self.players[i].socketId == socketId){ // Revisamos que jugador lo hizo y guardamos la pinta (suit) en ese espacio del arreglo self.suits.
-					self.suits[i] = suit;
-					break;
-				}
-			}
-
-			io.sockets.to(self.socketRoom).emit('pickedSuit', suit, i); 
-			if(++self.chooseFirstCounter == self.maximumPlayers){ // Si ya todos eligieron, sacamos una carta y la enviamos al cliente.
-				var validSuit = true;
-				while(validSuit){
-					var card = self.dealCard(false);
-					for(var i = 0; i < self.maximumPlayers; i++){ // Revisamos que jugador gano.
-						if(self.suits[i] == card.suit){
-							self.playTurn = i; // Le decimos que el turno es el i. Tengo que revisar esto. Si comentas esta linea el va a arrancar en el jugador 1 siempre.
-							validSuit = false;
-							break;
-						}
-					}
-				}
-				io.sockets.to(self.socketRoom).emit('donePicking', card);  // Enviamos el socket con la pinta de la carta.
-				var setTime = setTimeout(function(){  // En ciertos segundos inicia la partida normalmente. 
-					self.start();
-				}, pickSuitDelay);
-			}
-
-			
-		}
-	}
+	// Funcionamiento en orden del juego.
 
 	start(){
 		if(this.round < this.maximumRounds){
 			io.sockets.to(this.socketRoom).emit('round', ++this.round);
 			var betCounter = 0;
-			this.constantBet();		
+			this.constantBet();
 		}
 		else{
 			this.end();
@@ -251,16 +161,6 @@ class Table{
 
 		io.sockets.to(this.socketRoom).emit('substractConstantBet', temporalArray);
 		this.chooseColor();
-	}
-
-	chooseColor(){ // Funcion que controla quien elige color.
-		var previousBetTurn = this.playTurn;
-
-		if(++this.playTurn >= this.maximumPlayers){
-			this.playTurn = 0;
-		}
-
-		this.play(previousBetTurn, 0);
 	}
 
 	bet(turn, betCounter){ // Funcion de apuesta no constante. Se utilizaria en mesas VIP.
@@ -309,6 +209,16 @@ class Table{
 		}, this.playTimeoutTime);
 	}
 
+	chooseColor(){ // Funcion que controla quien elige color.
+		var previousBetTurn = this.playTurn;
+
+		if(++this.playTurn >= this.maximumPlayers){
+			this.playTurn = 0;
+		}
+
+		this.play(previousBetTurn, 0);
+	}
+
 	play(turn, playCounter){ // Funcion que controla el momento de jugar de cada jugador.
 		var self = this;
 		var currentSocketId = this.players[turn].socketId;
@@ -333,7 +243,9 @@ class Table{
 				self.reward(self.colorBets);
 			}
 		}
-		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, playersArray[turn].nickName);
+
+		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, this.players[turn].nickName);
+		//io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, nickNamesArray[turn].nickName);
 
 		var setTime = setTimeout(function(){
 			var randomPick = self.randomColor();
@@ -440,6 +352,23 @@ class Table{
 		}, timeBetweenRounds);
 	}
 
+	end(){
+		console.log('Game Over');
+		io.sockets.to(this.socketRoom).emit('tableEnd');
+
+		// Remover listeners de chat
+		// io.sockets.sockets[currentSocketId].removeListener('getChat', chat);
+		this.database();
+	}
+
+	database(){
+		// Escribir en la base de datos el dinero nuevo.
+		// Idea: Solo escribir en la base de datos cuando el usuario se descoencta / se va.
+		// Para esto se tendria que llevar el dinero de cada jugador en algun otro lado.
+	}
+
+	// Funciones auxiliares.
+
 	checkCounters(object, maximumPlayers){
 		if(++object.counter < maximumPlayers){
 				if(++object.turn >= maximumPlayers){
@@ -452,20 +381,13 @@ class Table{
 			}
 	}
 
-	end(){
-		console.log('Game Over');
-		io.sockets.to(this.socketRoom).emit('tableEnd');
-
-		io.sockets.adapter.rooms[this.socketRoom].started == false;
-		// Remover listeners de chat
-		// io.sockets.sockets[currentSocketId].removeListener('getChat', chat);
-		this.database();
-	}
-
-	database(){
-		// Escribir en la base de datos el dinero nuevo.
-		// Idea: Solo escribir en la base de datos cuando el usuario se descoencta / se va.
-		// Para esto se tendria que llevar el dinero de cada jugador en algun otro lado.
+	dealCard(remove){
+		var random = Math.floor(Math.random() * this.deck.length);
+		var card = this.deck[random];
+		if(remove){
+			this.deck.splice(this.deck.indexOf(card), 1);
+		}
+		return card;
 	}
 
 	randomColor(){
@@ -478,33 +400,220 @@ class Table{
 	}
 }
 
+class WaitingRoom{
+	constructor(roomName, deck){
+		// Room and default settings
+		this.roomName = roomName;
+		this.type = "Normal";
+		this.roomPassword = '';
+		this.roomBet = 500;
+		this.roomCapacity = 3;
+		this.turnTime = 30000;
+		this.rounds = 5;
+		this.roomCreator;
+
+		this.pickedCards = new Array();
+		this.players = new Array();
+		this.deck = this.shuffle(this.shuffle(deck));
+		
+		this.dealtCounter = 0;
+	}
+
+	addPlayer(Player){
+		var self = this;
+
+		// Solo el primer jugador puede iniciar el juego.
+		// Añadir control del boton de empezar cuando la sala este llena y todos con carta elegida.
+
+		if(this.players.length == 0){
+			this.roomCreator = Player;
+			
+			io.sockets.sockets[Player.socketId].on('updateType', updateType);
+			io.sockets.sockets[Player.socketId].on('updatePassword', updatePassword);
+			io.sockets.sockets[Player.socketId].on('updateBet', updateBet);
+			io.sockets.sockets[Player.socketId].on('updateCapacity', updateCapacity);
+			io.sockets.sockets[Player.socketId].on('updateTurnTime', updateTurnTime);
+			io.sockets.sockets[Player.socketId].on('updateRounds', updateRounds);
+		}
+
+		this.players.push(Player);
+
+		io.sockets.sockets[Player.socketId].on('chat', chat);
+		io.sockets.sockets[Player.socketId].on('dealWaitingRoomCard', chooseFirst);
+
+		function chat(message, socketId){
+			var nickName;
+			for(var i = 0; i < self.players.length; i++){
+				if(self.players[i].socketId == socketId){
+					nickName = nickNamesArray[i].nickName;
+					break;
+				}
+			}
+			io.sockets.to(self.roomName).emit('chat', nickName, message);
+		}
+
+		function chooseFirst(socketId){
+			io.sockets.sockets[socketId].removeListener('dealWaitingRoomCard', chooseFirst);
+			var tempCard = dealCard(true);
+
+			for(var i = 0; i < self.players.length; i++){
+				if(self.players[i].socketId == socketId){
+					break;
+				}
+			}
+
+			self.pickedCards[i] = tempCard;
+			io.sockets.to(self.roomName).emit('waitingRoomDealt', tempCard, self.players[i]); // Envia la carta y el jugador (i manda la posicion)
+
+			// PROBLEMA FUTURO: si se eligen todas las cartas y el master cambia la capacidad de la sala.
+			if(++self.dealtCounter == self.roomCapacity){
+				self.sortPlayers();
+				io.sockets.sockets[self.roomCreator.socketId].on('startTable', function(){
+					globalTable = new Table(self.players, self.roomName, self.type,
+						self.roomCapacity, self.rounds, self.roomBet * self.rounds, self.turnTime, self.roomBet);
+				});
+				io.sockets.sockets[self.roomCreator.socketId].emit('startTableEnabled');
+			}
+		}
+
+		function updateType(){
+
+		}
+
+		function updatePassword(socketId, password){
+			io.sockets.sockets[socketId].removeListener('updatePassword', updatePassword);
+			self.password = password;
+		}
+
+		function updateBet(socketId, bet){
+			io.sockets.sockets[socketId].removeListener('updateBet', updateBet);
+			self.bet = bet;
+		}
+
+		function updateCapacity(socketId, capacity){
+			io.sockets.sockets[socketId].removeListener('updateCapacity', updateCapacity);
+			self.capacity = capacity;
+		}
+
+		function updateTurnTime(socketId, turnTime){
+			io.sockets.sockets[socketId].removeListener('updateTurnTime', updateTurnTime);
+			self.turnTime = turnTime;
+		}
+
+		function updateRounds(socketId, rounds){
+			io.sockets.sockets[socketId].removeListener('updateRounds', updateRounds);
+			self.rounds = rounds;
+		}
+
+		io.sockets.to(this.roomName).emit('waitingRoomPlayers', this.players); //enviamos el arreglo de PLAYERS (clase)
+	}
+
+	kickPlayer(Player){
+		var index = this.players.indexOf(Player);
+		this.players.splice(index, 1);
+		this.pickedCards.splice(index,1);
+		//this.dealtCounter--;
+		io.sockets.to(this.roomName).emit('waitingRoomPlayers', this.players); //enviamos el arreglo de PLAYERS (clase)
+	}
+
+	sortPlayers(){
+		var tempObject = {};
+		for(var i = 0; i < this.roomCapacity; i++){
+			this.pickedCards[i] = [this.pickedCards[i].value, this.players[i]];
+		}
+
+		this.pickedCards.sort(function(a, b){return b[0]-a[0]});
+
+		for(var i = 0; i < this.roomCapacity; i++){
+			this.players[i] = this.pickedCards[i][1];
+		}
+	}
+	
+	shuffle(array){
+		var newArray = array;
+		var arrayLength = array.length;
+		var randomNumber;
+		var temp;
+
+		while(arrayLength){
+			randomNumber = Math.floor(Math.random() * arrayLength--);
+			temp = newArray[arrayLength];
+			newArray[arrayLength] = newArray[randomNumber];
+			newArray[randomNumber] = temp;
+		}
+
+		return newArray;
+	}
+
+	dealCard(remove){
+		var random = Math.floor(Math.random() * this.deck.length);
+		var card = this.deck[random];
+		if(remove){
+			this.deck.splice(this.deck.indexOf(card), 1);
+		}
+		return card;
+	}
+}
+
 function newConnection(socket){
-	socket.on('join', function(room, roomCapacity){
-		socket.join(room);
-		if(table[0]){
-			table[1].addPlayer(socket.id);
-			console.log(socket.id + ' added');
+
+	newPlayersArray.push(new Player(socket.id, nickNamesArray[nickNamesArray.length - 1]));
+
+	socket.on('join', function(roomName, roomCapacity){
+		// Incluir revision de capacidad de la sala.
+		for(var i = 0; i < newPlayersArray; i++){
+			if(newPlayersArray[i].socketId == socket.id){
+				var Me = newPlayersArray[i];
+				break;
+			}
+		}
+
+		socket.join(roomName);
+
+		socket.on('leaveWaitingRoom', function(){
+			for(var i = 0; i < newPlayersArray; i++){
+				if(newPlayersArray[i].socketId == socket.id){
+					var Me = newPlayersArray[i];
+					break;
+				}
+			}
+			waitingRoomVar.kickPlayer(Me);
+		});
+
+		if(waitingRoomVar == 0){
+			waitingRoomVar = new WaitingRoom(roomName, globalDeck);
+			waitingRoomVar.addPlayer(Me);
 		}
 		else{
-			table[0] = true;
-			table[1] = new Table(socket.id, room, 
-				players, maximumRounds, initialMoney, playTimeoutTime, constantBet);
-			table[1].begin();
-			console.log('Table created');
+			waitingRoomVar.addPlayer(Me);
 		}
 	});
 
-	socket.emit('menu');
+	
 	socket.on('disconnect', function(){
 	});
+
 }
+
+function generateDeck(){
+	var temporalArray = new Array();
+	for(var i = 0; i < decks; i++){
+		for(var j = 0; j < numbers.length; j++){
+			for(var k = 0; k < suits.length; k++){
+				temporalArray.push(new Card(j*4 + k, numbers[j], suits[k]));
+			}
+		}
+	}
+	return temporalArray;
+}
+
 
 console.log("Se ejecuto");
 
 module.exports = {
 	socket : io.sockets,
 	addNick: function(nickName){
-		playersArray.push(nickName);
+		nickNamesArray.push(nickName);
 	},
 	hashMap: hashMap
 }
