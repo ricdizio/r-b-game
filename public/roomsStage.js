@@ -13,6 +13,7 @@ class roomGUI {
         this.money = money
     }
     create(pos){
+        this.prevPos = pos
         this.roomSprites = new Array()
         this.paramTexts = new Array()
         this.stars = new Array()
@@ -48,6 +49,25 @@ class roomGUI {
             this.stars[i].update(true)
         }
     }
+    move(pos){
+        var i
+        var step = {x:this.prevPos.x,y:this.prevPos.y}
+        this.prevPos = pos
+        this.graphics.x += - step.x+pos.x
+        this.graphics.y += - step.y+pos.y
+        for(i in this.roomSprites){
+            this.roomSprites[i].x += - step.x + pos.x
+            this.roomSprites[i].y += - step.y + pos.y
+        }
+        for(i in this.stars){
+            this.stars[i].star.x += - step.x + pos.x
+            this.stars[i].star.y += - step.y + pos.y
+        }
+        for(i in this.paramTexts){
+            this.paramTexts[i].x += - step.x + pos.x 
+            this.paramTexts[i].y += - step.y + pos.y 
+        }
+    }
 }
 
 var roomsStage = {
@@ -80,17 +100,18 @@ var roomsStage = {
             this.allRooms[0].create(this.getPos(0))
         }, this)
         game.time.events.add(Phaser.Timer.SECOND*3, function(){
-            this.allRooms[1].create(this.getPos(1))
+            //this.allRooms[1].create(this.getPos(1))
+            this.allRooms[0].move(this.getPos(1))
         }, this)
-        game.time.events.add(Phaser.Timer.SECOND*4, function(){
-            this.allRooms[2].create(this.getPos(2))
-        }, this)
-        game.time.events.add(Phaser.Timer.SECOND*5, function(){
-            this.allRooms[3].create(this.getPos(3))
-        }, this)
-        game.time.events.add(Phaser.Timer.SECOND*6, function(){
-            this.allRooms[4].create(this.getPos(4))
-        }, this)
+        // game.time.events.add(Phaser.Timer.SECOND*4, function(){
+        //     this.allRooms[2].create(this.getPos(2))
+        // }, this)
+        // game.time.events.add(Phaser.Timer.SECOND*5, function(){
+        //     this.allRooms[3].create(this.getPos(3))
+        // }, this)
+        // game.time.events.add(Phaser.Timer.SECOND*6, function(){
+        //     this.allRooms[4].create(this.getPos(4))
+        // }, this)
 
         this.btnC = game.add.button(929, 10, 'btnCreateRoom', this.btnCreate_R, this, 0,0,0)
     },
