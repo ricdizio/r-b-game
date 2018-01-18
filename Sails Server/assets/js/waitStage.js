@@ -287,9 +287,10 @@ var waitRoom = {
   updatePlayer: function(index=0, join, name, gender='m', chat, date={d:17,m:1,y:2018}){
     var j=0
     if(join){
-      this.nPlayers++
-      if((this.playerInfo[0]!=undefined && index==0) || index != 0)
+      
+      if((this.playerInfo[0]!=undefined && index==0) || index != 0){
         this.playerInfo.push({name: name, gender:gender, chat:chat, date:date, sprite:undefined, st:this.statusEnum.WAITING})
+        this.nPlayers++}
       this.playerInfo[this.nPlayers-1].sprite = game.add.sprite(60,this.playerPos[this.nPlayers],
                                                                 this.playerInfo[this.nPlayers-1].gender+'Player')
       j=this.nPlayers-1
