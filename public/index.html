@@ -1,12 +1,81 @@
 <!DOCTYPE html>
 <html>
-    <meta charset="UTF-8">
+  <head>
+    <title><%- title %></title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--  
+        Stylesheets and Preprocessors
+        ==============================
+
+        You can always bring in CSS files manually with `link` tags, or asynchronously
+        on the client using a solution like AMD (RequireJS).  Or, if you like, you can
+        take advantage of Sails' boilerplate asset management.
+
+        By default, tylesheets from your `assets/linker/styles` folder are included
+        here automatically.  Both CSS (.css) and LESS (.less) are supported.
+        In production, your styles will be minified and concatenated into a single file.
+        
+        To customize any part of the built-in behavior, just edit your Gruntfile.
+        For example, here are a few things you could do:
+            
+            + Change the order of your CSS files
+            + Import stylesheets from other directories
+            + Use a different or additional preprocessor, like SASS, SCSS or Stylus
+    -->
+
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/1normalize.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    <link rel="stylesheet" href="/styles/style.css">
+    <!--STYLES END-->
+
+    <!--Added this so the client has access to the csrf tag and it's grabbed first service side on every page -->
+    <script type="text/javascript">
+      window.overlord = { csrf: "<%= _csrf %>" };
+    </script>
+
+    <!-- The sound file tht will play on activity events 
+    <audio id="chatAudio">
+      <source src="/sounds/notify.ogg" type="audio/ogg">
+      <source src="/sounds/notify.mp3" type="audio/mpeg">
+      <source src="/sounds/notify.wav" type="audio/wav">
+    </audio>
+
+    -->
+
+  </head>
 <body>
-  <script src="phaser.min.js"></script>
-  <script src="phaser-input.min.js"></script>
-  <script src="game.js"></script>
-  <script src="playStage.js"></script>
-  <script src="waitStage.js"></script>
-  <script src="roomsStage.js"></script>
-</body>
+	<nav class="nav-bar-Rectangle-11">
+	      <a class="LOGOTIPO" href="/">LOGOTIPO</a>
+	</nav>
+
+	<div class="container">
+		
+		<div class = "menu_lateral">
+			<div class="icons-nav-lateral">
+				<img src="/assets_ico/amigos_ico.png" class="amigos_ico">
+			</div>
+		</div>
+
+		<div class="game">
+		  <script src="phaser.min.js"></script>
+		  <script src="phaser-input.min.js"></script>
+		  <script src="game.js"></script>
+		  <script src="playStage.js"></script>
+		  <script src="waitStage.js"></script>
+		  <script src="roomsStage.js"></script>
+		</div>
+
+	</div>
+	    
+	  <!--SCRIPTS-->
+      <script src="/js/jquery-3.2.1.min.js"></script>
+      <script src="/js/popper.min.js"></script>
+      <script src="/js/bootstrap.bundle.min.js"></script>
+	  <!--SCRIPTS END-->
+	</body>
 </html>
