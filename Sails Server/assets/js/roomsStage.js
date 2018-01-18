@@ -101,7 +101,7 @@ var roomsStage = {
         }, this)
         game.time.events.add(Phaser.Timer.SECOND*3, function(){
             //this.allRooms[1].create(this.getPos(1))
-            this.allRooms[0].move(this.getPos(1))
+            //this.allRooms[0].move(this.getPos(1))
         }, this)
         // game.time.events.add(Phaser.Timer.SECOND*4, function(){
         //     this.allRooms[2].create(this.getPos(2))

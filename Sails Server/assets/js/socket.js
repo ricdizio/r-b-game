@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.0.107:3000');
+var socket = io.connect('http://190.198.219.163:3000');
 var bet = 0;
 
 class Card {
@@ -177,4 +177,4 @@ socket.on('end', function(){
   console.log('Table is over');
 });
 
-socket.emit('join', "room1", 3);
+//socket.emit('join', "room1", 3);
