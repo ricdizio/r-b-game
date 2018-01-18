@@ -140,7 +140,7 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
 
 socket.on('waitingRoomJoin', function(players){
   for(var i in players){
-    waitRoom.updatePlayer(0,true, players[i].nickName)
+    waitRoom.updatePlayer(i,true, players[i].nickName)
   }
 });
 
