@@ -29,32 +29,32 @@ var waitRoom = {
     game.stage.disableVisibilityChange = true
     game.add.plugin(PhaserInput.Plugin)
 
-    game.load.image('card1', 'assets_ico/carta_1.png')
-    game.load.image('card2', 'assets_ico/carta_small_ico.png')
-    game.load.image('cardBack', 'assets_ico/carta_back_ico.png')
-    game.load.image('cardBackB', 'assets_ico/carta_oculta_big_ico.png')
-    game.load.image('mPlayer', 'assets_ico/room_hombre.png')
-    game.load.image('wPlayer', 'assets_ico/room_mujer.png')
-    game.load.image('privateR', 'assets_ico/privada_ico.png')
-    game.load.image('publicR', 'assets_ico/publica_ico.png')
-    game.load.image('betCoin', 'assets_ico/monto_apuesta_ico.png')
-    game.load.image('3players', 'assets_ico/3_jugadores_ico.png')
-    game.load.image('4players', 'assets_ico/4_jugadores_ico.png')
-    game.load.image('5hand', 'assets_ico/mano_5_ico.png')
-    game.load.image('9hand', 'assets_ico/mano_9_ico.png')
-    game.load.image('dupTime', 'assets_ico/duplicar_tiempo_ico.png')
-    game.load.image('changeBet', 'assets_ico/apuesta_ico.png')
-    game.load.image('btnCheck', 'assets_ico/btn_check_ico.png')
-    game.load.spritesheet('return', 'assets_ico/arrow_back_ico.png',24,24,1)    
-    game.load.spritesheet('previous', 'assets_ico/atras_ico.png',17,16,1)
-    game.load.spritesheet('next', 'assets_ico/siguiente_ico.png',17,16,1)
-    game.load.spritesheet('change', 'assets_ico/btn_cambiar_apuesta.png', 170, 42, 1)
-    game.load.spritesheet('bet', 'assets_ico/btn_cambiar_apuesta.png', 72, 42, 1)
-    game.load.spritesheet('create', 'assets_ico/btn_create_ico.png', 170, 42, 1)
-    game.load.spritesheet('start', 'assets_ico/btn_start_ico.png', 170, 42, 1)
+    game.load.image('card1', '../assets/carta_1.png')
+    game.load.image('card2', '../assets/carta_small_ico.png')
+    game.load.image('cardBack', '../assets/carta_back_ico.png')
+    game.load.image('cardBackB', '../assets/carta_oculta_big_ico.png')
+    game.load.image('mPlayer', '../assets/room_hombre.png')
+    game.load.image('wPlayer', '../assets/room_mujer.png')
+    game.load.image('privateR', '../assets/privada_ico.png')
+    game.load.image('publicR', '../assets/publica_ico.png')
+    game.load.image('betCoin', '../assets/monto_apuesta_ico.png')
+    game.load.image('3players', '../assets/3_jugadores_ico.png')
+    game.load.image('4players', '../assets/4_jugadores_ico.png')
+    game.load.image('5hand', '../assets/mano_5_ico.png')
+    game.load.image('9hand', '../assets/mano_9_ico.png')
+    game.load.image('dupTime', '../assets/duplicar_tiempo_ico.png')
+    game.load.image('changeBet', '../assets/apuesta_ico.png')
+    game.load.image('btnCheck', '../assets/btn_check_ico.png')
+    game.load.spritesheet('return', '../assets/arrow_back_ico.png',24,24,1)    
+    game.load.spritesheet('previous', '../assets/atras_ico.png',17,16,1)
+    game.load.spritesheet('next', '../assets/siguiente_ico.png',17,16,1)
+    game.load.spritesheet('change', '../assets/btn_cambiar_apuesta.png', 170, 42, 1)
+    game.load.spritesheet('bet', '../assets/btn_cambiar_apuesta.png', 72, 42, 1)
+    game.load.spritesheet('create', '../assets/btn_create_ico.png', 170, 42, 1)
+    game.load.spritesheet('start', '../assets/btn_start_ico.png', 170, 42, 1)
 
     for(i = 0; i < 5; i++){
-      game.load.image("card" + i, "assets_ico/carta_" + (i+1) + ".png")
+      game.load.image("card" + i, "../assets/carta_" + (i+1) + ".png")
     }
   },
   texts: function(){
@@ -258,33 +258,33 @@ var waitRoom = {
     var date = {d:3,m:1,y:2018}
     game.time.events.add(Phaser.Timer.SECOND*3, function(){
       console.log("PRIMER DELAY ")
-      this.updatePlayer(true, 'VICTOR GARCIA','m',1,date)
+      this.updatePlayer(0,true, 'VICTOR GARCIA','m',1,date)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
     date = {d:12,m:12,y:2017}
     game.time.events.add(Phaser.Timer.SECOND*5, function(){
       console.log("SEGUNDO DELAY ")
-      this.updatePlayer(true, 'RICARDO DI ZIO','w',1,date)
-      this.updatePlayer(true, 'GABRIEL NOYA','w',1,date)
-      this.updatePlayer(true, 'LEO CHUPALO','w',1,date)
+      this.updatePlayer(0,true, 'RICARDO DI ZIO','w',1,date)
+      this.updatePlayer(0,true, 'GABRIEL NOYA','w',1,date)
+      this.updatePlayer(0,true, 'LEO CHUPALO','w',1,date)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
     game.time.events.add(Phaser.Timer.SECOND*7, function(){
       console.log("TERCER DELAY ")
-      this.updatePlayer(false, 0,0,0,0,2)
+      this.updatePlayer(0,false, 0,0,0,0,2)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
     game.time.events.add(Phaser.Timer.SECOND*9, function(){
       console.log("CUARTO DELAY ")
-      this.updatePlayer(true, 'NOYA CHUPALO','w',1,date)
+      this.updatePlayer(0,true, 'NOYA CHUPALO','w',1,date)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
   },
-  updatePlayer: function(join, name, gender, chat, date, index=0){
+  updatePlayer: function(index=0, join, name, gender='m', chat, date={d:17,m:1,y:2018}){
     var j=0
     if(join){
       this.nPlayers++
@@ -310,6 +310,8 @@ var waitRoom = {
       this.infoText[this.nPlayers].t1.text = ''
       this.infoText[this.nPlayers].t2.text = ''
       this.infoText[this.nPlayers].t3.text = ''
+      this.shutdown()
+      game.state.start("roomStage")
     }
     for(var i=j; i<this.nPlayers; i++){
       this.infoText[i].t1.text = this.playerInfo[i].name

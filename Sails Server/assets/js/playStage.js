@@ -181,26 +181,26 @@ var playGame = {
     game.config.setForceTimeOut = true
     game.stage.disableVisibilityChange = true
 
-    game.load.image('table', 'assets_ico/mesa_ico.png')
-    game.load.image('mplayer', 'assets_ico/hombre_avatar_ico.png')
-    game.load.image('wplayer', 'assets_ico/mujer_avatar_ico.png')
-    game.load.image('fplayer', 'assets_ico/jugador_principal_ico.png')
-    game.load.image('starWin', 'assets_ico/star_ganador_ico.png')
-    game.load.image('starLose', 'assets_ico/star_perdedor_ico.png')
-    game.load.image('mSmall', 'assets_ico/hombre_small_ico.png')
-    game.load.image('wSmall', 'assets_ico/mujer_small_ico.png')
-    game.load.image('cardBack', 'assets_ico/carta_back_ico.png')
-    game.load.image('coin', 'assets_ico/disponible_ico.png')
-    game.load.image('dupTime', 'assets_ico/duplicar_tiempo_ico.png')
-    game.load.spritesheet('buttonR', 'assets_ico/btn_red_ico.png', 72, 42, 1)
-    game.load.spritesheet('buttonL', 'assets_ico/btn_leave_ico.png', 175, 47, 1)
-    game.load.spritesheet('buttonB', 'assets_ico/btn_black_ico.png', 72, 42, 1)
-    game.load.spritesheet('buttonA', 'assets_ico/btn_accept_ico.png', 77, 28, 1)
-    game.load.spritesheet('buttonD', 'assets_ico/btn_deny_ico.png', 77, 28, 1)
-    game.load.spritesheet('buttonF', 'assets_ico/btn_agregar_ico.png', 77, 28, 1)
+    game.load.image('table', '../assets/mesa_ico.png')
+    game.load.image('mplayer', '../assets/hombre_avatar_ico.png')
+    game.load.image('wplayer', '../assets/mujer_avatar_ico.png')
+    game.load.image('fplayer', '../assets/jugador_principal_ico.png')
+    game.load.image('starWin', '../assets/star_ganador_ico.png')
+    game.load.image('starLose', '../assets/star_perdedor_ico.png')
+    game.load.image('mSmall', '../assets/hombre_small_ico.png')
+    game.load.image('wSmall', '../assets/mujer_small_ico.png')
+    game.load.image('cardBack', '../assets/carta_back_ico.png')
+    game.load.image('coin', '../assets/disponible_ico.png')
+    game.load.image('dupTime', '../assets/duplicar_tiempo_ico.png')
+    game.load.spritesheet('buttonR', '../assets/btn_red_ico.png', 72, 42, 1)
+    game.load.spritesheet('buttonL', '../assets/btn_leave_ico.png', 175, 47, 1)
+    game.load.spritesheet('buttonB', '../assets/btn_black_ico.png', 72, 42, 1)
+    game.load.spritesheet('buttonA', '../assets/btn_accept_ico.png', 77, 28, 1)
+    game.load.spritesheet('buttonD', '../assets/btn_deny_ico.png', 77, 28, 1)
+    game.load.spritesheet('buttonF', '../assets/btn_agregar_ico.png', 77, 28, 1)
 
     for(i = 0; i < 5; i++){
-      game.load.image("card" + i, "assets_ico/carta_" + (i+1) + ".png")
+      game.load.image("card" + i, "../assets/carta_" + (i+1) + ".png")
     }
   },
   addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false){

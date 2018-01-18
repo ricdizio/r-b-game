@@ -76,19 +76,19 @@ var roomsStage = {
         game.config.setForceTimeOut = true
         game.stage.disableVisibilityChange = true
 
-        game.load.image('initialBet', 'assets_ico/monto_entrada_ico.png')
-        game.load.image('mplayer2', 'assets_ico/room_player_ico.png')
-        game.load.image('lock', 'assets_ico/lock_ico.png')
-        game.load.image('people', 'assets_ico/room_player_ico.png')
-        game.load.image('time', 'assets_ico/tiempo_ico.png')
-        game.load.image('dtime', 'assets_ico/room_doubletime_ico.png')
-        game.load.image('rBet0', 'assets_ico/room_apuesta_ico.png')
-        game.load.image('5hand', 'assets_ico/mano_5_ico.png')
-        game.load.image('9hand', 'assets_ico/mano_9_ico.png')
-        game.load.image('starWin', 'assets_ico/star_ganador_ico.png')
-        game.load.image('starLose', 'assets_ico/star_perdedor_ico.png')
+        game.load.image('initialBet', '../assets/monto_entrada_ico.png')
+        game.load.image('mplayer2', '../assets/room_player_ico.png')
+        game.load.image('lock', '../assets/lock_ico.png')
+        game.load.image('people', '../assets/room_player_ico.png')
+        game.load.image('time', '../assets/tiempo_ico.png')
+        game.load.image('dtime', '../assets/room_doubletime_ico.png')
+        game.load.image('rBet0', '../assets/room_apuesta_ico.png')
+        game.load.image('5hand', '../assets/mano_5_ico.png')
+        game.load.image('9hand', '../assets/mano_9_ico.png')
+        game.load.image('starWin', '../assets/star_ganador_ico.png')
+        game.load.image('starLose', '../assets/star_perdedor_ico.png')
 
-        game.load.spritesheet('btnCreateRoom','assets_ico/btn_rooms.png',170,42,1)    
+        game.load.spritesheet('btnCreateRoom','../assets/btn_rooms.png',170,42,1)    
     },
     create: function(){
         this.allRooms = new Array()
@@ -121,7 +121,7 @@ var roomsStage = {
         return {x:roomPos[index%2].x,y:roomPos[index%2].y+parseInt(index/2)*roomStep.y}
     },
     btnCreate_R: function(){
-        //socket.emit('join', "Room1")
+        socket.emit('join', "Room1")
         console.log("Create")
         game.state.start("waitRoom")
     },
