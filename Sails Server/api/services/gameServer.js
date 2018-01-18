@@ -493,18 +493,22 @@ class WaitingRoom{
 
 		function updateBet(socketId, bet){
 			self.bet = bet;
+			io.sockets.to(self.roomName).emit('waitingRoomBet', bet);
 		}
 
 		function updateCapacity(socketId, capacity){
 			self.capacity = capacity;
+			io.sockets.to(self.roomName).emit('waitingRoomCapacity', capacity);
 		}
 
 		function updateTurnTime(socketId, turnTime){
 			self.turnTime = turnTime;
+			io.sockets.to(self.roomName).emit('waitingRoomTurnTime', turnTime);
 		}
 
 		function updateRounds(socketId, rounds){
 			self.rounds = rounds;
+			io.sockets.to(self.roomName).emit('waitingRoomRounds', rounds);
 		}
 
 		io.sockets.to(this.roomName).emit('waitingRoomJoin', this.players); //enviamos el arreglo de PLAYERS (clase)

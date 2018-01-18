@@ -1,0 +1,46 @@
+.nav-bar-Rectangle-11 {
+  height: 62px;
+  background-color: #060606;
+}
+
+.container{
+  display: inline-flex;
+}
+
+.game{
+  display: inline-flex;
+}
+
+.LOGOTIPO {
+  float: left;
+  display: block;
+  padding-top: 15px;
+  padding-left: 20px;
+  width: 128px;
+  height: 30px;
+  font-family: CircularStd;
+  font-size: 24px;
+  font-weight: 900;
+  font-style: normal;
+  font-stretch: normal;
+  line-height: normal;
+  letter-spacing: normal;
+  text-align: right;
+  color: #d0021b;
+}
+
+.menu_lateral {
+  width: 49px;
+  background-color: #222222;
+}
+
+
+.icons-nav-lateral{
+  display: inline-block;
+}
+
+.amigos_ico {
+  width: 29px;
+  height: 26px;
+  object-fit: contain;
+}
