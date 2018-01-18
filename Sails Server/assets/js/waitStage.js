@@ -284,18 +284,18 @@ var waitRoom = {
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
   },
-  updatePlayer: function(index=0, join, name, gender='m', chat, date={d:17,m:1,y:2018}){
+  updatePlayer: function(index, join, name, gender='m', chat, date={d:17,m:1,y:2018}){
     var j=0
     if(join){
-      
-      if((this.playerInfo[0]!=undefined && index==0) || index != 0){
+      if(nPlayers < index){
         this.playerInfo.push({name: name, gender:gender, chat:chat, date:date, sprite:undefined, st:this.statusEnum.WAITING})
-        this.nPlayers++}
-      this.playerInfo[this.nPlayers-1].sprite = game.add.sprite(60,this.playerPos[this.nPlayers],
-                                                                this.playerInfo[this.nPlayers-1].gender+'Player')
-      j=this.nPlayers-1
-      if(this.nPlayers == 1)
-        this.playerInfo[0].st = this.statusEnum.OWNER                                                     
+        this.nPlayers++
+        this.playerInfo[this.nPlayers-1].sprite = game.add.sprite(60,this.playerPos[this.nPlayers],
+                                                  this.playerInfo[this.nPlayers-1].gender+'Player')
+        j=this.nPlayers-1
+        if(this.nPlayers == 1)
+          this.playerInfo[0].st = this.statusEnum.OWNER 
+      }                                          
     }
     else{
       this.nPlayers--
@@ -312,7 +312,6 @@ var waitRoom = {
       this.infoText[this.nPlayers].t1.text = ''
       this.infoText[this.nPlayers].t2.text = ''
       this.infoText[this.nPlayers].t3.text = ''
-      this.shutdown()
       game.state.start("roomStage")
     }
     for(var i=j; i<this.nPlayers; i++){

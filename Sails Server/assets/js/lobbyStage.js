@@ -70,25 +70,24 @@ class roomGUI {
     }
 }
 
-var roomsStage = {
+var lobbyStage = {
     preload: function(){
         game.stage.backgroundColor = 0x181818
         game.config.setForceTimeOut = true
         game.stage.disableVisibilityChange = true
 
-        game.load.image('initialBet', '../assets/monto_entrada_ico.png')
-        game.load.image('mplayer2', '../assets/room_player_ico.png')
-        game.load.image('lock', '../assets/lock_ico.png')
-        game.load.image('people', '../assets/room_player_ico.png')
-        game.load.image('time', '../assets/tiempo_ico.png')
-        game.load.image('dtime', '../assets/room_doubletime_ico.png')
-        game.load.image('rBet0', '../assets/room_apuesta_ico.png')
-        game.load.image('5hand', '../assets/mano_5_ico.png')
-        game.load.image('9hand', '../assets/mano_9_ico.png')
-        game.load.image('starWin', '../assets/star_ganador_ico.png')
-        game.load.image('starLose', '../assets/star_perdedor_ico.png')
-        waitRoom.preload()
-        game.load.spritesheet('btnCreateRoom','../assets/btn_rooms.png',170,42,1)    
+        // game.load.image('initialBet', '../assets/monto_entrada_ico.png')
+        // game.load.image('mplayer2', '../assets/room_player_ico.png')
+        // game.load.image('lock', '../assets/lock_ico.png')
+        // game.load.image('people', '../assets/room_player_ico.png')
+        // game.load.image('time', '../assets/tiempo_ico.png')
+        // game.load.image('dtime', '../assets/room_doubletime_ico.png')
+        // game.load.image('rBet0', '../assets/room_apuesta_ico.png')
+        // game.load.image('5hand', '../assets/mano_5_ico.png')
+        // game.load.image('9hand', '../assets/mano_9_ico.png')
+        // game.load.image('starWin', '../assets/star_ganador_ico.png')
+        // game.load.image('starLose', '../assets/star_perdedor_ico.png')
+        // game.load.spritesheet('btnCreateRoom','../assets/btn_rooms.png',170,42,1)    
     },
     create: function(){
         this.allRooms = new Array()

@@ -11,7 +11,6 @@ class Card {
 
 var currentTurn = 0;
 
-
 function sendBet(){
   socket.emit('getBet', parseInt(money.value));
 }
@@ -137,10 +136,9 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
   playGame.updateBalane(balance);
 });
 
-
 socket.on('waitingRoomJoin', function(players){
   for(var i in players){
-    waitRoom.updatePlayer(i,true, players[i].nickName)
+    waitRoom.updatePlayer(i, true, players[i].nickName)
   }
 });
 
