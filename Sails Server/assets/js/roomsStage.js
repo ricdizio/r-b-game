@@ -87,7 +87,7 @@ var roomsStage = {
         game.load.image('9hand', '../assets/mano_9_ico.png')
         game.load.image('starWin', '../assets/star_ganador_ico.png')
         game.load.image('starLose', '../assets/star_perdedor_ico.png')
-
+        waitRoom.preload()
         game.load.spritesheet('btnCreateRoom','../assets/btn_rooms.png',170,42,1)    
     },
     create: function(){

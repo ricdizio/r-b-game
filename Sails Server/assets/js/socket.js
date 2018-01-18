@@ -139,17 +139,14 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
 
 
 socket.on('waitingRoomJoin', function(players){
-  socket.on('readyRoom1', function(){
-    for(var i in players){
-      waitRoom.updatePlayer(0,true, players[i].nickName)
-    }
-  });
+  for(var i in players){
+    waitRoom.updatePlayer(0,true, players[i].nickName)
+  }
 });
 
 socket.on('waitingRoomLeft', function(index){
   waitRoom.updatePlayer(index, false)
 });
-
 
 socket.on('poolRequest', function(){
   playGame.poolRequest(true);
