@@ -566,10 +566,13 @@ function newConnection(socket){
 	newPlayersArray.push(new Player(socket.id, nickNamesArray[nickNamesArray.length - 1]));
 
 	socket.on('join', function(roomName){
+		console.log('socket id en join');
+		console.log(socket.id);
 		// Incluir revision de capacidad de la sala.
-		for(var i = 0; i < newPlayersArray; i++){
+		for(var i = 0; i < newPlayersArray.length; i++){
 			if(newPlayersArray[i].socketId == socket.id){
 				var Me = newPlayersArray[i];
+				console.log(Me);
 				break;
 			}
 		}
@@ -577,7 +580,7 @@ function newConnection(socket){
 		socket.join(roomName);
 
 		socket.on('leaveWaitingRoom', function(){
-			for(var i = 0; i < newPlayersArray; i++){
+			for(var i = 0; i < newPlayersArray.length; i++){
 				if(newPlayersArray[i].socketId == socket.id){
 					var Me = newPlayersArray[i];
 					break;
