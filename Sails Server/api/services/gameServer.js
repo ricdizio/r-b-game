@@ -469,43 +469,45 @@ class WaitingRoom{
 			if(++self.dealtCounter == self.roomCapacity){
 				self.sortPlayers();
 				io.sockets.sockets[self.roomCreator.socketId].on('startTable', function(){
+					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateType', updateType);
+					io.sockets.sockets[self.roomCreator.socketId].removeListener('updatePassword', updatePassword);
+					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateBet', updateBet);
+					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateCapacity', updateCapacity);
+					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateTurnTime', updateTurnTime);
+					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateRounds', updateRounds);
+
 					globalTable = new Table(self.players, self.roomName, self.type,
 						self.roomCapacity, self.rounds, self.roomBet * self.rounds, self.turnTime, self.roomBet);
+
 				});
 				io.sockets.sockets[self.roomCreator.socketId].emit('startTableEnabled');
 			}
 		}
 
 		function updateType(){
-
 		}
 
 		function updatePassword(socketId, password){
-			io.sockets.sockets[socketId].removeListener('updatePassword', updatePassword);
 			self.password = password;
 		}
 
 		function updateBet(socketId, bet){
-			io.sockets.sockets[socketId].removeListener('updateBet', updateBet);
 			self.bet = bet;
 		}
 
 		function updateCapacity(socketId, capacity){
-			io.sockets.sockets[socketId].removeListener('updateCapacity', updateCapacity);
 			self.capacity = capacity;
 		}
 
 		function updateTurnTime(socketId, turnTime){
-			io.sockets.sockets[socketId].removeListener('updateTurnTime', updateTurnTime);
 			self.turnTime = turnTime;
 		}
 
 		function updateRounds(socketId, rounds){
-			io.sockets.sockets[socketId].removeListener('updateRounds', updateRounds);
 			self.rounds = rounds;
 		}
 
-		io.sockets.to(this.roomName).emit('waitingRoomPlayers', this.players); //enviamos el arreglo de PLAYERS (clase)
+		io.sockets.to(this.roomName).emit('waitingRoomJoin', this.players); //enviamos el arreglo de PLAYERS (clase)
 	}
 
 	kickPlayer(Player){
@@ -513,7 +515,7 @@ class WaitingRoom{
 		this.players.splice(index, 1);
 		this.pickedCards.splice(index,1);
 		//this.dealtCounter--;
-		io.sockets.to(this.roomName).emit('waitingRoomPlayers', this.players); //enviamos el arreglo de PLAYERS (clase)
+		io.sockets.to(this.roomName).emit('waitingRoomLeft', index); //enviamos el arreglo de PLAYERS (clase)
 	}
 
 	sortPlayers(){
@@ -559,7 +561,7 @@ function newConnection(socket){
 
 	newPlayersArray.push(new Player(socket.id, nickNamesArray[nickNamesArray.length - 1]));
 
-	socket.on('join', function(roomName, roomCapacity){
+	socket.on('join', function(roomName){
 		// Incluir revision de capacidad de la sala.
 		for(var i = 0; i < newPlayersArray; i++){
 			if(newPlayersArray[i].socketId == socket.id){
