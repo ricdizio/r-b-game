@@ -559,6 +559,8 @@ class WaitingRoom{
 
 function newConnection(socket){
 
+	console.log(nickNamesArray[nickNamesArray.length - 1]);
+	console.log(socket.id);
 	newPlayersArray.push(new Player(socket.id, nickNamesArray[nickNamesArray.length - 1]));
 
 	socket.on('join', function(roomName){
