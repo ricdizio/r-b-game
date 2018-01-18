@@ -247,7 +247,7 @@ var waitRoom = {
     }
     this.scrollCards[this.nCards-1].alpha = 0
     this.extraCard = this.scrollCards.pop()
-    this.pruebaDelay()
+    //this.pruebaDelay()
     this.checkBtns[1].update(true)
     this.checkBtns[4].update(true)
     this.checkBtns[5].update(true)

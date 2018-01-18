@@ -123,6 +123,7 @@ var roomsStage = {
     btnCreate_R: function(){
         socket.emit('join', "Room1")
         console.log("Create")
+        waitRoom.preload()
         game.state.start("waitRoom")
     },
     update: function(){
