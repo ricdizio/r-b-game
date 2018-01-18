@@ -558,9 +558,11 @@ class WaitingRoom{
 }
 
 function newConnection(socket){
-
+	console.log('Nick actual: ');
 	console.log(nickNamesArray[nickNamesArray.length - 1]);
+	console.log('socket id');
 	console.log(socket.id);
+
 	newPlayersArray.push(new Player(socket.id, nickNamesArray[nickNamesArray.length - 1]));
 
 	socket.on('join', function(roomName){
@@ -618,6 +620,8 @@ module.exports = {
 	socket : io.sockets,
 	addNick: function(nickName){
 		nickNamesArray.push(nickName);
+		console.log('nickNamesArray');
+		console.log(nickNamesArray);
 	},
 	hashMap: hashMap
 }
