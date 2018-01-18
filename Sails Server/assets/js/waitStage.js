@@ -253,6 +253,7 @@ var waitRoom = {
     this.checkBtns[5].update(true)
     this.checkBtns[8].update(true)
     console.log(waitRoom.gameParams)
+    socket.emit('readyRoom1')
   },
   pruebaDelay: function(){
     var date = {d:3,m:1,y:2018}

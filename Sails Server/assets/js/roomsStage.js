@@ -121,10 +121,9 @@ var roomsStage = {
         return {x:roomPos[index%2].x,y:roomPos[index%2].y+parseInt(index/2)*roomStep.y}
     },
     btnCreate_R: function(){
+        game.state.start("waitRoom")
         socket.emit('join', "Room1")
         console.log("Create")
-        waitRoom.preload()
-        game.state.start("waitRoom")
     },
     update: function(){
     }
