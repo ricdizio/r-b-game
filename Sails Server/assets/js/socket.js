@@ -158,6 +158,11 @@ socket.on('waitingRoomLeft', function(index, socketId){
     waitRoom.updatePlayer(index, false)
   }  
 });
+socket.on('waitingRoomDealt', function(card, index){
+  waitRoom.pickCard()
+  console.log(card)
+});
+
 
 socket.on('waitingRoomBet', function(bet){
  

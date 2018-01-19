@@ -239,7 +239,7 @@ var waitRoom = {
     }
     this.scrollCards[4].inputEnabled = true
     this.scrollCards[4].input.useHandCursor = true
-    this.scrollCards[4].events.onInputDown.add(this.pickCard, this)
+    this.scrollCards[4].events.onInputDown.add(this.pickCardReq, this)
     
     for(var i=0; i<this.nCards; i++){
       if(i!=4)
@@ -475,6 +475,9 @@ var waitRoom = {
       this.extraCard = this.scrollCards.shift()
     }
   },
+  pickCardReq: function(){
+    socket.emit('dealWaitingRoomCard', socket.id)
+  },
   pickCard: function(){
     var flipTween = game.add.tween(this.scrollCards[4].scale).to({
       x: 0,
@@ -495,11 +498,12 @@ var waitRoom = {
       this.scrollCards[4].inputEnabled = false
       this.scrollCards[4].input.useHandCursor = false
     }, this)
-
+    
     this.next.destroy()
     this.prev.destroy()
     flipTween.start()
     this.move()
+
   },
   updateStatus(player, status){
     var stColor, stColorHex
@@ -544,7 +548,7 @@ var waitRoom = {
       }
       this.scrollCards[4].inputEnabled = true
       this.scrollCards[4].input.useHandCursor = true
-      this.scrollCards[4].events.onInputDown.add(this.pickCard, this)
+      this.scrollCards[4].events.onInputDown.add(this.pickCardReq, this)
     }
     else{
       this.next.scale.set(1)
