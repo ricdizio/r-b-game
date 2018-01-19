@@ -143,8 +143,10 @@ socket.on('waitingRoomJoin', function(players){
   }
 });
 
-socket.on('waitingRoomLeft', function(index){
-  waitRoom.updatePlayer(index, false)
+socket.on('waitingRoomLeft', function(index, socketId){
+  if(socketId != socket.id){
+    waitRoom.updatePlayer(index, false)
+  }  
 });
 
 socket.on('poolRequest', function(){

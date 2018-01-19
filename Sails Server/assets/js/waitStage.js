@@ -24,10 +24,10 @@ class checkGUI {
 var waitRoom = {
   statusEnum: Object.freeze({OWNER: 1, READY: 2, WAITING:3 }),
   preload: function() { 
-    game.stage.backgroundColor = 0x181818
-    game.config.setForceTimeOut = true
-    game.stage.disableVisibilityChange = true
-    game.add.plugin(PhaserInput.Plugin)
+    // game.stage.backgroundColor = 0x181818
+    // game.config.setForceTimeOut = true
+    // game.stage.disableVisibilityChange = true
+    // game.add.plugin(PhaserInput.Plugin)
 
     // game.load.image('card1', '../assets/carta_1.png')
     // game.load.image('card2', '../assets/carta_small_ico.png')
@@ -316,7 +316,7 @@ var waitRoom = {
       this.infoText[this.nPlayers].t1.text = ''
       this.infoText[this.nPlayers].t2.text = ''
       this.infoText[this.nPlayers].t3.text = ''
-      game.state.start("roomStage")
+      
     }
     for(var i=j; i<this.nPlayers; i++){
       this.infoText[i].t1.text = this.playerInfo[i].name
@@ -324,6 +324,7 @@ var waitRoom = {
                                   this.playerInfo[i].date.d+' '+this.playerInfo[i].date.y
       this.infoText[i].t3.text = 'Picked card: '
       this.playerInfo[i].sprite.y = this.playerPos[i]
+      this.updateStatus(i, this.playerInfo[i].st)
     }
   },
   btnCheck: function(button){
@@ -357,13 +358,15 @@ var waitRoom = {
   btnNone: function(){
   },
   btnReturn: function(){
-    socket.emit('getPlay', true)
+    socket.emit('leaveWaitingRoom')
+    game.state.start("lobbyStage")
   },
   btnCreate: function(){
   },
   btnChange: function(){
   },
   btnStart: function(){
+    //socket.emit('getPlay', true)
     game.state.start("playGame")
   },
   moveRight: function(){
