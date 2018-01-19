@@ -463,7 +463,7 @@ class WaitingRoom{
 			}
 
 			self.pickedCards[i] = tempCard;
-			io.sockets.to(self.roomName).emit('waitingRoomDealt', tempCard, self.players[i]); // Envia la carta y el jugador (i manda la posicion)
+			io.sockets.to(self.roomName).emit('waitingRoomDealt', tempCard, i); // Envia la carta y el jugador (i manda la posicion)
 
 			// PROBLEMA FUTURO: si se eligen todas las cartas y el master cambia la capacidad de la sala.
 			if(++self.dealtCounter == self.roomCapacity){
