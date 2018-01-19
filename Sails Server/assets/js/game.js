@@ -16,6 +16,11 @@ window.onload = function() {
 
 loadAssets = {
   preload: function(){
+    game.stage.backgroundColor = 0x181818
+    game.config.setForceTimeOut = true
+    game.stage.disableVisibilityChange = true
+    game.add.plugin(PhaserInput.Plugin)
+    
     //----- LOBBY ASSETS ---------------------------------------------------------
     game.load.image('initialBet', '../assets/monto_entrada_ico.png')
     //game.load.image('mplayer2', '../assets/room_player_ico.png')
@@ -79,6 +84,6 @@ loadAssets = {
     }
   },
   create: function(){
-    game.state.start("roomStage")
+    game.state.start("lobbyStage")
   }
 }

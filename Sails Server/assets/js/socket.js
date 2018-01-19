@@ -1,4 +1,4 @@
-var socket = io.connect('http://190.198.219.163:3000');
+var socket = io.connect('http://192.168.1.126:3000');
 var bet = 0;
 
 class Card {
@@ -137,7 +137,8 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
 });
 
 socket.on('waitingRoomJoin', function(players){
-  for(var i in players){
+  console.log(players)
+  for(var i=0; i<players.length; i++){
     waitRoom.updatePlayer(i, true, players[i].nickName)
   }
 });

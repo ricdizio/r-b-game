@@ -177,9 +177,9 @@ var playGame = {
     }
   },
   preload: function() {
-    this.gameParameters()
-    game.config.setForceTimeOut = true
-    game.stage.disableVisibilityChange = true
+    // this.gameParameters()
+    // game.config.setForceTimeOut = true
+    // game.stage.disableVisibilityChange = true
 
     // game.load.image('table', '../assets/mesa_ico.png')
     // game.load.image('mplayer', '../assets/hombre_avatar_ico.png')
