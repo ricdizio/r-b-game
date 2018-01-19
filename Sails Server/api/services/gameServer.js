@@ -516,10 +516,11 @@ class WaitingRoom{
 
 	kickPlayer(Player){
 		var index = this.players.indexOf(Player);
+		io.sockets.to(this.roomName).emit('waitingRoomLeft', index, this.players[index].socketId); //enviamos el arreglo de PLAYERS (clase)
 		this.players.splice(index, 1);
 		this.pickedCards.splice(index,1);
 		//this.dealtCounter--;
-		io.sockets.to(this.roomName).emit('waitingRoomLeft', index, this.players[index].socketId); //enviamos el arreglo de PLAYERS (clase)
+		
 	}
 
 	sortPlayers(){
