@@ -110,7 +110,6 @@ var waitRoom = {
     this.nCards = 10
     this.maxPlayers = 4
     this.nPlayers = 0
-    console.log("CREADO NPLAYERS: "+this.nPlayers)
     this.zoomLimit = {min: 221, mid:294.5, max: 368}
     this.scrollLimit = {min:94 , max: 422}
     this.scrollPos = {min: 94, mid:243, max: 422}
@@ -208,7 +207,7 @@ var waitRoom = {
     this.return = game.add.button(18, 19, 'return', this.btnReturn, this, 0,0,0)
     this.create = game.add.button(928, 10, 'create', this.btnCreate, this, 0,0,0)
     this.change = game.add.button(928, 406, 'change', this.btnChange, this, 0,0,0)
-    this.start = game.add.button(928, 802, 'start', this.btnStart, this, 0,0,0)
+    
 
     this.next.anchor.set(0.5, 0.5)
     this.prev.anchor.set(0.5, 0.5)
@@ -329,23 +328,31 @@ var waitRoom = {
   },
   btnCheck: function(button){
     var i=0, j=0
+    // Time
     if(button.value==1 || button.value==2 || button.value==3){
       i=0; j=3
       var time = new Array(15,30,45)
       waitRoom.gameParams.time = time[button.value-1]
+      socket.emit('updateTurnTime',waitRoom.gameParams.time)
     }
+    // Type
     if(button.value==4 || button.value==5){
       i=3; j=5
       waitRoom.gameParams.type = button.value - 4
+      socket.emit('updateType',waitRoom.gameParams.type)
     }
+    // Rounds
     if(button.value==6 || button.value==7){
       i=5; j=7
       var rounds = new Array(5,9)
       waitRoom.gameParams.rounds = rounds[button.value - 6]
+      socket.emit('updateRounds',waitRoom.gameParams.rounds)
     }
+    // Players
     if(button.value==8 || button.value==9){
       i=7; j=9
       waitRoom.gameParams.players = button.value - 5
+      socket.emit('updateCapacity',waitRoom.gameParams.players)
     }
     console.log(waitRoom.gameParams)
     for(; i<j; i++){
@@ -354,6 +361,9 @@ var waitRoom = {
       else
         waitRoom.checkBtns[i].update(false)
     }
+  },
+  paramUpdate: function(){
+
   },
   btnNone: function(){
   },
@@ -540,6 +550,10 @@ var waitRoom = {
       this.next.scale.set(1)
       this.prev.scale.set(1)
     }
+  },
+  ready2Start: function(){
+    this.start = game.add.button(928, 802, 'start', this.btnStart, this, 0,0,0)
+    socket.emit('startTable')
   },
   shutdown: function(){
     game.world.removeAll()

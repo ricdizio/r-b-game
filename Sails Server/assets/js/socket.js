@@ -136,6 +136,16 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
   playGame.updateBalane(balance);
 });
 
+socket.on('startTableEnabled', function(){
+// Aparece boton para arrancar la mesa
+  waitRoom.ready2Start()
+});
+
+socket.on('tableStarted', function(type=0, capacity, rounds, time, players, gender, money){
+  var gender1 = [1,1,1]
+  game.state.start("playGame",true, false, type, capacity, rounds, time, players, gender1, money)
+});
+
 socket.on('waitingRoomJoin', function(players){
   console.log(players)
   for(var i=0; i<players.length; i++){
@@ -147,6 +157,19 @@ socket.on('waitingRoomLeft', function(index, socketId){
   if(socketId != socket.id){
     waitRoom.updatePlayer(index, false)
   }  
+});
+
+socket.on('waitingRoomBet', function(bet){
+ 
+});
+socket.on('waitingRoomCapacity', function(capacity){
+ 
+});
+socket.on('waitingRoomTurnTime', function(time){
+ 
+});
+socket.on('waitingRoomRounds', function(rounds){
+ 
 });
 
 socket.on('poolRequest', function(){

@@ -114,7 +114,7 @@ var playGame = {
   nCards: 0,
   timerOn: true,
   nRound: 0,
-  gameParameters: function(type=0, players=3, rounds=5, time=45, nick, gender=[1,0,1,0,1], money=500){
+  gameParameters: function(type=0, players=3, rounds=5, time=30, nick, gender=[1,0,1], money=500){
     if(type == 0)
       this.roomType = 'Normal'
     if(players == 4){
@@ -175,6 +175,9 @@ var playGame = {
       else
         this.pGender.push('w')
     }
+  },
+  init: function(type, capacity, rounds, time, players, gender1, money){
+    game.gameParameters(type, capacity, rounds, time, players, gender1, money)
   },
   preload: function() {
     // this.gameParameters()
