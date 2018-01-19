@@ -467,6 +467,7 @@ class WaitingRoom{
 
 			// PROBLEMA FUTURO: si se eligen todas las cartas y el master cambia la capacidad de la sala.
 			if(++self.dealtCounter == self.roomCapacity){
+				console.log('habilitadoooo');
 				self.sortPlayers();
 				io.sockets.sockets[self.roomCreator.socketId].on('startTable', function(){
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateType', updateType);
