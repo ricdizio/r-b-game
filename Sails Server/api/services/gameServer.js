@@ -519,7 +519,7 @@ class WaitingRoom{
 		this.players.splice(index, 1);
 		this.pickedCards.splice(index,1);
 		//this.dealtCounter--;
-		io.sockets.to(this.roomName).emit('waitingRoomLeft', index); //enviamos el arreglo de PLAYERS (clase)
+		io.sockets.to(this.roomName).emit('waitingRoomLeft', index, this.players[index].socketId); //enviamos el arreglo de PLAYERS (clase)
 	}
 
 	sortPlayers(){
