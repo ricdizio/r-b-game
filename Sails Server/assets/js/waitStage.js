@@ -288,12 +288,11 @@ var waitRoom = {
     var j=0
     if(join){
       if(nPlayers < index){
-        this.playerInfo.push({name: name, gender:gender, chat:chat, date:date, sprite:undefined, st:this.statusEnum.WAITING})
         this.nPlayers++
+        this.playerInfo.push({name: name, gender:gender, chat:chat, date:date, sprite:undefined, st:this.statusEnum.WAITING})
         this.playerInfo[this.nPlayers-1].sprite = game.add.sprite(60,this.playerPos[this.nPlayers],
                                                   this.playerInfo[this.nPlayers-1].gender+'Player')
-        j=this.nPlayers-1
-        if(this.nPlayers == 1)
+        if((j=this.nPlayers-1) == 0)
           this.playerInfo[0].st = this.statusEnum.OWNER 
       }                                          
     }
