@@ -427,7 +427,7 @@ class WaitingRoom{
 
 		if(this.players.length == 0){
 			this.roomCreator = Player;
-			
+			// falta nombre
 			io.sockets.sockets[Player.socketId].on('updateType', updateType);
 			io.sockets.sockets[Player.socketId].on('updatePassword', updatePassword);
 			io.sockets.sockets[Player.socketId].on('updateBet', updateBet);
@@ -467,6 +467,7 @@ class WaitingRoom{
 
 			// PROBLEMA FUTURO: si se eligen todas las cartas y el master cambia la capacidad de la sala.
 			if(++self.dealtCounter == self.roomCapacity){
+				console.log('habilitadoooo');
 				self.sortPlayers();
 				io.sockets.sockets[self.roomCreator.socketId].on('startTable', function(){
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateType', updateType);
@@ -478,7 +479,8 @@ class WaitingRoom{
 
 					globalTable = new Table(self.players, self.roomName, self.type,
 						self.roomCapacity, self.rounds, self.roomBet * self.rounds, self.turnTime, self.roomBet);
-
+					
+					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, self.players, 0, self.roomBet);
 				});
 				io.sockets.sockets[self.roomCreator.socketId].emit('startTableEnabled');
 			}
@@ -487,26 +489,26 @@ class WaitingRoom{
 		function updateType(){
 		}
 
-		function updatePassword(socketId, password){
+		function updatePassword(password){
 			self.password = password;
 		}
 
-		function updateBet(socketId, bet){
+		function updateBet(bet){
 			self.bet = bet;
 			io.sockets.to(self.roomName).emit('waitingRoomBet', bet);
 		}
 
-		function updateCapacity(socketId, capacity){
+		function updateCapacity(capacity){
 			self.capacity = capacity;
 			io.sockets.to(self.roomName).emit('waitingRoomCapacity', capacity);
 		}
 
-		function updateTurnTime(socketId, turnTime){
+		function updateTurnTime(turnTime){
 			self.turnTime = turnTime;
 			io.sockets.to(self.roomName).emit('waitingRoomTurnTime', turnTime);
 		}
 
-		function updateRounds(socketId, rounds){
+		function updateRounds(rounds){
 			self.rounds = rounds;
 			io.sockets.to(self.roomName).emit('waitingRoomRounds', rounds);
 		}
