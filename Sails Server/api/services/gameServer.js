@@ -246,6 +246,7 @@ class Table{
 		}
 
 		io.sockets.to(self.socketRoom).emit('play', turn);
+		console.log(turn);
 
 		var setTime = setTimeout(function(){
 			var randomPick = self.randomColor();
