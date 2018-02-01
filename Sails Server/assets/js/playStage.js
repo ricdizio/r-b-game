@@ -21,6 +21,7 @@ class cardGUI {
 
     flipTween.onComplete.add(function(){
       this.card.loadTexture('card'+index)
+      console.log(index)
       backFlipTween.start()
     }, this)
 
@@ -428,23 +429,23 @@ var playGame = {
     }
   },
   onClickR: function(){
+    this.timerBar.stop()
+    this.timerOn = false
+    this.timerCircle.destroy()
     this.btnUpdate(this.btnEnum.PICK, false)
     console.log("RED BUTTON")
-    for(var i=0; i< this.maxRounds; i++){
-      this.cardArray[i].flip(i,1,1)
-    }
-    this.updateRound(++this.nRound)
-    //socket.emit('getPlay', true)
+    socket.emit('getPlay', true)
+    //this.cardArray[index].flip(i,1,1)
+    //this.updateRound(++this.nRound)
+    socket.emit('getPlay', true)
   },
   onClickB: function(){
     this.timerBar.stop()
     this.timerOn = false
     this.timerCircle.destroy()
     this.btnUpdate(this.btnEnum.PICK, false)
-
-    this.updateRound(++this.nRound)
-    //socket.emit('getPlay', false)
     console.log("BLACK BUTTON")
+    socket.emit('getPlay', false)
   },
   poolRequest: function(req){
     this.btnUpdate(this.btnEnum.POOL, true)
@@ -457,8 +458,8 @@ var playGame = {
     this.btnUpdate(this.btnEnum.POOL, false)
     socket.emit('getPoolAnswer', false, socket.id)
   },
-  alertTurn: function(select, playerIndex, playerText){
-
+  alertTurn: function(playBool, playerIndex){
+    this.btnUpdate(this.btnEnum.PICK, true)
     this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
     this.timerOn = true
     this.timerBar.onComplete.add(function(){
@@ -479,8 +480,8 @@ var playGame = {
     //this.playerArray[playerIndex].alert(false)
   },
   showCard: function(card, suit) {
-    this.cardArray[this.nCards].flip(card, 1)
-    this.printWinColor(card)
+    console.log(card)
+    this.cardArray[this.nCards].flip(this.nCards, 1)
     this.cardArray[this.nCards].move(true, 0,0)
     this.nCards++
     this.cardArray.push(new cardGUI())

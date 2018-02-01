@@ -66,20 +66,21 @@ socket.on('donePicking', function(card){
   playGame.showFirst(card);
 });
 
-socket.on('play', function(betId, playerIndex, playTimer, nickName){
+socket.on('play', function(index){
   //if(!lastTurn){
-    if(betId == socket.id){
+    if(index == myPos){
       console.log("Te toca elegir!");
-      playGame.alertTurn(true, playerIndex, "It's your turn!", playTimer);
+      playGame.alertTurn(true, index);
       // Colocar en pantalla "te toca elegir"
 
     }
     else{
-      console.log(nickName + " is Picking!");
-      playGame.alertTurn(false, playerIndex, nickName + " is Picking!", playTimer);
+      var i
+      var name = myNicks[i=index-myPos<0?i+playGame.maxPlayers:i]
+      console.log(name + " is Picking!");
+      //playGame.alertTurn(false, name + " is Picking!");
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
-    currentTurn = playerIndex;
   //}
   //else{
   //  playGame.checkPlayer(playerIndex);
@@ -212,10 +213,8 @@ socket.on('timedOut', function(playerIndex){
 });
 
 socket.on('substractConstantBet', function(balance){
-  for(var i=0; i<myPos; i++){
-    balance.push(balance.shift());
-  }
-  playGame.updateBalane(balance);
+
+  playGame.updateBalane(sortArray(balance));
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 
@@ -228,3 +227,10 @@ socket.on('end', function(){
 });
 
 //socket.emit('join', "room1", 3);
+
+function sortArray(array){
+  for(var i=0; i<myPos; i++){
+    array.push(array.shift());
+  }
+  return array
+}
