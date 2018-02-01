@@ -80,9 +80,10 @@ class Table{
 		this.playTimeoutTime = playTimeoutTime;
 		this.constantMoneyBet = constantMoneyBet;
 		this.playTurn = 0;
-		
+
 		this.initiatePlayers(Players, initialMoney);
 		this.players = Players;
+		this.nickNamesArray;
 
 		this.pool = 0;
 
@@ -96,13 +97,13 @@ class Table{
 
 		this.deck = this.shuffle(globalDeck);
 		this.deck = this.shuffle(this.deck);
+
 		this.start();
 	}
 
 	// Funciones iniciales.
 
 	initiatePlayers(players, initialMoney){
-
 		for(var i = 0; i < players.length; i++){
 			//temporalObjectArray[i] = new Player(playersId[i], initialMoney, i);
 			players[i].money = initialMoney;
@@ -244,7 +245,7 @@ class Table{
 			}
 		}
 
-		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, this.players[turn].nickName);
+		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.players[turn].nickName);
 		//io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, nickNamesArray[turn].nickName);
 
 		var setTime = setTimeout(function(){
@@ -467,7 +468,7 @@ class WaitingRoom{
 
 			// PROBLEMA FUTURO: si se eligen todas las cartas y el master cambia la capacidad de la sala.
 			if(++self.dealtCounter == self.roomCapacity){
-				console.log('habilitadoooo');
+				var nickNamesArray = new Array();
 				//self.sortPlayers();
 				io.sockets.sockets[self.roomCreator.socketId].on('startTable', function(){
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateType', updateType);
@@ -477,10 +478,18 @@ class WaitingRoom{
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateTurnTime', updateTurnTime);
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateRounds', updateRounds);
 
+					for(var i = 0; i < self.players.length; i++){
+						nickNamesArray.push(self.players[i].nickName);
+					}
+			
+					for(var i = 0; i < self.players.length; i++){
+						io.sockets.sockets[self.players[i].socketId].emit('logicalPlayers', nickNamesArray, self.players[i].nickName);
+					}
+
 					globalTable = new Table(self.players, self.roomName, self.type,
 						self.roomCapacity, self.rounds, self.roomBet * self.rounds, self.turnTime, self.roomBet);
 					
-					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, self.players, 0, self.roomBet);
+					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, 0, self.roomBet);
 				});
 				io.sockets.sockets[self.roomCreator.socketId].emit('startTableEnabled');
 			}
