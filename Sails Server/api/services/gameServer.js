@@ -95,7 +95,8 @@ class Table{
 		this.chooseFirstTimeoutVariable;
 		this.colorBets = new Array();
 
-		this.deck = this.shuffle(globalDeck);
+		this.deck = this.generateDeck(); // QUITAR,
+		this.deck = this.shuffle(this.deck);
 		this.deck = this.shuffle(this.deck);
 		var self = this;
 
@@ -388,9 +389,7 @@ class Table{
 
 	dealCard(remove){
 		var random = Math.floor(Math.random() * this.deck.length);
-		console.log(this.deck);
 		var card = this.deck[random];
-		console.log('card dentro de dealCard: ' + card);
 		if(remove){
 			this.deck.splice(this.deck.indexOf(card), 1);
 		}
