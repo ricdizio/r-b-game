@@ -274,6 +274,7 @@ class Table{
 
 	reward(colorArray){
 		var card = this.dealCard(true);
+		console.log(card);
 		var counter = 0;
 		var self = this;
 		var balance = new Array();
@@ -387,7 +388,9 @@ class Table{
 
 	dealCard(remove){
 		var random = Math.floor(Math.random() * this.deck.length);
+		console.log(this.deck);
 		var card = this.deck[random];
+		console.log('card dentro de dealCard: ' + card);
 		if(remove){
 			this.deck.splice(this.deck.indexOf(card), 1);
 		}
