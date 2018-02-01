@@ -412,7 +412,7 @@ class WaitingRoom{
 		this.turnTime = 30000;
 		this.rounds = 5;
 		this.roomCreator;
-
+		this.nickNamesArray = new Array();
 		this.pickedCards = new Array();
 		this.players = new Array();
 		this.deck = this.shuffle(this.shuffle(deck));
@@ -438,6 +438,7 @@ class WaitingRoom{
 		}
 
 		this.players.push(Player);
+		this.nickNamesArray.push(Player.nickName);
 
 		io.sockets.sockets[Player.socketId].on('chat', chat);
 		io.sockets.sockets[Player.socketId].on('dealWaitingRoomCard', chooseFirst);
@@ -468,7 +469,6 @@ class WaitingRoom{
 
 			// PROBLEMA FUTURO: si se eligen todas las cartas y el master cambia la capacidad de la sala.
 			if(++self.dealtCounter == self.roomCapacity){
-				var nickNamesArray = new Array();
 				//self.sortPlayers();
 				io.sockets.sockets[self.roomCreator.socketId].on('startTable', function(){
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateType', updateType);
@@ -478,12 +478,10 @@ class WaitingRoom{
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateTurnTime', updateTurnTime);
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateRounds', updateRounds);
 
+					
 					for(var i = 0; i < self.players.length; i++){
-						nickNamesArray.push(self.players[i].nickName);
-					}
-			
-					for(var i = 0; i < self.players.length; i++){
-						io.sockets.sockets[self.players[i].socketId].emit('logicalPlayers', nickNamesArray, self.players[i].nickName);
+						io.sockets.sockets[self.players[i].socketId].emit('logicalPlayers', self.nickNamesArray, self.players[i].nickName);
+						console.log('Enviando: ' + self.players[i].nickName + ' ' + self.nickNamesArray);
 					}
 
 					globalTable = new Table(self.players, self.roomName, self.type,
@@ -491,6 +489,7 @@ class WaitingRoom{
 					
 					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, 0, self.roomBet);
 				});
+
 				io.sockets.sockets[self.roomCreator.socketId].emit('startTableEnabled');
 			}
 		}
