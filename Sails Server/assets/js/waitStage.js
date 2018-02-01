@@ -502,7 +502,7 @@ var waitRoom = {
     this.next.destroy()
     this.prev.destroy()
     flipTween.start()
-    this.move()
+    //this.move()
 
   },
   updateStatus(player, status){
