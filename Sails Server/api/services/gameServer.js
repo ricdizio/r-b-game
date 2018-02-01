@@ -98,7 +98,7 @@ class Table{
 		this.deck = this.shuffle(globalDeck);
 		this.deck = this.shuffle(this.deck);
 
-		setTimeout(this.start, 2000);
+		this.start();
 	}
 
 	// Funciones iniciales.
