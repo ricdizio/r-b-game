@@ -245,8 +245,7 @@ class Table{
 			}
 		}
 
-		io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.players[turn].nickName);
-		//io.sockets.to(self.socketRoom).emit('play', currentSocketId, turn, this.playTimeoutTime, nickNamesArray[turn].nickName);
+		io.sockets.to(self.socketRoom).emit('play', turn);
 
 		var setTime = setTimeout(function(){
 			var randomPick = self.randomColor();
@@ -287,7 +286,7 @@ class Table{
 			for(var i = 0; i < this.maximumPlayers; i++){
 				balance.push(this.players[i].money);
 			}
-			io.sockets.to(this.socketRoom).emit('reward', 0, 0, balance, 0, true);
+			io.sockets.to(this.socketRoom).emit('reward', 0, 0, balance, 0, true); // no mandar balance, para que si ya se resto el dinero?
 			this.pool = 0;
 			this.sendReward(0, 0, false, 0, 0);
 		}
