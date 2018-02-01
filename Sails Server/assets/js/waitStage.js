@@ -378,7 +378,7 @@ var waitRoom = {
   },
   btnStart: function(){
     //socket.emit('getPlay', true)
-    game.state.start("playGame")
+    //game.state.start("playGame")
     console.log("Boton start")
     socket.emit('startTable')
   },

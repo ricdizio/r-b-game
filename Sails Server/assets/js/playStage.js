@@ -114,7 +114,12 @@ var playGame = {
   nCards: 0,
   timerOn: true,
   nRound: 0,
-  gameParameters: function(type=0, players=3, rounds=5, time=30, gender=[1,0,1], money=500){
+  gameParameters: function(type=0, players=3, rounds=5, time=30, nicks, myPos=0, gender=[1,0,1], money=500){
+    console.log("Game parameters:\n")
+    console.log("capacity: "+players)
+    console.log("nicks: "+nicks)
+    console.log("Yo: "+myPos)
+
     if(type == 0)
       this.roomType = 'Normal'
     if(players == 4){
@@ -167,7 +172,8 @@ var playGame = {
     this.pGender = new Array()
     this.iniMoney = money
     this.playTime = time
-    //this.nicks = ["Victor", "Gabriel", "Ricardo", "Maria"]
+    this.nicks = nicks
+    this.myPos = myPos
     for(var i=0; i<this.maxPlayers; i++){
       if(gender[i])
         this.pGender.push('m')
@@ -175,8 +181,12 @@ var playGame = {
         this.pGender.push('w')
     }
   },
-  init: function(type, capacity, rounds, time, players, gender1, money){
-    this.gameParameters(type, capacity, rounds, time, players, gender1, money)
+  init: function(type, capacity, rounds, time, nicksP, posP, gender1, money){
+    console.log("capacity "+capacity)
+    console.log("time "+time)
+    console.log("Players: en la mesa "+nicksP)
+    console.log("Yo: "+posP)
+    this.gameParameters(type, capacity, rounds, time, nicksP, posP, gender1, money)
   },
   preload: function() {
     // this.gameParameters()
@@ -205,12 +215,12 @@ var playGame = {
     //   game.load.image("card" + i, "../assets/carta_" + (i+1) + ".png")
     // }
   },
-  setPositions: function(nicks, myPos){
-    this.nicks = nicks
-    this.myPos = myPos
-    console.log("Nicks:"+nicks)
-    console.log("Nicks:"+myPos)
-  },
+  // setPositions: function(nicks, myPos){
+  //   this.nicks = nicks
+  //   this.myPos = myPos
+  //   console.log("Nicks:"+nicks)
+  //   console.log("Nicks:"+myPos)
+  // },
   addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false){
     var auxSprite = game.add.sprite(posX, posY, spriteID)
     auxSprite.anchor.set(anchorX, anchorY)
@@ -337,7 +347,7 @@ var playGame = {
     this.addSprite(640, 809, 'dupTime')
     this.leaveBtn = game.add.button(928, 800, 'buttonL', this.shutdown, this, 0, 0, 0)   
 
-    var countDown = this.playTime
+    var countDown = this.playTime/ 1000
     this.timer.loop(1000,function(){
       this.timerText.text = countDown--
       if(countDown<1){

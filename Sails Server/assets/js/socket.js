@@ -1,5 +1,7 @@
 var socket = io.connect('http://192.168.1.138:3000');
 var bet = 0;
+var myPos;
+var myNicks = new Array()
 
 class Card {
   constructor(index, number, suit){
@@ -111,7 +113,10 @@ socket.on('logicalPlayers', function(nicks, myNick){
     nicks.push(nicks.shift())
     n++;
   }
-  waitRoom.setPositions(nicks, n);
+  myNicks = nicks
+  myPos = n
+  console.log("Players: "+nicks)
+  console.log("Yo: "+myPos)
 });
 
 socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
@@ -153,7 +158,9 @@ socket.on('startTableEnabled', function(){
 
 socket.on('tableStarted', function(type=0, capacity, rounds, time, gender, money){
   var gender1 = [1,1,1]
-  game.state.start("playGame",true, false, type, capacity, rounds, time, gender1, money)
+  console.log("Players: segundo "+myNicks)
+  console.log("Yo: "+myPos)
+  game.state.start("playGame",true, false, type, capacity, rounds, time, myNicks, myPos, gender1, money)
 });
 
 socket.on('waitingRoomJoin', function(players){
@@ -205,6 +212,9 @@ socket.on('timedOut', function(playerIndex){
 });
 
 socket.on('substractConstantBet', function(balance){
+  for(var i=0; i<myPos; i++){
+    balance.push(balance.shift());
+  }
   playGame.updateBalane(balance);
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
