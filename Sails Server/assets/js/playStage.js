@@ -348,16 +348,16 @@ var playGame = {
     this.addSprite(640, 809, 'dupTime')
     this.leaveBtn = game.add.button(928, 800, 'buttonL', this.shutdown, this, 0, 0, 0)   
 
-    var countDown = this.playTime/ 1000
-    this.timer.loop(1000,function(){
-      this.timerText.text = countDown--
-      if(countDown<1){
-        this.timer.stop()
-        this.timerText.text = ''
-      }
-    }, this)
-    this.timerText.text = countDown--
-    this.timer.start()
+    // var countDown = this.playTime/ 1000
+    // this.timer.loop(1000,function(){
+    //   this.timerText.text = countDown--
+    //   if(countDown<1){
+    //     this.timer.stop()
+    //     this.timerText.text = ''
+    //   }
+    // }, this)
+    // this.timerText.text = countDown--
+    // this.timer.start()
 
     // game.time.events.add(Phaser.Timer.SECOND*5, function(){
     //   this.btnUpdate(this.btnEnum.PICK, true)
@@ -373,6 +373,7 @@ var playGame = {
     // this.updateWinners("",0,winArr1,4)
     game.world.bringToTop(this.timerCircle)
     game.world.bringToTop(this.timerText)
+    game.world.bringToTop(this.radialProgressBar)
   },
   updateStatus: function(player, status){
     var posX, posY
@@ -468,7 +469,6 @@ var playGame = {
     }, this)
     this.currentTimer = this.timerPos[playerIndex]
     //this.playerArray[playerIndex].alert(true)
-    this.btnUpdate(this.btnEnum.PICK, true)
   },
   checkPlayer: function(playerIndex, color){
     this.timerOn = false

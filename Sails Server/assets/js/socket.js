@@ -69,16 +69,23 @@ socket.on('donePicking', function(card){
 socket.on('play', function(index){
   //if(!lastTurn){
     if(index == myPos){
-      console.log("Te toca elegir!");
+      
+      var i = index-myPos
+      if(i<0) i += playGame.maxPlayers
+      var name = myNicks[i]
+
+      console.log("Te toca elegir!"+name);
       playGame.alertTurn(true, index);
       // Colocar en pantalla "te toca elegir"
 
     }
     else{
-      var i
-      var name = myNicks[i=index-myPos<0?i+playGame.maxPlayers:i]
-      console.log(name + " is Picking!");
-      //playGame.alertTurn(false, name + " is Picking!");
+      // var i = index-myPos
+      // if(i<0) i += playGame.maxPlayers
+      // var name = myNicks[i]
+
+      // console.log(name + " is Picking!");
+      // playGame.alertTurn(false, name + " is Picking!");
       // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
     }
   //}
