@@ -97,8 +97,11 @@ class Table{
 
 		this.deck = this.shuffle(globalDeck);
 		this.deck = this.shuffle(this.deck);
+		self = this;
 
-		this.start();
+		setTimeout(function(){
+			self.start();
+		}, 5000);
 	}
 
 	// Funciones iniciales.
@@ -483,7 +486,7 @@ class WaitingRoom{
 						io.sockets.sockets[self.players[i].socketId].emit('logicalPlayers', self.nickNamesArray, self.players[i].nickName);
 						console.log('Enviando: ' + self.players[i].nickName + ' ' + self.nickNamesArray);
 					}
-					
+
 					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, 0, self.roomBet);
 
 					globalTable = new Table(self.players, self.roomName, self.type,
