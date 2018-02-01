@@ -483,11 +483,13 @@ class WaitingRoom{
 						io.sockets.sockets[self.players[i].socketId].emit('logicalPlayers', self.nickNamesArray, self.players[i].nickName);
 						console.log('Enviando: ' + self.players[i].nickName + ' ' + self.nickNamesArray);
 					}
+					
+					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, 0, self.roomBet);
 
 					globalTable = new Table(self.players, self.roomName, self.type,
 						self.roomCapacity, self.rounds, self.roomBet * self.rounds, self.turnTime, self.roomBet);
 					
-					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, 0, self.roomBet);
+					
 				});
 
 				io.sockets.sockets[self.roomCreator.socketId].emit('startTableEnabled');
