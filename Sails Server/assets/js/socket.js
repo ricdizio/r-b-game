@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.1.126:3000');
+var socket = io.connect('http://192.168.1.138:3000');
 var bet = 0;
 
 class Card {
@@ -158,8 +158,10 @@ socket.on('waitingRoomLeft', function(index, socketId){
     waitRoom.updatePlayer(index, false)
   }  
 });
-socket.on('waitingRoomDealt', function(card, index){
-  waitRoom.pickCard()
+socket.on('waitingRoomDealt', function(card, index, socketId){
+  if(socketId == socket.id){
+    waitRoom.pickCard()
+  } 
   console.log(card)
 });
 

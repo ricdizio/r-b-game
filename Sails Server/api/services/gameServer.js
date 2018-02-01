@@ -454,7 +454,7 @@ class WaitingRoom{
 
 		function chooseFirst(socketId){
 			io.sockets.sockets[socketId].removeListener('dealWaitingRoomCard', chooseFirst);
-			var tempCard = dealCard(true);
+			var tempCard = self.dealCard(true);
 
 			for(var i = 0; i < self.players.length; i++){
 				if(self.players[i].socketId == socketId){
@@ -463,12 +463,12 @@ class WaitingRoom{
 			}
 
 			self.pickedCards[i] = tempCard;
-			io.sockets.to(self.roomName).emit('waitingRoomDealt', tempCard, i); // Envia la carta y el jugador (i manda la posicion)
+			io.sockets.to(self.roomName).emit('waitingRoomDealt', tempCard, i, socketId); // Envia la carta y el jugador (i manda la posicion)
 
 			// PROBLEMA FUTURO: si se eligen todas las cartas y el master cambia la capacidad de la sala.
 			if(++self.dealtCounter == self.roomCapacity){
 				console.log('habilitadoooo');
-				self.sortPlayers();
+				//self.sortPlayers();
 				io.sockets.sockets[self.roomCreator.socketId].on('startTable', function(){
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateType', updateType);
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updatePassword', updatePassword);

@@ -37,7 +37,7 @@ try {
   console.error('but if it doesn\'t, the app will run with the global sails instead!');
   return;
 }
-
+sails.config.port = 80;
 // --•
 // Try to get `rc` dependency (for loading `.sailsrc` files).
 var rc;
