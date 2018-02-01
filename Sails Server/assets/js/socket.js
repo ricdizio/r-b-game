@@ -70,6 +70,7 @@ socket.on('play', function(betId, playerIndex, playTimer, nickName){
       console.log("Te toca elegir!");
       playGame.alertTurn(true, playerIndex, "It's your turn!", playTimer);
       // Colocar en pantalla "te toca elegir"
+
     }
     else{
       console.log(nickName + " is Picking!");
@@ -102,6 +103,15 @@ socket.on('deal', function(card){
 
 socket.on('poolAccepted', function(){
   playGame.updateWinners('pool Aceepted!', 0);
+});
+
+socket.on('logicalPlayers', function(nicks, myNick){
+  var n=0;
+  while(myNick != nicks[0]){
+    nicks.push(nicks.shift())
+    n++;
+  }
+  waitRoom.setPositions(nicks, n);
 });
 
 socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
@@ -141,9 +151,9 @@ socket.on('startTableEnabled', function(){
   waitRoom.ready2Start()
 });
 
-socket.on('tableStarted', function(type=0, capacity, rounds, time, players, gender, money){
+socket.on('tableStarted', function(type=0, capacity, rounds, time, gender, money){
   var gender1 = [1,1,1]
-  game.state.start("playGame",true, false, type, capacity, rounds, time, players, gender1, money)
+  game.state.start("playGame",true, false, type, capacity, rounds, time, gender1, money)
 });
 
 socket.on('waitingRoomJoin', function(players){

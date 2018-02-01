@@ -108,7 +108,7 @@ var waitRoom = {
     this.texts()
     this.num = 0
     this.nCards = 10
-    this.maxPlayers = 4
+    this.maxPlayers = 3
     this.nPlayers = 0
     this.zoomLimit = {min: 221, mid:294.5, max: 368}
     this.scrollLimit = {min:94 , max: 422}
@@ -354,6 +354,7 @@ var waitRoom = {
       waitRoom.gameParams.players = button.value - 5
       socket.emit('updateCapacity',waitRoom.gameParams.players)
     }
+
     console.log(waitRoom.gameParams)
     for(; i<j; i++){
       if(i==button.value-1)
@@ -378,6 +379,8 @@ var waitRoom = {
   btnStart: function(){
     //socket.emit('getPlay', true)
     game.state.start("playGame")
+    console.log("Boton start")
+    socket.emit('startTable')
   },
   moveRight: function(){
     if(!this.isBusy){
@@ -557,7 +560,7 @@ var waitRoom = {
   },
   ready2Start: function(){
     this.start = game.add.button(928, 802, 'start', this.btnStart, this, 0,0,0)
-    socket.emit('startTable')
+
   },
   shutdown: function(){
     game.world.removeAll()

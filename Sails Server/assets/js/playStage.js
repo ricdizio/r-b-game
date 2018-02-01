@@ -114,7 +114,7 @@ var playGame = {
   nCards: 0,
   timerOn: true,
   nRound: 0,
-  gameParameters: function(type=0, players=3, rounds=5, time=30, nick, gender=[1,0,1], money=500){
+  gameParameters: function(type=0, players=3, rounds=5, time=30, gender=[1,0,1], money=500){
     if(type == 0)
       this.roomType = 'Normal'
     if(players == 4){
@@ -167,8 +167,7 @@ var playGame = {
     this.pGender = new Array()
     this.iniMoney = money
     this.playTime = time
-    //this.nicks = nick
-    this.nicks = ["Victor", "Gabriel", "Ricardo", "Maria"]
+    //this.nicks = ["Victor", "Gabriel", "Ricardo", "Maria"]
     for(var i=0; i<this.maxPlayers; i++){
       if(gender[i])
         this.pGender.push('m')
@@ -177,7 +176,7 @@ var playGame = {
     }
   },
   init: function(type, capacity, rounds, time, players, gender1, money){
-    game.gameParameters(type, capacity, rounds, time, players, gender1, money)
+    this.gameParameters(type, capacity, rounds, time, players, gender1, money)
   },
   preload: function() {
     // this.gameParameters()
@@ -205,6 +204,12 @@ var playGame = {
     // for(i = 0; i < 5; i++){
     //   game.load.image("card" + i, "../assets/carta_" + (i+1) + ".png")
     // }
+  },
+  setPositions: function(nicks, myPos){
+    this.nicks = nicks
+    this.myPos = myPos
+    console.log("Nicks:"+nicks)
+    console.log("Nicks:"+myPos)
   },
   addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false){
     var auxSprite = game.add.sprite(posX, posY, spriteID)
@@ -273,7 +278,7 @@ var playGame = {
     
 
     this.radialProgressBar = game.add.graphics(0, 0)
-    this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime*1000, "Linear", true, 0, 0, false)
+    this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
   },
   addGameTexts: function(){
     var roundStyle = {fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' }
@@ -343,18 +348,18 @@ var playGame = {
     this.timerText.text = countDown--
     this.timer.start()
 
-    game.time.events.add(Phaser.Timer.SECOND*5, function(){
-      this.btnUpdate(this.btnEnum.PICK, true)
-      this.timerOn = false
-      this.timer.stop()
-      this.timerText.text = ''
-      this.timerCircle.clear()
-    }, this)
+    // game.time.events.add(Phaser.Timer.SECOND*5, function(){
+    //   this.btnUpdate(this.btnEnum.PICK, true)
+    //   this.timerOn = false
+    //   this.timer.stop()
+    //   this.timerText.text = ''
+    //   this.timerCircle.clear()
+    // }, this)
   
-    var winArr = new Array(1,2)
-    this.updateWinners("",0,winArr,0)
-    var winArr1 = new Array(0,1)
-    this.updateWinners("",0,winArr1,4)
+    // var winArr = new Array(1,2)
+    // this.updateWinners("",0,winArr,0)
+    // var winArr1 = new Array(0,1)
+    // this.updateWinners("",0,winArr1,4)
     game.world.bringToTop(this.timerCircle)
     game.world.bringToTop(this.timerText)
   },
@@ -442,9 +447,8 @@ var playGame = {
     this.btnUpdate(this.btnEnum.POOL, false)
     socket.emit('getPoolAnswer', false, socket.id)
   },
-  alertTurn: function(select, playerIndex, playerText, time){
+  alertTurn: function(select, playerIndex, playerText){
 
-    this.playTime = time
     this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
     this.timerOn = true
     this.timerBar.onComplete.add(function(){
