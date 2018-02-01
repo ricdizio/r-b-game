@@ -283,13 +283,13 @@ var playGame = {
     this.currentRound.lineStyle(1, 0x5e5d5d)
     this.currentRound.drawRoundedRect(146, 619, 37, this.roundRectH, 7)
 
-    this.timerCircle.beginFill(0xffffff)
-    this.timerCircle.drawCircle(689+23, 646, 46)
-    this.timerCircle.endFill()
+    // this.timerCircle.beginFill(0xffffff)
+    // this.timerCircle.drawCircle(689+23, 646, 46)
+    // this.timerCircle.endFill()
     
 
     this.radialProgressBar = game.add.graphics(0, 0)
-    this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
+    //this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
   },
   addGameTexts: function(){
     var roundStyle = {fontSize: '12px', fill: '#FFF' ,fontWeight: 'normal' }
@@ -432,7 +432,7 @@ var playGame = {
   onClickR: function(){
     this.timerBar.stop()
     this.timerOn = false
-    this.timerCircle.destroy()
+    this.timerCircle.clear()
     this.btnUpdate(this.btnEnum.PICK, false)
     console.log("RED BUTTON")
     socket.emit('getPlay', true)
@@ -443,7 +443,7 @@ var playGame = {
   onClickB: function(){
     this.timerBar.stop()
     this.timerOn = false
-    this.timerCircle.destroy()
+    this.timerCircle.clear()
     this.btnUpdate(this.btnEnum.PICK, false)
     console.log("BLACK BUTTON")
     socket.emit('getPlay', false)
@@ -460,6 +460,9 @@ var playGame = {
     socket.emit('getPoolAnswer', false, socket.id)
   },
   alertTurn: function(playBool, playerIndex){
+    this.timerCircle.beginFill(0xffffff)
+    this.timerCircle.drawCircle(689+23, 646, 46)
+    this.timerCircle.endFill()
     this.btnUpdate(this.btnEnum.PICK, true)
     this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
     this.timerOn = true

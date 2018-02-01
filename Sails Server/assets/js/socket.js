@@ -1,6 +1,6 @@
 var socket = io.connect('http://192.168.1.138:3000');
 var bet = 0;
-var myPos;
+var myPos=0;
 var myNicks = new Array()
 
 class Card {
@@ -68,14 +68,15 @@ socket.on('donePicking', function(card){
 
 socket.on('play', function(index){
   //if(!lastTurn){
+    console.log("index: "+index+ " muPos: "+myPos)
     if(index == myPos){
-      
+
       var i = index-myPos
       if(i<0) i += playGame.maxPlayers
       var name = myNicks[i]
 
       console.log("Te toca elegir!"+name);
-      playGame.alertTurn(true, index);
+      playGame.alertTurn(true, i);
       // Colocar en pantalla "te toca elegir"
 
     }
