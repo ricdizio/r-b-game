@@ -128,13 +128,13 @@ socket.on('logicalPlayers', function(nicks, myNick){
   console.log("Yo: "+myPos)
 });
 
-socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
+socket.on('reward', function(winningPlayers, prize, balance, houseWon){
   console.log('premio: ' + prize);
-  var winText = new String();
+  var winText = "test";
   if(!houseWon){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
     // balance contiene el dinero de cada jugador (del 0 a N jugadores).
-    for(var i = 0; i < winningPlayers.length; i++){
+    /*for(var i = 0; i < winningPlayers.length; i++){
       if(ids[winningPlayers[i]] == socket.id){
         winText = 'You Win ';
         console.log('You win ' + prize +'!');
@@ -145,7 +145,7 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
         prize = 0;
         console.log('You Lose ');
       }
-    }
+    }*/
   }
   else{
     // Mostrar en pantalla que gano la casa.
@@ -154,7 +154,7 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
     prize =0;
   }
   playGame.updateWinners(winText, prize);
-  playGame.updateBalane(sortArray(balance));
+  playGame.updateBalance(sortArray(balance));
 });
 
 socket.on('startTableEnabled', function(){

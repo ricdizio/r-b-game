@@ -353,7 +353,7 @@ class Table {
 				ids.push(this.players[i].socketId);
 			}
 			this.pool = 0;
-			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false); // REVISAR
+			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, false); // REVISAR
 		}
 
 		setTimeout(function () {
