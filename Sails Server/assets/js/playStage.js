@@ -535,7 +535,8 @@ var playGame = {
   },
   updateBalane: function(balance){
     for(i = 0; i< balance.length ; i++)
-    this.balanceText[i].text = balance[i]
+    console.log(balance)
+    this.balanceArray[i].text = balance[i]
   },
   updateRound: function(roundNumber){
     this.currentRound.clear()
