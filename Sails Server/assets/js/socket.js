@@ -154,6 +154,7 @@ socket.on('reward', function(winningPlayers, prize, balance, houseWon){
     prize =0;
   }
   playGame.updateWinners(winText, prize);
+  console.log("Balance en REWARD: "+balance)
   playGame.updateBalance(sortArray(balance));
 });
 
@@ -219,7 +220,7 @@ socket.on('timedOut', function(playerIndex){
 
 socket.on('substractConstantBet', function(balance){
 
-  playGame.updateBalane(sortArray(balance));
+  playGame.updateBalance(sortArray(balance));
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 

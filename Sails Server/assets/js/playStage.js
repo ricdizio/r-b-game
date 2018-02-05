@@ -537,11 +537,11 @@ var playGame = {
       this.starsArray[winners[i]*5+round].update(true)
     }
   },
-  updateBalane: function(balance){
+  updateBalance: function(balance){
     for(i = 0; i< balance.length ; i++){
       this.balanceArray[i].text = balance[i]
     }
-    console.log(balance)
+    console.log("BALANCE: "+balance)
   },
   updateRound: function(roundNumber){
     this.currentRound.clear()
