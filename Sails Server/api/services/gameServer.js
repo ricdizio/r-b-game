@@ -145,8 +145,8 @@ class Table {
 
 	// Funcionamiento en orden del juego.
 
-	start(){
-		if(this.round < this.maximumRounds){
+	start() {
+		if (this.round < this.maximumRounds) {
 			io.sockets.to(this.socketRoom).emit('round', this.round++);
 			var betCounter = 0;
 			this.constantBet();
@@ -340,16 +340,16 @@ class Table {
 
 			var winningPlayers = new Array();
 			var ids = new Array();
-			
-			
-			for(var i = 0; i < this.maximumPlayers; i++){
+
+
+			for (var i = 0; i < this.maximumPlayers; i++) {
 				balance.push(this.players[i].money);
 
-				if(colorArray[i] == card.color){
+				if (colorArray[i] == card.color) {
 					winningPlayers.push(i);
 					this.players[i].add(prize);
 				}
-				
+
 				ids.push(this.players[i].socketId);
 			}
 			this.pool = 0;
@@ -640,7 +640,6 @@ function generateDeck() {
 	}
 	return temporalArray;
 }
-
 
 console.log("Se ejecuto");
 

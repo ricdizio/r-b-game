@@ -251,7 +251,7 @@ var waitRoom = {
     this.checkBtns[1].update(true)
     this.checkBtns[4].update(true)
     this.checkBtns[5].update(true)
-    this.checkBtns[8].update(true)
+    this.checkBtns[9].update(true)
     console.log(waitRoom.gameParams)
   },
   pruebaDelay: function(){
