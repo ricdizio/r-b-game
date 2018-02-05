@@ -147,7 +147,7 @@ class Table{
 
 	start(){
 		if(this.round < this.maximumRounds){
-			io.sockets.to(this.socketRoom).emit('round', ++this.round);
+			io.sockets.to(this.socketRoom).emit('round', this.round++);
 			var betCounter = 0;
 			this.constantBet();
 		}
@@ -163,7 +163,7 @@ class Table{
 			temporalArray.push(this.players[i].money);
 			this.pool += this.constantMoneyBet;
 		}
-
+		console.log(temporalArray);
 		io.sockets.to(this.socketRoom).emit('substractConstantBet', temporalArray);
 		this.chooseColor();
 	}
