@@ -48,6 +48,7 @@ class roomGUI {
         for(var i=0; i<3; i++){
             this.stars[i].update(true)
         }
+        
     }
     move(pos){
         var i
@@ -94,9 +95,8 @@ var lobbyStage = {
         for(var i=0; i<5; i++){
             this.allRooms.push(new roomGUI(0,"Nombre_de_Prueba"+i))   
         }
-
         game.time.events.add(Phaser.Timer.SECOND*2, function(){
-            this.allRooms[0].create(this.getPos(0))
+            //this.allRooms[0].create(this.getPos(0))
         }, this)
         game.time.events.add(Phaser.Timer.SECOND*3, function(){
             //this.allRooms[1].create(this.getPos(1))
@@ -123,6 +123,9 @@ var lobbyStage = {
         game.state.start("waitRoom")
         socket.emit('join', "Room1")
         console.log("Create")
+    },
+    joinRoom: function(index){
+
     },
     update: function(){
     }

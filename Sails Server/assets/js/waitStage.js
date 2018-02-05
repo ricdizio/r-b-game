@@ -330,37 +330,37 @@ var waitRoom = {
     var i=0, j=0
     // Time
     if(button.value==1 || button.value==2 || button.value==3){
-      i=0; j=3
+      i=1; j=4
       var time = new Array(15,30,45)
       waitRoom.gameParams.time = time[button.value-1]
       socket.emit('updateTurnTime',waitRoom.gameParams.time)
     }
     // Type
     if(button.value==4 || button.value==5){
-      i=3; j=5
+      i=4; j=6
       waitRoom.gameParams.type = button.value - 4
       socket.emit('updateType',waitRoom.gameParams.type)
     }
     // Rounds
     if(button.value==6 || button.value==7){
-      i=5; j=7
+      i=6; j=8
       var rounds = new Array(5,9)
       waitRoom.gameParams.rounds = rounds[button.value - 6]
       socket.emit('updateRounds',waitRoom.gameParams.rounds)
     }
     // Players
     if(button.value==8 || button.value==9){
-      i=7; j=9
+      i=8; j=10
       waitRoom.gameParams.players = button.value - 5
       socket.emit('updateCapacity',waitRoom.gameParams.players)
     }
 
     console.log(waitRoom.gameParams)
     for(; i<j; i++){
-      if(i==button.value-1)
-        waitRoom.checkBtns[i].update(true)
+      if(i==button.value)
+        waitRoom.checkBtns[i-1].update(true)
       else
-        waitRoom.checkBtns[i].update(false)
+        waitRoom.checkBtns[i-1].update(false)
     }
   },
   paramUpdate: function(){
