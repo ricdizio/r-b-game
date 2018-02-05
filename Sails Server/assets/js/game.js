@@ -36,8 +36,7 @@ loadAssets = {
     game.load.spritesheet('btnCreateRoom','../assets/btn_rooms.png',170,42,1) 
 
     //----- WAITROOM ASSETS ------------------------------------------------------
-    game.load.image('card1', '../assets/carta_1.png')
-    game.load.image('card2', '../assets/carta_small_ico.png')
+    game.load.image('cardsmall', '../assets/carta_small_ico.png')
     game.load.image('cardBack', '../assets/carta_back_ico.png')
     game.load.image('cardBackB', '../assets/carta_oculta_big_ico.png')
     game.load.image('mPlayer', '../assets/room_hombre.png')
