@@ -587,6 +587,7 @@ function newConnection(socket) {
 	console.log(nickNamesArray[nickNamesArray.length - 1]);
 	console.log('socket id');
 	console.log(socket.id);
+	socket.join('lobby');
 
 	newPlayersArray.push(new Player(socket.id, nickNamesArray[nickNamesArray.length - 1]));
 
@@ -612,15 +613,20 @@ function newConnection(socket) {
 				}
 			}
 			waitingRoomVar.kickPlayer(Me);
+			socket.join('lobby');
 		});
 
 		if (waitingRoomVar == 0) {
 			waitingRoomVar = new WaitingRoom(roomName, globalDeck);
+			io.sockets.to('lobby').emit('updateLobby', waitingRoomVar);
+
 			waitingRoomVar.addPlayer(Me);
 		}
 		else {
 			waitingRoomVar.addPlayer(Me);
 		}
+		socket.leave('lobby');
+		
 	});
 
 
