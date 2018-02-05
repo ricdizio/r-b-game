@@ -128,7 +128,7 @@ socket.on('logicalPlayers', function(nicks, myNick){
   console.log("Yo: "+myPos)
 });
 
-socket.on('reward', function(winningPlayers, prize, balance, houseWon){
+socket.on('reward3', function(winningPlayers, prize, balance, houseWon){
   console.log('premio: ' + prize);
   var winText = "test";
   if(!houseWon){
@@ -153,7 +153,16 @@ socket.on('reward', function(winningPlayers, prize, balance, houseWon){
     winText = 'The House Wins';
     prize =0;
   }
-  playGame.updateWinners(winText, prize);
+  
+  for(var i = 0; i < winningPlayers.length; i++){
+    var a = winningPlayers[i]-myPos;
+    if(a < 0) a += playGame.maxPlayers;
+    winningPlayers[i] = a;
+  }
+  
+
+  playGame.updateWinners(sortArray(winningPlayers));
+  console.log("Balance en REWARD: "+balance)
   playGame.updateBalance(sortArray(balance));
 });
 
@@ -219,7 +228,7 @@ socket.on('timedOut', function(playerIndex){
 
 socket.on('substractConstantBet', function(balance){
 
-  playGame.updateBalane(sortArray(balance));
+  playGame.updateBalance(sortArray(balance));
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 

@@ -145,8 +145,8 @@ class Table {
 
 	// Funcionamiento en orden del juego.
 
-	start(){
-		if(this.round < this.maximumRounds){
+	start() {
+		if (this.round < this.maximumRounds) {
 			io.sockets.to(this.socketRoom).emit('round', this.round++);
 			var betCounter = 0;
 			this.constantBet();
@@ -353,7 +353,7 @@ class Table {
 			}
 			this.pool = 0;
 			console.log('SOCKET REWARD');
-			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, false); // REVISAR
+			io.sockets.to(this.socketRoom).emit('reward3', winningPlayers, prize, balance, false); // REVISAR
 		}
 
 		setTimeout(function () {
@@ -646,7 +646,6 @@ function generateDeck() {
 	}
 	return temporalArray;
 }
-
 
 console.log("Se ejecuto");
 

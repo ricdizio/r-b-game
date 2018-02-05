@@ -526,22 +526,17 @@ var playGame = {
     if(suit == 0)
       console.log('CLUBS')
   },
-  updateWinners: function(winText, prize, winners, round){
-    if(prize != 0){
-      //this.winnerText.text = winText +''+ prize
-    }
-    else{
-      //this.winnerText.text = winText
-    }
+  updateWinners: function(winners){
     for(i = 0; i<winners.length; i++){
-      this.starsArray[winners[i]*5+round].update(true)
+      this.starsArray[winners[i]*5+this.nRound].update(true)
     }
+    this.nRound++
   },
-  updateBalane: function(balance){
+  updateBalance: function(balance){
     for(i = 0; i< balance.length ; i++){
       this.balanceArray[i].text = balance[i]
     }
-    console.log(balance)
+    console.log("BALANCE: "+balance)
   },
   updateRound: function(roundNumber){
     this.currentRound.clear()
