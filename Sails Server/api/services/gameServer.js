@@ -412,7 +412,7 @@ class WaitingRoom{
 		this.roomName = roomName;
 		this.type = "Normal";
 		this.roomPassword = '';
-		this.roomBet = 500;
+		this.roomBet = 100;
 		this.roomCapacity = 3;
 		this.turnTime = 30000;
 		this.rounds = 5;
