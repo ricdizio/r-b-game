@@ -335,6 +335,7 @@ class Table {
 	sendReward(colorArray, counter, go, card, balance) {
 		clearTimeout(this.poolTimeoutVariable);
 		var self = this;
+		console.log('GO EN REWARD' + go);
 		if (go) {
 			var prize = this.pool / counter;
 
@@ -351,6 +352,7 @@ class Table {
 				ids.push(this.players[i].socketId);
 			}
 			this.pool = 0;
+			console.log('SOCKET REWARD');
 			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, false); // REVISAR
 		}
 
