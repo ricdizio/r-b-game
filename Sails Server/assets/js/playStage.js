@@ -449,7 +449,7 @@ var playGame = {
     socket.emit('getPlay', false)
   },
   poolRequest: function(req){
-    this.btnUpdate(this.btnEnum.POOL, true)
+    //this.btnUpdate(this.btnEnum.POOL, true)
   },
   poolAccept: function(){
     this.btnUpdate(this.btnEnum.POOL, false)
@@ -466,8 +466,12 @@ var playGame = {
     this.btnUpdate(this.btnEnum.PICK, true)
     this.timerBar = game.add.tween(this.timerAngle).to( { max: 360 }, this.playTime, "Linear", true, 0, 0, false)
     this.timerOn = true
+    // game.world.bringToTop(this.timerCircle)
+    // game.world.bringToTop(this.radialProgressBar)
+    // game.world.bringToTop(this.timerText)
     this.timerBar.onComplete.add(function(){
       this.timerOn = false
+      this.timerCircle.clear()
       this.radialProgressBar.clear()
     }, this)
     this.currentTimer = this.timerPos[playerIndex]
@@ -484,7 +488,7 @@ var playGame = {
   },
   showCard: function(card, suit) {
     console.log(card)
-    this.cardArray[this.nCards].flip(this.nCards, 1)
+    this.cardArray[this.nCards].flip(card.index, 1)
     this.cardArray[this.nCards].move(true, 0,0)
     this.nCards++
     this.cardArray.push(new cardGUI())

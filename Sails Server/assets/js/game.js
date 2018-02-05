@@ -79,8 +79,8 @@ loadAssets = {
     game.load.spritesheet('buttonD', '../assets/btn_deny_ico.png', 77, 28, 1)
     game.load.spritesheet('buttonF', '../assets/btn_agregar_ico.png', 77, 28, 1)
 
-    for(i = 0; i < 5; i++){
-      game.load.image("card" + i, "../assets/carta_" + (i+1) + ".png")
+    for(i = 0; i < 52; i++){
+      game.load.image("card" + i, "../assets/card" + i + ".png")
     }
   },
   create: function(){

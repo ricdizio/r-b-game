@@ -153,11 +153,8 @@ socket.on('reward', function(winningPlayers, prize, balance, ids, houseWon){
     winText = 'The House Wins';
     prize =0;
   }
-  for(var i = 0; i < balance.length; i++){
-      console.log("Jugador " + (i+1) + " tiene " + balance[i]);
-  }
   playGame.updateWinners(winText, prize);
-  playGame.updateBalane(balance);
+  playGame.updateBalane(sortArray(balance));
 });
 
 socket.on('startTableEnabled', function(){
