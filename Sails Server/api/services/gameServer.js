@@ -340,17 +340,20 @@ class Table{
 
 			var winningPlayers = new Array();
 			var ids = new Array();
-
+			
+			
 			for(var i = 0; i < this.maximumPlayers; i++){
+				balance.push(this.players[i].money);
+
 				if(colorArray[i] == card.color){
 					winningPlayers.push(i);
 					this.players[i].add(prize);
 				}
-				balance.push(this.players[i].money);
+				
 				ids.push(this.players[i].socketId);
 			}
 			this.pool = 0;
-			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false);
+			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance, ids, false); // REVISAR
 		}
 
 		setTimeout(function(){
