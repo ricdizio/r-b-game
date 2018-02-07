@@ -187,7 +187,7 @@ create: function(req, res, next) {
     var userObj = req.param('id');
 
     // Agregamos id del amigo a friends
-    User.findOne(req.session.User.id).populate('friends').exec(function(err,u){
+    User.findOne(req.session.User.nickName).populate('friends').exec(function(err,u){
       u.friends.add(userObj);
       u.save(function(err){ 
         if(err) {
