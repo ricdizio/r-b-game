@@ -218,6 +218,9 @@ socket.on('waitingRoomRounds', function(rounds){
   waitRoom.btnCheck(rounds + 6)
 });
 
+socket.on('refreshRooms', function(){
+  
+});
 
 socket.on('poolRequest', function(){
   playGame.poolRequest(true);

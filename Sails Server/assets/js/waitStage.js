@@ -359,6 +359,7 @@ var waitRoom = {
     game.state.start("lobbyStage")
   },
   btnCreate: function(){
+    
   },
   btnChange: function(){
   },
@@ -546,7 +547,6 @@ var waitRoom = {
   },
   ready2Start: function(){
     this.start = game.add.button(928, 802, 'start', this.btnStart, this, 0,0,0)
-
   },
   shutdown: function(){
     game.world.removeAll()

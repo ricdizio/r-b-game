@@ -36,6 +36,11 @@ class roomGUI {
         this.roomSprites.push(game.add.sprite(pos.x+352, pos.y+88, 'initialBet'))
         this.roomSprites.push(game.add.sprite(pos.x+120, pos.y+85, this.hand+'hand'))
         this.roomSprites.push(game.add.sprite(pos.x+300, pos.y+83, 'rBet'+this.betType))
+
+        this.roomSprites[0].inputEnabled = true;
+        this.roomSprites[0].input.useHandCursor = true;
+        this.roomSprites[0].events.onInputDown.add(this.joinRoom, this);
+
         if(this.dTime)
             this.roomSprites.push(game.add.sprite(pos.x+259, pos.y+83, 'dtime'))
         if(this.lock)
@@ -107,6 +112,15 @@ var lobbyStage = {
         game.state.start("waitRoom")
         socket.emit('join', "Room1")
         console.log("Create")
+    },
+    addRoom: function(name, pos){
+        this.allRooms.push(new roomGUI(0,name))
+        this.allRooms[0].create(this.getPos(pos))
+    },
+    joinRoom: function(){
+        game.state.start("waitRoom")
+        socket.emit('join', "Room1")
+        console.log("Join in Room1")
     },
     joinRoom: function(index){
 
