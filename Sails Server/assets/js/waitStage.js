@@ -293,7 +293,25 @@ var waitRoom = {
       this.updateStatus(i, this.playerInfo[i].st)
     }
   },
-  btnCheck: function(i, j, button){
+  btnCheck: function(button){
+    var i=0, j=0
+    // Time
+    if(button.value==1 || button.value==2 || button.value==3){
+      i=1; j=4
+    }
+    // Type
+    if(button.value==4 || button.value==5){
+      i=4; j=6
+    }
+    // Rounds
+    if(button.value==6 || button.value==7){
+      i=6; j=8
+    }
+    // Players
+    if(button.value==8 || button.value==9){
+      i=8; j=10
+    }
+
     for(; i<j; i++){
       if(i==button)
         waitRoom.checkBtns[i-1].update(true)
@@ -331,7 +349,7 @@ var waitRoom = {
     }
 
     console.log(waitRoom.gameParams)
-    waitRoom.btnCheck(i, j, button.value)
+    //waitRoom.btnCheck(i, j, button.value)
   },
   btnNone: function(){
   },

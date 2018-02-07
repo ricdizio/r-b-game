@@ -209,7 +209,9 @@ socket.on('updateType', function(type){
 });
 
 socket.on('waitingRoomCapacity', function(capacity){
+  console.log("Capacity before call fn: "+capacity)
   waitRoom.btnCheck(capacity + 5)
+  console.log("Capacity after call fn: "+capacity)
 });
 socket.on('waitingRoomTurnTime', function(time){
   waitRoom.btnCheck(bet + 1)
