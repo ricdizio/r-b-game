@@ -222,8 +222,8 @@ socket.on('waitingRoomRounds', function(rounds){
   }
 });
 
-socket.on('refreshRooms', function(){
-  
+socket.on('refreshRooms', function(waitingRoom){
+  lobbyStage.addRoom(waitingRoom)
 });
 
 socket.on('poolRequest', function(){

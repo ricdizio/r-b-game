@@ -113,9 +113,9 @@ var lobbyStage = {
         socket.emit('join', "Room1")
         console.log("Create")
     },
-    addRoom: function(name, pos){
-        this.allRooms.push(new roomGUI(0,name))
-        this.allRooms[0].create(this.getPos(pos))
+    addRoom: function(wR){
+        this.allRooms.push(new roomGUI(0, wR.roomName, 0, wR.capacity, wR.lock, wR.turnTime, wR.rounds, 0, 0, wR.roomBet*wR.rounds))
+        this.allRooms[0].create(this.getPos(0))
     },
     joinRoom: function(){
         game.state.start("waitRoom")
