@@ -122,9 +122,6 @@ var lobbyStage = {
         socket.emit('join', "Room1")
         console.log("Join in Room1")
     },
-    joinRoom: function(index){
-
-    },
     update: function(){
     }
 }
