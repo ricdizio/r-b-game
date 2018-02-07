@@ -92,7 +92,7 @@ class playerGUI {
 
     //Peticion XMLhttp
     var http = new XMLHttpRequest();
-    var url = "profile/add";
+    var url = "http://201.242.167.11:1337/profile/add";
     var data = new FormData();
     data.append('id', id);
     http.open("POST", url, true);
@@ -103,11 +103,12 @@ class playerGUI {
       if(http.readyState == 4 && http.status == 200) {
         alert(http.responseText);
       }
+    }
+    http.send(data);
 
-    http.send(params);
-
-    console.log("Friend "+this.nick+" Added")
-    this.buttonF.destroy()
+    console.log("Friend "+this.nick+" Added");
+    alert("Friend "+this.nick+" Added");
+    this.buttonF.destroy();
   }
 }
 

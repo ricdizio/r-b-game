@@ -188,6 +188,8 @@ create: function(req, res, next) {
 
     // Agregamos id del amigo a friends
     User.findOne(req.session.User.nickName).populate('friends').exec(function(err,u){
+      console,log("info req enviada: " + req.session.User.nickName);
+      console,log("info u: " + u);
       u.friends.add(userObj);
       u.save(function(err){ 
         if(err) {
@@ -199,7 +201,7 @@ create: function(req, res, next) {
       var msg = "user with id: "+ userObj + " has been added successfully";
       console.log(msg);
 
-      res.json({ data: msg})
+      res.json({data: msg})
       console.log(u);
     });
   },
