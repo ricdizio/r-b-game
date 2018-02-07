@@ -9,7 +9,7 @@ class checkGUI {
     
     button.inputEnabled = true
     button.value = value
-    button.events.onInputDown.add(waitRoom.btnCheck, this)
+    button.events.onInputDown.add(waitRoom.paramUpdate, this)
     button.input.useHandCursor = true
     this.point.beginFill(0xd0021b)
     this.point.drawCircle(posX, posY,8)
@@ -293,7 +293,15 @@ var waitRoom = {
       this.updateStatus(i, this.playerInfo[i].st)
     }
   },
-  btnCheck: function(button){
+  btnCheck: function(i, j, button){
+    for(; i<j; i++){
+      if(i==button)
+        waitRoom.checkBtns[i-1].update(true)
+      else
+        waitRoom.checkBtns[i-1].update(false)
+    }
+  },
+  paramUpdate: function(button){
     var i=0, j=0
     // Time
     if(button.value==1 || button.value==2 || button.value==3){
@@ -323,15 +331,7 @@ var waitRoom = {
     }
 
     console.log(waitRoom.gameParams)
-    for(; i<j; i++){
-      if(i==button.value)
-        waitRoom.checkBtns[i-1].update(true)
-      else
-        waitRoom.checkBtns[i-1].update(false)
-    }
-  },
-  paramUpdate: function(){
-
+    waitRoom.btnCheck(i, j, button.value)
   },
   btnNone: function(){
   },

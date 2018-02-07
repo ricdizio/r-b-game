@@ -449,13 +449,11 @@ class WaitingRoom {
 		io.sockets.sockets[Player.socketId].on('dealWaitingRoomCard', chooseFirst);
 
 		function chat(message, socketId) {
-			var nickName;
-			for (var i = 0; i < self.players.length; i++) {
-				if (self.players[i].socketId == socketId) {
-					nickName = nickNamesArray[i].nickName;
-					break;
-				}
-			}
+			var filterObj = self.players.filter(function(e) {
+				return e.socketId == socketId;
+			});
+
+			var nickName = filterObj.nickName;
 			io.sockets.to(self.roomName).emit('chat', nickName, message);
 		}
 
