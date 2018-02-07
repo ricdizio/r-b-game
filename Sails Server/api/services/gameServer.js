@@ -452,20 +452,29 @@ class WaitingRoom {
 			var filterObj = self.players.filter(function(e) {
 				return e.socketId == socketId;
 			});
-
+			console.log('FILTEROBJ CHAT: '+ filterObj);
 			var nickName = filterObj.nickName;
-			io.sockets.to(self.roomName).emit('chat', nickName, message);
+			console.log('NICKNAME: '+ nickName);
+			io.sockets.to(self.roomName).emit('chat', 'DizioElMaricon', message);
 		}
 
 		function chooseFirst(socketId) {
 			io.sockets.sockets[socketId].removeListener('dealWaitingRoomCard', chooseFirst);
 			var tempCard = self.dealCard(true);
 
-			for (var i = 0; i < self.players.length; i++) {
+			/*for (var i = 0; i < self.players.length; i++) {
 				if (self.players[i].socketId == socketId) {
 					break;
 				}
-			}
+			}*/
+
+			var filterObj = self.players.filter(function(e) {
+				return e.socketId == socketId;
+			});
+			
+			console.log('FILTEROBJ CHOOSEFIRST: '+ filterObj);
+			var i = self.players.indexOf(filterObj);
+			console.log('I: ' + i);
 
 			self.pickedCards[i] = tempCard;
 			io.sockets.to(self.roomName).emit('waitingRoomDealt', tempCard, i, socketId); // Envia la carta y el jugador (i manda la posicion)
@@ -491,8 +500,6 @@ class WaitingRoom {
 
 					globalTable = new Table(self.players, self.roomName, self.type,
 						self.roomCapacity, self.rounds, self.roomBet * self.rounds, self.turnTime, self.roomBet);
-
-
 				});
 
 				io.sockets.sockets[self.roomCreator.socketId].emit('startTableEnabled');
