@@ -453,7 +453,6 @@ class WaitingRoom {
 				return e.socketId == socketId;
 			});
 			var nickName = filterObj[0].nickName;
-			console.log('NICKNAME: '+ nickName);
 			io.sockets.to(self.roomName).emit('chat', nickName, message);
 		}
 
@@ -471,9 +470,7 @@ class WaitingRoom {
 				return e.socketId == socketId;
 			});
 
-			//console.log('FILTEROBJ CHOOSEFIRST: '+ filterObj);
 			var i = self.players.indexOf(filterObj[0]);
-			console.log('I: ' + i);
 
 			self.pickedCards[i] = tempCard;
 			io.sockets.to(self.roomName).emit('waitingRoomDealt', tempCard, i, socketId); // Envia la carta y el jugador (i manda la posicion)
@@ -489,14 +486,14 @@ class WaitingRoom {
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateTurnTime', updateTurnTime);
 					io.sockets.sockets[self.roomCreator.socketId].removeListener('updateRounds', updateRounds);
 
-
 					for (var i = 0; i < self.players.length; i++) {
 						io.sockets.sockets[self.players[i].socketId].emit('logicalPlayers', self.nickNamesArray, self.players[i].nickName);
 						console.log('Enviando: ' + self.players[i].nickName + ' ' + self.nickNamesArray);
 					}
 
 					io.sockets.to(self.roomName).emit('tableStarted', 0, self.roomCapacity, self.rounds, self.turnTime, 0, self.roomBet * self.rounds);
-
+					console.log('JUGADORES AL CREAR: ')
+					console.log(self.players)
 					globalTable = new Table(self.players, self.roomName, self.type,
 						self.roomCapacity, self.rounds, self.roomBet * self.rounds, self.turnTime, self.roomBet);
 				});
@@ -518,6 +515,7 @@ class WaitingRoom {
 		}
 
 		function updateCapacity(capacity) {
+			console.log('CAPACIDAD RECIBIDA: ' + capacity);
 			self.capacity = capacity;
 			io.sockets.to(self.roomName).emit('waitingRoomCapacity', capacity);
 		}
