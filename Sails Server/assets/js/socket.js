@@ -197,19 +197,23 @@ socket.on('waitingRoomDealt', function(card, index, socketId){
   console.log(card)
 });
 
-
+// Update btn
 socket.on('waitingRoomBet', function(bet){
- 
 });
+socket.on('updateType', function(type){
+  waitRoom.btnCheck(type + 4)
+});
+
 socket.on('waitingRoomCapacity', function(capacity){
- 
+  waitRoom.btnCheck(capacity + 5)
 });
 socket.on('waitingRoomTurnTime', function(time){
- 
+  waitRoom.btnCheck(bet + 1)
 });
 socket.on('waitingRoomRounds', function(rounds){
- 
+  waitRoom.btnCheck(bet + 6)
 });
+
 
 socket.on('poolRequest', function(){
   playGame.poolRequest(true);

@@ -23,39 +23,7 @@ class checkGUI {
   
 var waitRoom = {
   statusEnum: Object.freeze({OWNER: 1, READY: 2, WAITING:3 }),
-  preload: function() { 
-    // game.stage.backgroundColor = 0x181818
-    // game.config.setForceTimeOut = true
-    // game.stage.disableVisibilityChange = true
-    // game.add.plugin(PhaserInput.Plugin)
-
-    // game.load.image('card1', '../assets/carta_1.png')
-    // game.load.image('card2', '../assets/carta_small_ico.png')
-    // game.load.image('cardBack', '../assets/carta_back_ico.png')
-    // game.load.image('cardBackB', '../assets/carta_oculta_big_ico.png')
-    // game.load.image('mPlayer', '../assets/room_hombre.png')
-    // game.load.image('wPlayer', '../assets/room_mujer.png')
-    // game.load.image('privateR', '../assets/privada_ico.png')
-    // game.load.image('publicR', '../assets/publica_ico.png')
-    // game.load.image('betCoin', '../assets/monto_apuesta_ico.png')
-    // game.load.image('3players', '../assets/3_jugadores_ico.png')
-    // game.load.image('4players', '../assets/4_jugadores_ico.png')
-    // game.load.image('5hand', '../assets/mano_5_ico.png')
-    // game.load.image('9hand', '../assets/mano_9_ico.png')
-    // game.load.image('dupTime', '../assets/duplicar_tiempo_ico.png')
-    // game.load.image('changeBet', '../assets/apuesta_ico.png')
-    // game.load.image('btnCheck', '../assets/btn_check_ico.png')
-    // game.load.spritesheet('return', '../assets/arrow_back_ico.png',24,24,1)    
-    // game.load.spritesheet('previous', '../assets/atras_ico.png',17,16,1)
-    // game.load.spritesheet('next', '../assets/siguiente_ico.png',17,16,1)
-    // game.load.spritesheet('change', '../assets/btn_cambiar_apuesta.png', 170, 42, 1)
-    // game.load.spritesheet('bet', '../assets/btn_cambiar_apuesta.png', 72, 42, 1)
-    // game.load.spritesheet('create', '../assets/btn_create_ico.png', 170, 42, 1)
-    // game.load.spritesheet('start', '../assets/btn_start_ico.png', 170, 42, 1)
-
-    // for(i = 0; i < 5; i++){
-    //   game.load.image("card" + i, "../assets/carta_" + (i+1) + ".png")
-    // }
+  preload: function() {
   },
   texts: function(){
     var titleStyle = {fontSize: '18px', fill: '#f5a623' ,fontWeight: 'normal' }
@@ -78,7 +46,6 @@ var waitRoom = {
     game.add.text(629, 588, 'TURN TIME',subTitleStyle)
     game.add.text(629, 677, 'NUMBER OF ROUNDS',subTitleStyle)
     game.add.text(40,114,'This is to select the first player. Who pick the highest card start.',descriptionStyle)
-    
   },
   draw: function(){
     game.stage.backgroundColor = 0x181818
@@ -129,7 +96,7 @@ var waitRoom = {
       pass: '',
       type: 1,
       bet: 500,
-      players: 4,
+      players: 3,
       time: 30,
       rounds: 5
     }
@@ -251,7 +218,7 @@ var waitRoom = {
     this.checkBtns[1].update(true)
     this.checkBtns[4].update(true)
     this.checkBtns[5].update(true)
-    this.checkBtns[8].update(true)
+    this.checkBtns[7].update(true)
     console.log(waitRoom.gameParams)
   },
   pruebaDelay: function(){
