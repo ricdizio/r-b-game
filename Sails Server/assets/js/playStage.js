@@ -343,11 +343,12 @@ var playGame = {
     this.addSprite(640, 809, 'dupTime')
     this.leaveBtn = game.add.button(928, 800, 'buttonL', this.shutdown, this, 0, 0, 0)   
 
-    var countDown = this.playTime/ 1000
+    this.countDown = this.playTime/ 1000
     this.timer.loop(1000,function(){
-      this.timerText.text = countDown--
-      if(countDown<1){
+      this.timerText.text = this.countDown--
+      if(this.countDown<1){
         this.timer.stop()
+        this.countDown = this.playTime/ 1000
         this.timerText.text = ''
       }
     }, this)
