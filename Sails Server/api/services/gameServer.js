@@ -295,7 +295,7 @@ class Table {
 		}
 		else if (counter == this.maximumPlayers && this.round != this.maximumRounds) {
 			this.poolTimeoutVariable = setTimeout(function () {
-				poolAnswer(false, 0);
+				poolAnswer(false, 0, true);
 			}, poolTimeout);
 
 			this.poolAnswer = 0;
@@ -306,20 +306,24 @@ class Table {
 
 			io.sockets.to(this.socketRoom).emit('poolRequest'); // Solicitud para acumular
 
-			function poolAnswer(poolAnswerVar, socketId) {
-				if (poolAnswerVar) {
-					self.poolAccept++;
-				}
-				self.poolAnswer++;
-
-				if (self.poolAccept == self.maximumPlayers) { // Si todos dicen que si.
-					self.sendReward(0, 0, false, 0, 0);
-					io.sockets.to(this.socketRoom).emit('poolAccepted');
-				}
-				else if (self.poolAnswer == self.maximumPlayers) { // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
-					for (var i = 0; i < self.maximumPlayers; i++) {
-						io.sockets.sockets[self.players[i].socketId].removeListener('getPoolAnswer', poolAnswer);
+			function poolAnswer(poolAnswerVar, socketId, timedOut) {
+				if(!timedOut){
+					if (poolAnswerVar) {
+						self.poolAccept++;
 					}
+					self.poolAnswer++;
+	
+					if (self.poolAccept == self.maximumPlayers) { // Si todos dicen que si.
+						self.sendReward(0, 0, false, 0, 0);
+						io.sockets.to(this.socketRoom).emit('poolAccepted');
+					}
+					else if (self.poolAnswer == self.maximumPlayers) { // Si alguien dice que no, quitamos los event listeners de todos y les hacemos reward.
+						for (var i = 0; i < self.maximumPlayers; i++) {
+							io.sockets.sockets[self.players[i].socketId].removeListener('getPoolAnswer', poolAnswer);
+						}
+						self.sendReward(colorArray, counter, true, card, balance); // Enviamos reward normalmente.
+					}
+				} else {
 					self.sendReward(colorArray, counter, true, card, balance); // Enviamos reward normalmente.
 				}
 			}
