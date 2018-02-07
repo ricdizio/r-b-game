@@ -414,7 +414,8 @@ class WaitingRoom {
 	constructor(roomName, deck) {
 		// Room and default settings
 		this.roomName = roomName;
-		this.type = "Normal";
+		this.type = 0; // 0 normal. 1 vip
+		this.lock = 0; // 0 privado, 1 publico
 		this.roomPassword = '';
 		this.roomBet = 100;
 		this.roomCapacity = 3;
@@ -439,6 +440,7 @@ class WaitingRoom {
 			this.roomCreator = Player;
 			// falta nombre
 			io.sockets.sockets[Player.socketId].on('updateType', updateType);
+			io.sockets.sockets[Player.socketId].on('updateLock', updateLock);
 			io.sockets.sockets[Player.socketId].on('updatePassword', updatePassword);
 			io.sockets.sockets[Player.socketId].on('updateBet', updateBet);
 			io.sockets.sockets[Player.socketId].on('updateCapacity', updateCapacity);
@@ -506,7 +508,14 @@ class WaitingRoom {
 			}
 		}
 
-		function updateType() {
+		function updateType(type) {
+			self.type = type;
+			io.sockets.to(self.roomName).emit('waitingRoomType', type);
+		}
+
+		function updateLock(lock){
+			self.lock = lock;
+			io.sockets.to(self.roomName).emit('waitingRoomLock', lock);
 		}
 
 		function updatePassword(password) {
@@ -623,7 +632,19 @@ function newConnection(socket) {
 
 		if (waitingRoomVar == 0) {
 			waitingRoomVar = new WaitingRoom(roomName, globalDeck);
-			io.sockets.to('lobby').emit('updateLobby', waitingRoomVar);
+			
+			var temp = {
+				roomName = roomName,
+				type = 0, // 0 normal. 1 vip
+				lock = 0, // 0 privado, 1 publico b
+				roomPassword = '',
+				roomBet = 100,
+				roomCapacity = 3,
+				turnTime = 30000,
+				rounds = 5
+			}
+
+			io.sockets.to('lobby').emit('refreshRooms', temp);
 
 			waitingRoomVar.addPlayer(Me);
 		}
@@ -631,9 +652,7 @@ function newConnection(socket) {
 			waitingRoomVar.addPlayer(Me);
 		}
 		socket.leave('lobby');
-		
 	});
-
 
 	socket.on('disconnect', function () {
 	});
