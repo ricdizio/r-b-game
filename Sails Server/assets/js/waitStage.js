@@ -333,7 +333,7 @@ var waitRoom = {
     if(button.value==4 || button.value==5){
       i=4; j=6
       waitRoom.gameParams.type = button.value - 4
-      socket.emit('updateType',waitRoom.gameParams.type)
+      socket.emit('updateLock',waitRoom.gameParams.type)
     }
     // Rounds
     if(button.value==6 || button.value==7){
@@ -359,7 +359,7 @@ var waitRoom = {
     game.state.start("lobbyStage")
   },
   btnCreate: function(){
-    
+
   },
   btnChange: function(){
   },

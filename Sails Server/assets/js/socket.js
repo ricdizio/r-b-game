@@ -204,10 +204,9 @@ socket.on('waitingRoomDealt', function(card, index, socketId){
 // Update btn
 socket.on('waitingRoomBet', function(bet){
 });
-socket.on('updateType', function(type){
-  waitRoom.btnCheck(type + 4)
+socket.on('waitingRoomLock', function(lock){
+  waitRoom.btnCheck(lock + 4)
 });
-
 socket.on('waitingRoomCapacity', function(capacity){
   waitRoom.btnCheck(capacity + 5)
 });
