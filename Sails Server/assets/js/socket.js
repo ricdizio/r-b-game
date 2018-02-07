@@ -1,5 +1,5 @@
 
-var socket = io.connect('http://201.242.167.11:3000');
+var socket = io.connect('http://190.38.142.244:3000');
 var bet = 0;
 var myPos=0;
 var myNicks = new Array()
@@ -209,9 +209,7 @@ socket.on('updateType', function(type){
 });
 
 socket.on('waitingRoomCapacity', function(capacity){
-  console.log("Capacity before call fn: "+capacity)
   waitRoom.btnCheck(capacity + 5)
-  console.log("Capacity after call fn: "+capacity)
 });
 socket.on('waitingRoomTurnTime', function(time){
   waitRoom.btnCheck(bet + 1)

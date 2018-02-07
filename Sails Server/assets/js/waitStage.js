@@ -294,25 +294,24 @@ var waitRoom = {
     }
   },
   btnCheck: function(button){
-    console.log(button)
     var i=0, j=0
     // Time
-    if(button.value==1 || button.value==2 || button.value==3){
+    if(button==1 || button==2 || button==3){
       i=1; j=4
     }
     // Type
-    if(button.value==4 || button.value==5){
+    if(button==4 || button==5){
       i=4; j=6
     }
     // Rounds
-    if(button.value==6 || button.value==7){
+    if(button==6 || button==7){
       i=6; j=8
     }
     // Players
-    if(button.value==8 || button.value==9){
+    if(button==8 || button==9){
       i=8; j=10
     }
-
+    
     for(; i<j; i++){
       if(i==button)
         this.checkBtns[i-1].update(true)

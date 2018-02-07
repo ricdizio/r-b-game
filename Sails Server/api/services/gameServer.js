@@ -525,11 +525,13 @@ class WaitingRoom {
 		}
 
 		function updateTurnTime(turnTime) {
+			console.log('TURNO RECIBIDA: ' + turnTime);
 			self.turnTime = turnTime;
 			io.sockets.to(self.roomName).emit('waitingRoomTurnTime', turnTime);
 		}
 
 		function updateRounds(rounds) {
+			console.log('RONDAS RECIBIDA: ' + rounds);
 			self.rounds = rounds;
 			io.sockets.to(self.roomName).emit('waitingRoomRounds', rounds);
 		}
