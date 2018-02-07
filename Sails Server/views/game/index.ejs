@@ -1,59 +1,154 @@
 
-<style>
-    #messages li { padding: 5px 10px; }
-    #messages li:nth-child(odd) { background: #eee; }
-    #messages { margin-bottom: 10px }
-
-    .container{
-        margin-top: 20px !important;
-    }
-
-    .mensajes{
-        list-style-type: none;
-        border-style: solid;
-        border-color: black;
-        border:2px;
-        overflow-y: scroll; 
-        height: 400px;
-        width: 300px;
-        margin: 0; 
-        padding: 0;
-    }
-</style>
-
-
 <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
 <script src="js/jquery-1.11.1.js"></script>
 
-
+<!-- -->
 <script src="js/phaser.min.js"></script>
 <script src="js/phaser-input.min.js"></script>
-<script src="js/game.js"></script>
-<script src="js/playStage.js"></script>
 <script src="js/lobbyStage.js"></script>
+<script src="js/playStage.js"></script>
+<script src="js/roomsStage.js"></script>
 <script src="js/waitStage.js"></script>
+<script src="js/game.js"></script>
 <script src="js/socket.js"></script>
+<!-- -->
 
-<div class = "container">
-    <div class="row">
-        <div class= "col-sm-10">
-            <div id="phaser-game"></div>
-        </div>
-        <div class="col-sm-2">
-            <div class="container">
-                <div class="row">
-                    <ul class="mensajes" id="messages"></ul>
-                </div>
-                <div class="row">
-                    <form action="">
-                        <input id="m" autocomplete="off"/> <button>send</button>
-                    </form>   
-                </div>
-            </div>
-        </div>
-    </div>
+
+
+<div class="container">
+    <div class="topbar">
+    	<div class="logo-box">
+    		<span class="Logo1">RED<span class="Logo2">BLACK</span></span>
+    	</div>
+		<div class="img-top-box topbar-ico-box-basic">
+	    	<img class= "center-top-img" src="images/menu_ico.png">
+	    </div>
+	    <div class="topbar-ico-box-basic">
+	    	<img class= "center-top-img" src="images/notificaciones_ico.png">
+	    </div>
+	    <div class="topbar-ico-box-basic">
+	    	<img class= "center-top-img" src="images/mensajes_privados_ico.png">
+	    </div>
+	    <div class="topbar-ico-box-profilebox">
+	    	<span><%= session.User.name %> <%= session.User.lastName %></span>
+	    </div>	
+	    <div class="topbar-ico-box-basic">
+	    	<img class= "center-top-img-profile" src="images/avatar_menu_top_ico.png">
+	    </div>
+
+	    <!-- Boton (Revisar si sera penticion tipo AJAX o Redireccion-->
+	    <button class="btn_top" type="button">EXPRESS RECHARGE</button>
+	    <!-- Boton (Revisar si sera penticion tipo AJAX o Redireccion-->
+
+	    <div class="top-coin-box">
+	    	<!-- add content-->
+	    	<span class = "top-title-money-span">Available</span>
+	    	<span class = "top-money-span"><%= session.User.tokens %></span>
+	    </div>
+	    <div class="topbar-ico-box-basic">
+	    	<img class= "center-top-img" src="images/saldo_ico.png">
+	    </div>
+
+	</div>
+	
+	<div class = "main-box">
+
+	    <div class="lateral-navbar">
+
+	    	<div class="img-box">
+	    		<img class= "img-lateral-navbar" src="images/amigos_ico.png">
+	    	</div>
+
+	    	<div class="img-box">
+	    		<img class= "img-lateral-navbar" src="images/chat_ico.png">
+	    	</div>
+
+	    	<div class="img-box">
+	    		<img class= "img-lateral-navbar" src="images/wallet_ico.png">
+	    	</div>
+
+	    	<div class="img-box">
+	    		<img class= "img-lateral-navbar" src="images/historial_ico.png">
+	    	</div>
+
+	    </div>
+	    <div class="chat-box">
+	    	<div class="chat-header">
+	    		<span class="chat-title">chat</span>
+	    		<div class="chat-icon-box">
+	    			<img class="center-chat-img" src="images/mute_ico.png">
+	    		</div>
+	    		<div class="chat-icon-box">
+	    			<img class="center-chat-img" src="images/borrar_chat_ico.png">
+	    		</div>
+	    	</div>
+
+	    	<div class= "chat-profile-box">
+	    		<div class="chat-profile-box-img">
+	    			<img class="center-profile-chat-img" src="images/avatar_sala_ico.png">
+	    		</div>
+	    		
+	    	</div>
+
+	    	<div id="chat-list-box" class= "chat-list-box">
+	    		<div class="box-messege">
+	    			<div class="box-title">
+	    				<span class="name-chat">Ricardo Di Zio</span>
+	    				<span class="time-chat">6:00 AM</span>
+	    			</div>
+	    			<span class="messege-chat">Test chat</span>
+	    		</div>
+
+	    		<div class="box-messege">
+	    	    	<div class="box-title">
+	    				<span class="name-chat">Ricardo Di Zio</span>
+	    				<span class="time-chat">6:00 AM</span>
+	    			</div>
+	    			<span class="messege-chat">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	    			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	    			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	    			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	    			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+	    			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</span>
+	    		</div>
+	    		
+	    	</div>
+
+	    	<div class= "chat-input-box">
+	    	
+	    		<form id="chat-form">
+	    			<input class="chat-input-box-content" id="m" type="" name="">
+	    			<button class="chat-input-box-send" id="send" >
+	    				<img src="images/enviar_ico.png" />
+	    			</button>
+	    		</form>
+
+	    	</div>
+
+	    </div>
+	    <div class= "game-container">
+	        <div id="phaser-game"></div>
+	    </div>
+
+	</div>
 </div>
+
+<!--Script chat -->
 
 <script src="js/chat.js"></script>
 
+<!--Script chat -->
+
+
+<!--
+<script type="text/javascript">
+	window.onload = function()
+      {
+        var contenedor = document.getElementById('container-loading');
+        contenedor.style.visibilty = 'hidden';
+        contenedor.style.opacity = '0';
+      }
+</script>
+-->
+<!--<script src="js/chat.js"></script>-->
 

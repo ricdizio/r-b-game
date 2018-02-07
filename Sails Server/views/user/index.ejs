@@ -31,12 +31,21 @@
 			<% } %>	
 			<td><a href="/profile/<%= user.nickName %>" class="btn btn-sm btn-primary">Show</a></td>
 			<td><a href="/profile/<%= user.nickName %>/edit" class="btn btn-sm btn-warning">Edit</a></td>
-
-			<td><form action="/profile/<%= user.nickName %>/delete" method="POST">
-				<input type="hidden" name="_method" value="delete"/>
-				<input type="submit" class="btn btn-sm btn-danger" value="Delete"/>
-				<input type="hidden" name="_csrf" value="<%= _csrf %>" />
-			</form></td>
+			<td>
+				<form action="/profile/add" method="POST">
+					<input type="hidden" name="id" value="<%= user.id %>"/>
+					<input type="submit" class="btn btn-sm btn" value="Add"/>
+					<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				</form>
+	
+			</td>
+			<td>
+				<form action="/profile/<%= user.nickName %>/delete" method="POST">
+					<input type="hidden" name="_method" value="delete"/>
+					<input type="submit" class="btn btn-sm btn-danger" value="Delete"/>
+					<input type="hidden" name="_csrf" value="<%= _csrf %>" />
+				</form>
+			</td>
 		</tr> 
 
 		<% }) %>

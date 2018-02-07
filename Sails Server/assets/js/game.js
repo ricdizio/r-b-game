@@ -2,10 +2,16 @@ var game
 var gameOpt = {
   gameWidth: 1133,
   gameHeight: 853,
+/*
+Resolucion ideal
+  gameWidth: 1057,
+  gameHeight: 877,
+
+*/
 }
 
 window.onload = function() {
-  game = new Phaser.Game(gameOpt.gameWidth, gameOpt.gameHeight)
+  game = new Phaser.Game(gameOpt.gameWidth, gameOpt.gameHeight, Phaser.AUTO, 'phaser-game')
   game.state.add("loadAssets", loadAssets)
   game.state.add("playGame", playGame)
   game.state.add("waitRoom", waitRoom)

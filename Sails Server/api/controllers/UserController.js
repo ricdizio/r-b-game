@@ -167,6 +167,37 @@ create: function(req, res, next) {
     });
   },
 
+// Metodo para agregar amigos
+  addFriend: function(req, res, next) {
+
+    if(!req.session.authenticated){
+       var loginRequiredError = [{
+          name: 'loginRequired',
+          message: 'You must be logged to play.'
+        }];
+    
+        // Remember that err is the object being passed down (a.k.a. flash.err), whose value is another object with
+        // the key of loginRequiredError
+        req.session.flash = {
+        err: loginRequiredError
+       };
+       return res.redirect('/login');
+    }
+
+    var userObj = req.param('id');
+
+    // Agregamos id del amigo a friends
+    User.findOne(req.session.User.id).populate('friends').exec(function(err,u){
+      u.friends.add(userObj);
+      u.save(function(err){ 
+        if(err) console.error(err);
+      });
+      console.log("user with id: "+ userObj + " has been added successfully");
+      console.log(u);
+    });
+  },
+
+
   //List of users
   index: function(req, res, next) {
 
@@ -175,6 +206,7 @@ create: function(req, res, next) {
       if (err) return next(err);
       // pass the array down to the /views/index.ejs page
       res.view("user/index",{users: users,title:"List Users"});
+      //console.log(req.session.User);
     });
   },
 
