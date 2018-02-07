@@ -39,7 +39,7 @@ class roomGUI {
 
         this.roomSprites[0].inputEnabled = true;
         this.roomSprites[0].input.useHandCursor = true;
-        this.roomSprites[0].events.onInputDown.add(this.joinRoom, this);
+        this.roomSprites[0].events.onInputDown.add(lobbyStage.joinRoom, this);
 
         if(this.dTime)
             this.roomSprites.push(game.add.sprite(pos.x+259, pos.y+83, 'dtime'))
