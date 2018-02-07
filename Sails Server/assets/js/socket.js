@@ -212,10 +212,10 @@ socket.on('waitingRoomCapacity', function(capacity){
   waitRoom.btnCheck(capacity + 5)
 });
 socket.on('waitingRoomTurnTime', function(time){
-  waitRoom.btnCheck(bet + 1)
+  waitRoom.btnCheck(time + 1)
 });
 socket.on('waitingRoomRounds', function(rounds){
-  waitRoom.btnCheck(bet + 6)
+  waitRoom.btnCheck(rounds + 6)
 });
 
 
