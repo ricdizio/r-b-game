@@ -289,10 +289,7 @@ class Table {
 		}
 		if (counter == 0) {
 			// House won.
-			for (var i = 0; i < this.maximumPlayers; i++) {
-				balance.push(this.players[i].money);
-			}
-			io.sockets.to(this.socketRoom).emit('reward', 0, 0, balance, 0, true); // no mandar balance, para que si ya se resto el dinero?
+			io.sockets.to(this.socketRoom).emit('reward', 0, 0, 0);
 			this.pool = 0;
 			this.sendReward(0, 0, false, 0, 0);
 		}
@@ -353,7 +350,7 @@ class Table {
 			}
 			this.pool = 0;
 			console.log('SOCKET REWARD');
-			io.sockets.to(this.socketRoom).emit('reward3', winningPlayers, prize, balance, false); // REVISAR
+			io.sockets.to(this.socketRoom).emit('reward', winningPlayers, prize, balance); // REVISAR
 		}
 
 		setTimeout(function () {

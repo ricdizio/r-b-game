@@ -11,6 +11,12 @@ module.exports = {
   schema: true,
 
   attributes: {
+
+    id:{
+      type: 'integer',
+      autoIncrement: true,
+      primaryKey: true
+    },
   	
   	name: {
   		type: 'string',
@@ -51,6 +57,11 @@ module.exports = {
     admin: {
       type: 'boolean',
       defaultsTo: false
+    },
+
+    friends: {
+      collection: 'user',
+      via: 'id'
     },
 
     validated:{

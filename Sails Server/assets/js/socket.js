@@ -1,4 +1,4 @@
-var socket = io.connect('http://192.168.1.138:3000');
+var socket = io.connect('http://192.168.0.110:3000');
 var bet = 0;
 var myPos=0;
 var myNicks = new Array()
@@ -128,10 +128,10 @@ socket.on('logicalPlayers', function(nicks, myNick){
   console.log("Yo: "+myPos)
 });
 
-socket.on('reward3', function(winningPlayers, prize, balance, houseWon){
+socket.on('reward', function(winningPlayers, prize, balance){
   console.log('premio: ' + prize);
   var winText = "test";
-  if(!houseWon){
+  if(winningPlayers === 0){
     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
     // balance contiene el dinero de cada jugador (del 0 a N jugadores).
     /*for(var i = 0; i < winningPlayers.length; i++){
@@ -151,7 +151,7 @@ socket.on('reward3', function(winningPlayers, prize, balance, houseWon){
     // Mostrar en pantalla que gano la casa.
     console.log("Gana la casa");
     winText = 'The House Wins';
-    prize =0;
+    prize = 0;
   }
   
   for(var i = 0; i < winningPlayers.length; i++){
@@ -160,10 +160,13 @@ socket.on('reward3', function(winningPlayers, prize, balance, houseWon){
     winningPlayers[i] = a;
   }
   
-
+  // Revisar porque winningplayers es 0
   playGame.updateWinners(sortArray(winningPlayers));
   console.log("Balance en REWARD: "+balance)
-  playGame.updateBalance(sortArray(balance));
+  if(balance !== 0){
+    playGame.updateBalance(sortArray(balance));
+  }
+  
 });
 
 socket.on('startTableEnabled', function(){

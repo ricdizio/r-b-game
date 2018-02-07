@@ -70,6 +70,11 @@ module.exports.routes = {
     action: "update"
   },
 
+  'POST /profile/add': {
+    controller: "User", 
+    action: "addFriend"
+  },
+
   'POST /profile/:nickname/delete': {
     controller: "User", 
     action: "destroy"
@@ -123,6 +128,9 @@ module.exports.routes = {
 // game
   "GET /play": {
     controller: "GameController",
+    locals: {
+      layout: 'loading',
+    },
     action: "play",
   },
 
