@@ -616,7 +616,7 @@ function newConnection(socket) {
 				break;
 			}
 		}
-
+		socket.leave('lobby');
 		socket.join(roomName);
 
 		socket.on('leaveWaitingRoom', function () {
@@ -632,16 +632,16 @@ function newConnection(socket) {
 
 		if (waitingRoomVar == 0) {
 			waitingRoomVar = new WaitingRoom(roomName, globalDeck);
-			
+
 			var temp = {
-				roomName = roomName,
-				type = 0, // 0 normal. 1 vip
-				lock = 0, // 0 privado, 1 publico b
-				roomPassword = '',
-				roomBet = 100,
-				roomCapacity = 3,
-				turnTime = 30000,
-				rounds = 5
+				roomName: roomName,
+				type: 0, // 0 normal. 1 vip
+				lock: 0, // 0 privado, 1 publico b
+				roomPassword: '',
+				roomBet: 100,
+				roomCapacity: 3,
+				turnTime: 30000,
+				rounds: 5
 			}
 
 			io.sockets.to('lobby').emit('refreshRooms', temp);
@@ -651,7 +651,7 @@ function newConnection(socket) {
 		else {
 			waitingRoomVar.addPlayer(Me);
 		}
-		socket.leave('lobby');
+		
 	});
 
 	socket.on('disconnect', function () {
