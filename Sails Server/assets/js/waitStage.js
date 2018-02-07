@@ -294,6 +294,7 @@ var waitRoom = {
     }
   },
   btnCheck: function(button){
+    console.log(button)
     var i=0, j=0
     // Time
     if(button.value==1 || button.value==2 || button.value==3){
