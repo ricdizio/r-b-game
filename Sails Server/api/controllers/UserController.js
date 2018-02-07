@@ -190,9 +190,16 @@ create: function(req, res, next) {
     User.findOne(req.session.User.id).populate('friends').exec(function(err,u){
       u.friends.add(userObj);
       u.save(function(err){ 
-        if(err) console.error(err);
+        if(err) {
+          console.error(err);
+          res.json(500, { error: 'cant not add user' })
+        }
+
       });
-      console.log("user with id: "+ userObj + " has been added successfully");
+      var msg = "user with id: "+ userObj + " has been added successfully";
+      console.log(msg);
+
+      res.json({ data: msg})
       console.log(u);
     });
   },
