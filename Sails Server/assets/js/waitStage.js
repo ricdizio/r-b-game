@@ -314,9 +314,9 @@ var waitRoom = {
 
     for(; i<j; i++){
       if(i==button)
-        waitRoom.checkBtns[i-1].update(true)
+        this.checkBtns[i-1].update(true)
       else
-        waitRoom.checkBtns[i-1].update(false)
+        this.checkBtns[i-1].update(false)
     }
   },
   paramUpdate: function(button){
