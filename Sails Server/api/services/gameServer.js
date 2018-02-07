@@ -452,10 +452,9 @@ class WaitingRoom {
 			var filterObj = self.players.filter(function(e) {
 				return e.socketId == socketId;
 			});
-			console.log('FILTEROBJ CHAT: '+ filterObj);
-			var nickName = filterObj.nickName;
+			var nickName = filterObj[0].nickName;
 			console.log('NICKNAME: '+ nickName);
-			io.sockets.to(self.roomName).emit('chat', 'DizioElMaricon', message);
+			io.sockets.to(self.roomName).emit('chat', nickName, message);
 		}
 
 		function chooseFirst(socketId) {
@@ -471,9 +470,9 @@ class WaitingRoom {
 			var filterObj = self.players.filter(function(e) {
 				return e.socketId == socketId;
 			});
-			
-			console.log('FILTEROBJ CHOOSEFIRST: '+ filterObj);
-			var i = self.players.indexOf(filterObj);
+
+			//console.log('FILTEROBJ CHOOSEFIRST: '+ filterObj);
+			var i = self.players.indexOf(filterObj[0]);
 			console.log('I: ' + i);
 
 			self.pickedCards[i] = tempCard;
