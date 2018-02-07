@@ -354,15 +354,15 @@ var playGame = {
       }
     }, this)
     //this.timerText.text = countDown--
-    this.timer.start()
+    //this.timer.start()
 
-    game.time.events.add(Phaser.Timer.SECOND*5, function(){
-      this.btnUpdate(this.btnEnum.PICK, true)
-      this.timerOn = false
-      this.timer.stop()
-      this.timerText.text = ''
-      this.timerCircle.clear()
-    }, this)
+    // game.time.events.add(Phaser.Timer.SECOND*5, function(){
+    //   this.btnUpdate(this.btnEnum.PICK, true)
+    //   this.timerOn = false
+    //   this.timer.stop()
+    //   this.timerText.text = ''
+    //   this.timerCircle.clear()
+    // }, this)
   
     // var winArr = new Array(1,2)
     // this.updateWinners("",0,winArr,0)
