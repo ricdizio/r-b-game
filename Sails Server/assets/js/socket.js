@@ -1,8 +1,5 @@
-<<<<<<< HEAD
+
 var socket = io.connect('http://201.242.167.11:3000');
-=======
-var socket = io.connect('http://190.38.142.244:3000');
->>>>>>> 42dc4b1b3ae4d3c028facc64a5166d50ebabd57f
 var bet = 0;
 var myPos=0;
 var myNicks = new Array()
