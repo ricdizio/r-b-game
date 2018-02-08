@@ -682,3 +682,28 @@ module.exports = {
 	},
 	hashMap: hashMap
 }
+
+
+		/*var socket = req.socket;
+		  // falta implementar mas seguirdad seguiridad
+		  
+		  if(!req.session.authenticated){
+		   var loginRequiredError = [{
+			name: 'loginRequired',
+			message: 'You must be logged to play.'
+		   }];
+		
+		   // Remember that err is the object being passed down (a.k.a. flash.err), whose value is another object with
+		   // the key of loginRequiredError
+		   req.session.flash = {
+			err: loginRequiredError
+		   };
+		   return res.redirect('/login');
+		  }
+		  
+		  // Verificar si tiene credito en la base de datos para jugar
+		  var element = req.session.User.nickName;
+		  User.findOne({nickName: element}).exec(function(err, user) {
+			gameServer.addNick(user.nickName);
+			});
+			return res.view('game/index',{title:"R&B - Play"});*/

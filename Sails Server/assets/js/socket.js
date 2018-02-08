@@ -1,8 +1,10 @@
 
-var socket = io.connect('http://190.38.142.244:3000');
+//var socket = io.connect('http://190.38.142.244:3000');
 var bet = 0;
 var myPos=0;
 var myNicks = new Array()
+
+io.socket.post('/play/joinLobby');
 
 class Card {
   constructor(index, number, suit){
@@ -15,7 +17,7 @@ class Card {
 var currentTurn = 0;
 
 function sendBet(){
-  socket.emit('getBet', parseInt(money.value));
+  io.socket.post('getBet', parseInt(money.value));
 }
 
 function logCard(card){
@@ -23,11 +25,11 @@ function logCard(card){
   console.log("Card: " + card.number + " of " + card.suit);
 }
 
-socket.on('bettedMoney', function(money, playerIndex){
+io.socket.on('bettedMoney', function(money, playerIndex){
   console.log("Jugador " + (playerIndex + 1) + " aposto " + money);
 });
 
-socket.on('bet', function(betId, playerIndex){
+io.socket.on('bet', function(betId, playerIndex){
   if(betId == socket.id){
     console.log("Te toca apostar");
     // Colocar en pantalla "te toca apostar"
@@ -38,11 +40,11 @@ socket.on('bet', function(betId, playerIndex){
   }
 });
 
-socket.on('suitRequest', function(){
+io.socket.on('suitRequest', function(){
   playGame.suitRequest();
 });
 
-socket.on('pickedSuit', function(suit, player){
+io.socket.on('pickedSuit', function(suit, player){
   if(suit == 'Clubs'){
     playGame.pickedSuit(0);
     suit = 0;
@@ -62,12 +64,12 @@ socket.on('pickedSuit', function(suit, player){
   playGame.checkSuit(suit, player);
 });
 
-socket.on('donePicking', function(card){
+io.socket.on('donePicking', function(card){
   console.log('Done Picking');
   playGame.showFirst(card);
 });
 
-socket.on('play', function(index){
+io.socket.on('play', function(index){
   //if(!lastTurn){
     console.log("index: "+index+ " muPos: "+myPos)
     if(index == myPos){
@@ -97,7 +99,7 @@ socket.on('play', function(index){
   
 });
 
-socket.on('bettedColor', function(color, playerIndex){
+io.socket.on('bettedColor', function(color, playerIndex){
   if(color){
     color = "Red";
   }
@@ -109,15 +111,15 @@ socket.on('bettedColor', function(color, playerIndex){
   console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
 });
 
-socket.on('deal', function(card){
+io.socket.on('deal', function(card){
   logCard(card);
 });
 
-socket.on('poolAccepted', function(){
+io.socket.on('poolAccepted', function(){
   playGame.updateWinners('pool Aceepted!', 0);
 });
 
-socket.on('logicalPlayers', function(nicks, myNick){
+io.socket.on('logicalPlayers', function(nicks, myNick){
   var n=0;
   while(myNick != nicks[0]){
     nicks.push(nicks.shift())
@@ -129,7 +131,7 @@ socket.on('logicalPlayers', function(nicks, myNick){
   console.log("Yo: "+myPos)
 });
 
-socket.on('reward', function(winningPlayers, prize, balance){
+io.socket.on('reward', function(winningPlayers, prize, balance){
   console.log('premio: ' + prize);
   var winText = "test";
   if(winningPlayers === 0){
@@ -170,31 +172,31 @@ socket.on('reward', function(winningPlayers, prize, balance){
   
 });
 
-socket.on('startTableEnabled', function(){
+io.socket.on('startTableEnabled', function(){
 // Aparece boton para arrancar la mesa
   waitRoom.ready2Start()
 });
 
-socket.on('tableStarted', function(type=0, capacity, rounds, time, gender, money){
+io.socket.on('tableStarted', function(type=0, capacity, rounds, time, gender, money){
   var gender1 = [1,1,1]
   console.log("Players: segundo "+myNicks)
   console.log("Yo: "+myPos)
   game.state.start("playGame",true, false, type, capacity, rounds, time, myNicks, myPos, gender1, money)
 });
 
-socket.on('waitingRoomJoin', function(players){
+io.socket.on('waitingRoomJoin', function(players){
   console.log(players)
   for(var i=0; i<players.length; i++){
     waitRoom.updatePlayer(i, true, players[i].nickName)
   }
 });
 
-socket.on('waitingRoomLeft', function(index, socketId){
+io.socket.on('waitingRoomLeft', function(index, socketId){
   if(socketId != socket.id){
     waitRoom.updatePlayer(index, false)
   }  
 });
-socket.on('waitingRoomDealt', function(card, index, socketId){
+io.socket.on('waitingRoomDealt', function(card, index, socketId){
   if(socketId == socket.id){
     waitRoom.pickCard()
   } 
@@ -202,18 +204,18 @@ socket.on('waitingRoomDealt', function(card, index, socketId){
 });
 
 // Update btn
-socket.on('waitingRoomBet', function(bet){
+io.socket.on('waitingRoomBet', function(bet){
 });
-socket.on('waitingRoomLock', function(lock){
+io.socket.on('waitingRoomLock', function(lock){
   waitRoom.btnCheck(lock + 4)
 });
-socket.on('waitingRoomCapacity', function(capacity){
+io.socket.on('waitingRoomCapacity', function(capacity){
   waitRoom.btnCheck(capacity + 5)
 });
-socket.on('waitingRoomTurnTime', function(time){
+io.socket.on('waitingRoomTurnTime', function(time){
   waitRoom.btnCheck(time/15)
 });
-socket.on('waitingRoomRounds', function(rounds){
+io.socket.on('waitingRoomRounds', function(rounds){
   if(rounds == 5){
     waitRoom.btnCheck(6)
   } else if(rounds == 9){
@@ -221,40 +223,40 @@ socket.on('waitingRoomRounds', function(rounds){
   }
 });
 
-socket.on('refreshRooms', function(waitingRoom){
-  lobbyStage.addRoom(waitingRoom)
+io.socket.on('refreshRooms', function(roomsJSON){
+  console.log("Refresh room ", roomsJSON);
+  lobbyStage.addRoom(roomsJSON.waitingRooms[0].properties);
 });
 
-socket.on('poolRequest', function(){
+io.socket.on('poolRequest', function(){
   playGame.poolRequest(true);
 });
 
-socket.on('round', function(round){
+io.socket.on('round', function(round){
   // Aqui actualiza la ronda abajo a la izq.
   playGame.updateRound(round);
   console.log("Round " + (round));
 });
 
-socket.on('timedOut', function(playerIndex){
+io.socket.on('timedOut', function(playerIndex){
   // Aqui indica que el jugador playerIndex tardo demasiado y su turno fue pasado.
   console.log('Jugador ' + (playerIndex + 1) + ' ha tardado demasiado');
 });
 
-socket.on('substractConstantBet', function(balance){
+io.socket.on('substractConstantBet', function(balance){
 
   playGame.updateBalance(sortArray(balance));
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 
-socket.on('nickNames', function(nicks){
+io.socket.on('nickNames', function(nicks){
   playGame.nickName(nicks);
 });
 
-socket.on('end', function(){
+io.socket.on('end', function(){
   console.log('Table is over');
 });
 
-//socket.emit('join', "room1", 3);
 
 function sortArray(array){
   for(var i=0; i<myPos; i++){
@@ -262,3 +264,4 @@ function sortArray(array){
   }
   return array
 }
+

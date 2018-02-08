@@ -1,9 +1,16 @@
+console.log('AFUERA')
 $('#chat-form').submit(function(){
-    socket.emit('chat', $('#m').val(), socket.id);
+  io.socket.post('/play/chat', { message: $('#m').val() }, function (resData, jwRes) {
+    jwRes.statusCode; // => 200
+    console.log(jwRes.statusCode)
+  });
+    console.log('ADENTRO')
     $('#m').val('');
     return false;
   });
-  socket.on('chat', function(id, msg){
+  io.socket.on('chat', function(obj){
+    id = obj.id;
+    msg = obj.message;
   	console.log(id);
   	var dt = new Date();
 	  var time = dt.getHours() + ":" + dt.getMinutes();

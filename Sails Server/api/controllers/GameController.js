@@ -5,59 +5,134 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-
-var gameServer = require('../services/gameServer');
-
 module.exports = {
+	play: function(req, res){
+		return res.view('game/index',{title:"R&B - Play"});
+	},
 
-	play: function(req, res, next) {
-		
-		  // falta implementar mas seguirdad seguiridad
-		  
-		  if(!req.session.authenticated){
-		   var loginRequiredError = [{
-			name: 'loginRequired',
-			message: 'You must be logged to play.'
-		   }];
-		
-		   // Remember that err is the object being passed down (a.k.a. flash.err), whose value is another object with
-		   // the key of loginRequiredError
-		   req.session.flash = {
-			err: loginRequiredError
-		   };
-		   return res.redirect('/login');
-		  }
-		  
-		
-		  // Verificar si tiene credito en la base de datos para jugar
-		  var element = req.session.User.nickName;
-		
-		  User.findOne({nickName: element}).exec(function(err, user) {
-			/*var roomName = 'room1'; // No se como obtener esto aun, a traves del request o algo.
-			if(user.tokens >= 500){
-				var object = gameServer.hashMap.get(roomName);
-				if(object.players.length < object.capacity){
-					var userTemp = {
-						nickName: user.nickName
-						//money: user.money,
-						//session: 
-					}
-					object.players.push(userTemp);
-					gameServer.hashMap.set(roomName, object);
-				}
-				else{
-					// Rechazar jugador
-				}
-			}
-			else{
-				console.log("mandar error no posee credito");
+	joinLobby: function(req, res){
+		if (req.isSocket) {
+			sails.sockets.join(req, 'lobby');
+			var socketId = sails.sockets.getId(req);
+			var nickName = req.session.User.nickName;
+			HashMap.userMap.set(socketId, Player.create(socketId, nickName, req));
+			// retornarle las salas
+		}
+	},
+
+	createWaitingRoom: function(req, res){
+		if (req.isSocket) {
+			var socketId = sails.sockets.getId(req);
+			var roomName = req.param('roomName');
+
+			if(!HashMap.roomMap.has(roomName)){
+				sails.sockets.leave(req, 'lobby');
+				sails.sockets.join(req, roomName);
+
+				var tempRoom = WaitingRoom.create(roomName);
+				var tempPlayer = HashMap.userMap.get(socketId);
+				tempRoom.addPlayer(tempPlayer);
+				HashMap.roomMap.set(roomName, tempRoom);
 				
-				//gameServer.addNick({nickName : user.nickName});
-			}*/
+				sails.sockets.broadcast('lobby', 'refreshRooms', {waitingRooms: HashMap.roomMap.values()}, req);
+			}
+		}
+	},
 
-			gameServer.addNick(user.nickName);
-			});
-			return res.view('game/index',{title:"R&B - Play"});
-		 },
-};
+	joinWaitingRoom: function(req, res) {
+		if (req.isSocket) {
+			// Revisar dinero
+			var socketId = sails.sockets.getId(req);
+			var tempPlayer = HashMap.userMap.get(socketId);
+			var roomName = req.param('roomName');
+			var tempRoom = HashMap.roomMap.get(roomName);
+
+			sails.sockets.leave(req, 'lobby');
+			sails.sockets.join(req, roomName);
+
+			tempRoom.addPlayer(tempPlayer);
+
+		}
+	},
+
+	updateType: function(req, res) {
+		if (req.isSocket) {
+			var tempRoom = WaitingRoom.getRoomByReq(req);
+
+			if(tempRoom.roomCreator.socketId == socketId){
+				tempRoom.updateType(req.param('type'));
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomRounds', {type: req.param('type')});
+			}
+		}
+	},
+	updateLock: function(req, res) {
+		if (req.isSocket) {
+			var tempRoom = WaitingRoom.getRoomByReq(req);
+
+			if(tempRoom.roomCreator.socketId == socketId){
+				tempRoom.updateLock(req.param('lock'));
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomLock', {lock: req.param('lock')});
+			}
+		}
+	},
+	updatePassword: function(req, res) {
+		if (req.isSocket) {
+			var tempRoom = WaitingRoom.getRoomByReq(req);
+
+			if(tempRoom.roomCreator.socketId == socketId){
+				tempRoom.updatePassword(req.param('password'));
+			}
+		}
+	},
+	updateBet: function(req, res) {
+		if (req.isSocket) {
+			var tempRoom = WaitingRoom.getRoomByReq(req);
+
+			if(tempRoom.roomCreator.socketId == socketId){
+				tempRoom.updateBet(req.param('bet'));
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomBet', {bet: req.param('bet')});
+			}
+		}
+	},
+	updateCapacity: function(req, res) {
+		if (req.isSocket) {
+			var tempRoom = WaitingRoom.getRoomByReq(req);
+
+			if(tempRoom.roomCreator.socketId == socketId){
+				tempRoom.updateCapacity(req.param('capacity'));
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomCapacity', {capacity: req.param('capacity')});
+			}
+		}
+	},
+	updateTurnTime: function(req, res) {
+		if (req.isSocket) {
+			var tempRoom = WaitingRoom.getRoomByReq(req);
+
+			if(tempRoom.roomCreator.socketId == socketId){
+				tempRoom.updateTurnTime(req.param('turnTime'));
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomTurnTime', {turnTime: req.param('turnTime')});
+			}
+		}
+	},
+	updateRounds: function(req, res) {
+		if (req.isSocket) {
+			var tempRoom = WaitingRoom.getRoomByReq(req);
+
+			if(tempRoom.roomCreator.socketId == socketId){
+				tempRoom.updateRounds(req.param('rounds'));
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomRounds', {rounds: req.param('rounds')});
+			}
+		}
+	},
+	chat: function(req, res){
+		if(req.isSocket){
+			var socketId = sails.sockets.getId(req);
+			console.log(socketId)
+			var tempPlayer = HashMap.userMap.get(socketId); // Player
+			console.log(tempPlayer)
+			var roomIn = tempPlayer.roomIn;
+			sails.sockets.broadcast(roomIn, 'chat', {id: tempPlayer.nickName, message: req.param('message')});
+		}
+	}
+}
 

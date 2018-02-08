@@ -90,7 +90,6 @@ module.exports.routes = {
     action: "index"
   },
 
-
   'GET /user/getdata': {
     controller: "User", 
     action: "getdata"
@@ -134,6 +133,26 @@ module.exports.routes = {
     action: "play",
   },
 
+  "POST /play/joinLobby": {
+    controller: "GameController",
+    action: 'joinLobby',
+  },
+
+  "POST /play/chat": {
+    controller: "GameController",
+    action: "chat",
+  },
+
+  "POST /play/createRoom": {
+    controller: "GameController",
+    action: "createWaitingRoom",
+  },
+
+  "POST /play/joinRoom": {
+    controller: "GameController",
+    action: "joinWaitingRoom",
+  },
+
 
   /***************************************************************************
   *                                                                          *
@@ -144,5 +163,4 @@ module.exports.routes = {
   * for configuration options and examples.                                  *
   *                                                                          *
   ***************************************************************************/
-
 };
