@@ -5,6 +5,9 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+
+ // var result = rooms.map(a => a.properties); rooms es un arreglo de objetos, retorna un array de la propiedad properties de rooms.
+
 module.exports = {
 	play: function(req, res){
 		return res.view('game/index',{title:"R&B - Play"});
@@ -16,6 +19,7 @@ module.exports = {
 			var socketId = sails.sockets.getId(req);
 			var nickName = req.session.User.nickName;
 			HashMap.userMap.set(socketId, Player.create(socketId, nickName, req));
+			console.log(HashMap.userMap.size)
 			// retornarle las salas
 		}
 	},
@@ -33,8 +37,10 @@ module.exports = {
 				var tempPlayer = HashMap.userMap.get(socketId);
 				tempRoom.addPlayer(tempPlayer);
 				HashMap.roomMap.set(roomName, tempRoom);
+				var rooms = HashMap.roomMap.values();
+				var result = rooms.map(a => a.properties);
 				
-				sails.sockets.broadcast('lobby', 'refreshRooms', {waitingRooms: HashMap.roomMap.values()}, req);
+				sails.sockets.broadcast('lobby', 'refreshRooms', {waitingRooms: result});
 			}
 		}
 	},
@@ -127,9 +133,7 @@ module.exports = {
 	chat: function(req, res){
 		if(req.isSocket){
 			var socketId = sails.sockets.getId(req);
-			console.log(socketId)
 			var tempPlayer = HashMap.userMap.get(socketId); // Player
-			console.log(tempPlayer)
 			var roomIn = tempPlayer.roomIn;
 			sails.sockets.broadcast(roomIn, 'chat', {id: tempPlayer.nickName, message: req.param('message')});
 		}

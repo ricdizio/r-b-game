@@ -110,7 +110,7 @@ var lobbyStage = {
     },
     btnCreate_R: function(){
         game.state.start("waitRoom")
-        io.socket.post('/play/createWaitingRoom', {roomName: "Room1"})
+        io.socket.post('/play/createWaitingRoom', {roomName: "Room1"});
         console.log("Create")
     },
     addRoom: function(wR){

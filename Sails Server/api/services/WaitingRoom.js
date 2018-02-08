@@ -1,9 +1,16 @@
 class WaitingRoom {
 	constructor(roomName) {
         // Room and default settings
-
+        this.roomName = roomName;
+		this.roomCreator;
+		this.nickNamesArray = new Array();
+		this.pickedCards = new Array();
+		this.players = new Array();
+        this.deck = Deck.shuffle(Deck.shuffle(Deck.get()));
+        this.dealtCounter = 0;
+        
         this.properties = {
-            roomName: roomName,
+            roomName: this.roomName,
             type: 0, // 0 normal. 1 vip
             lock: 0, // 0 privado, 1 publico
             roomPassword: '',
@@ -12,13 +19,6 @@ class WaitingRoom {
             turnTime: 30000,
             rounds: 5
         }
-        
-		this.roomCreator;
-		this.nickNamesArray = new Array();
-		this.pickedCards = new Array();
-		this.players = new Array();
-        this.deck = Deck.shuffle(Deck.shuffle(Deck.get()));
-		this.dealtCounter = 0;
     }
     
     addPlayer(Player){

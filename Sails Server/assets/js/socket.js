@@ -224,8 +224,9 @@ io.socket.on('waitingRoomRounds', function(rounds){
 });
 
 io.socket.on('refreshRooms', function(roomsJSON){
+  //ROOMJSON ES UN JSON CON PROPIEDAD .waitingRooms, QUE CONTIENE UN ARREGLO CON LAS PROPIEDADES: roomName, type, lock, etc. VER WaitingRoom.js en /services.
   console.log("Refresh room ", roomsJSON);
-  lobbyStage.addRoom(roomsJSON.waitingRooms[0].properties);
+  lobbyStage.addRoom(roomsJSON.waitingRooms[0].roomName);
 });
 
 io.socket.on('poolRequest', function(){

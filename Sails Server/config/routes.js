@@ -143,12 +143,12 @@ module.exports.routes = {
     action: "chat",
   },
 
-  "POST /play/createRoom": {
+  "POST /play/createWaitingRoom": {
     controller: "GameController",
     action: "createWaitingRoom",
   },
 
-  "POST /play/joinRoom": {
+  "POST /play/joinWaitingRoom": {
     controller: "GameController",
     action: "joinWaitingRoom",
   },
