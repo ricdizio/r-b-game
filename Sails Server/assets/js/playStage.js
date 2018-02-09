@@ -180,15 +180,18 @@ var playGame = {
     if(rounds == 5){
       this.maxRounds = 5
       this.cardPos = new Array(362, 444, 526, 608, 690)
+      this.roudPos = new Array(161, 200, 240, 280, 320)
+      this.posStarX = new Array(157, 197, 237, 277, 317)
     }
     if(rounds == 9){
       this.maxRounds = 9
-      this.cardPos = new Array(350, 400, 500, 600, 650, 700, 750, 800)
+      this.cardPos = new Array(350, 400, 450, 500, 600, 650, 700, 750, 800)
+      this.roudPos = new Array(161, 200, 240, 280, 320, 360, 420, 480, 540)
+      this.posStarX = new Array(157, 197, 237, 277, 317, 357, 397, 437, 477)
     }
     this.currentTimer = this.timerPos[0]
     this.nickSmallPos = new Array(655, 682, 710, 738)
     this.ratingPlayer = new Array(652, 679, 707, 735)
-    this.posStarX = new Array(157, 197, 237, 277, 317)
     this.roudPos = new Array(161, 200, 240, 280, 320)
     this.pSmallPos = new Array(654, 681, 710, 737)
     this.posStarY = new Array(655, 683, 711, 739)
@@ -245,7 +248,10 @@ var playGame = {
     graphics.endFill()
 
     graphics.beginFill(0x0a0a0a)
-    graphics.drawRoundedRect(40, 650, 300, 25, 18)
+    if(this.maxRounds == 5)
+      graphics.drawRoundedRect(40, 650, 300, 25, 18)
+    if(this.maxRounds == 9)
+      graphics.drawRoundedRect(40, 650, 550, 25, 18)
     graphics.endFill()
 
     // graphics.beginFill(0xb30202,1)
