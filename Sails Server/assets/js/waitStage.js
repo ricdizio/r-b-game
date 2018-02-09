@@ -489,6 +489,7 @@ var waitRoom = {
       this.scrollCards[4].input.useHandCursor = false
     }, this)
     
+    this.updateStatus(myPos, this.statusEnum.READY)
     this.next.destroy()
     this.prev.destroy()
     flipTween.start()
