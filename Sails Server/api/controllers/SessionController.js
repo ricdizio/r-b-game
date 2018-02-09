@@ -102,7 +102,7 @@ module.exports = {
 				     admin: user.admin,
 				     validated: user.validated,
 				     createdAt: user.createdAt,
-				     updatedAt: user.updatedAt,
+				     updatedAt: user.updatedAt, 
 				     id: user.id
 				}
 
@@ -189,6 +189,5 @@ module.exports = {
 			}
 		});
 	}
-
 };
 

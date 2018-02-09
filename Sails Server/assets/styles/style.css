@@ -332,6 +332,8 @@
 .chat-input-box-send{
   background-color: transparent;
   display: inline-block;
+  outline: none;
+  border:0px;
 }
 
 .img-lateral-navbar{
@@ -345,6 +347,7 @@
   height: 49px;
   display: inline-block;
   padding-top: 10px;
+  padding-left: 3px;
 }
 
 .game-container{
@@ -356,6 +359,28 @@
  background-color: black;
  */
 }
+
+.btn-general{
+  background-color: transparent;
+  display: inline-block;
+  outline: none;
+  border:0px;
+}
+
+.btn-general:active {
+  transform: translateZ(-3px);
+}
+
+button:focus {
+    outline: 0px dotted !important; 
+    outline: 0px auto -webkit-focus-ring-color !important; 
+}
+
+input:focus {
+    outline: 0px dotted !important; 
+    outline: 0px auto -webkit-focus-ring-color !important; 
+}
+
 
 .container{
     width: 100%;

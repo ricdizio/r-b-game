@@ -42,6 +42,7 @@
 	    <div class="top-coin-box">
 	    	<!-- add content-->
 	    	<span class = "top-title-money-span">Available</span>
+	    	<!-- tokens implementar req tipo post -->
 	    	<span class = "top-money-span"><%= session.User.tokens %></span>
 	    </div>
 	    <div class="topbar-ico-box-basic">
@@ -54,20 +55,28 @@
 
 	    <div class="lateral-navbar">
 
-	    	<div class="img-box">
-	    		<img class= "img-lateral-navbar" src="images/amigos_ico.png">
+	    	<div id="caja1" class="img-box">
+	    		<button id="menu1" class= "btn-general">
+	    			<img class= "img-lateral-navbar" src="images/amigos_ico.png">
+	    		</button>
 	    	</div>
 
-	    	<div class="img-box">
-	    		<img class= "img-lateral-navbar" src="images/chat_ico.png">
+	    	<div id="caja2" class="img-box">
+	    		<button id="menu2" class= "btn-general">
+	    			<img class= "img-lateral-navbar" src="images/chat_ico.png">
+	    		</button>
 	    	</div>
 
-	    	<div class="img-box">
-	    		<img class= "img-lateral-navbar" src="images/wallet_ico.png">
+	    	<div id="caja3" class="img-box">
+	    		<button id="menu3" class= "btn-general">
+	    			<img class= "img-lateral-navbar" src="images/wallet_ico.png">
+	    		</button>
 	    	</div>
 
-	    	<div class="img-box">
-	    		<img class= "img-lateral-navbar" src="images/historial_ico.png">
+	    	<div id="caja4" class="img-box">
+	    		<button id="menu4" class= "btn-general">
+	    			<img class= "img-lateral-navbar" src="images/historial_ico.png">
+	    		</button>
 	    	</div>
 
 	    </div>
@@ -132,11 +141,12 @@
 	</div>
 </div>
 
-<!--Script chat -->
+<!--Scripts-->
 
 <script src="js/chat.js"></script>
+<script src="js/interfaceController.js"></script>
 
-<!--Script chat -->
+<!--Scripts -->
 
 
 <!--

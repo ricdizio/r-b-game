@@ -169,7 +169,7 @@ create: function(req, res, next) {
 
 // Metodo para agregar amigos
   addFriend: function(req, res, next) {
-
+    
     if(!req.session.authenticated){
        var loginRequiredError = [{
           name: 'loginRequired',
@@ -187,8 +187,8 @@ create: function(req, res, next) {
     var userObj = req.param('id');
 
     // Agregamos id del amigo a friends
-    User.findOne(req.session.User.nickName).populate('friends').exec(function(err,u){
-      console,log("info req enviada: " + req.session.User.nickName);
+    User.findOne(req.session.User.id).populate('friends').exec(function(err,u){
+      console,log("info req enviada: " + req.session.User.id);
       console,log("info u: " + u);
       u.friends.add(userObj);
       u.save(function(err){ 
