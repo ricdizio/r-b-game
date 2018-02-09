@@ -212,7 +212,7 @@ var playGame = {
     console.log("time "+time)
     console.log("Players: en la mesa "+nicksP)
     console.log("Yo: "+posP)
-    this.gameParameters(type, 4, rounds, time, nicksP, posP, gender1, money)
+    this.gameParameters(type, capacity, rounds, time, nicksP, posP, gender1, money) // AQUI
   },
   preload: function() {
   },
