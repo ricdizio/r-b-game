@@ -31,8 +31,9 @@ module.exports = {
 		
 		  // Verificar si tiene credito en la base de datos para jugar
 		  var element = req.session.User.nickName;
-		
+		  var t;
 		  User.findOne({nickName: element}).exec(function(err, user) {
+			t = user.tokens;
 			/*var roomName = 'room1'; // No se como obtener esto aun, a traves del request o algo.
 			if(user.tokens >= 500){
 				var object = gameServer.hashMap.get(roomName);
@@ -57,7 +58,7 @@ module.exports = {
 
 			gameServer.addNick(user.nickName);
 			});
-			return res.view('game/index',{title:"R&B - Play"});
+			return res.view('game/index',{title:"R&B - Play",tokens: t});
 		 },
 };
 
