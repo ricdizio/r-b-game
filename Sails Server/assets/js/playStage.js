@@ -212,7 +212,7 @@ var playGame = {
     console.log("time "+time)
     console.log("Players: en la mesa "+nicksP)
     console.log("Yo: "+posP)
-    this.gameParameters(type, capacity, rounds, time, nicksP, posP, gender1, money)
+    this.gameParameters(type, capacity, rounds, time, nicksP, posP, gender1, money) // AQUI
   },
   preload: function() {
   },
@@ -251,7 +251,7 @@ var playGame = {
     if(this.maxRounds == 5)
       graphics.drawRoundedRect(40, 650, 300, 25, 18)
     if(this.maxRounds == 9)
-      graphics.drawRoundedRect(40, 650, 550, 25, 18)
+      graphics.drawRoundedRect(40, 650, 480, 25, 18)
     graphics.endFill()
 
     // graphics.beginFill(0xb30202,1)
