@@ -181,8 +181,9 @@ var playGame = {
       this.maxRounds = 5
       this.cardPos = new Array(362, 444, 526, 608, 690)
     }
-    if(rounds == 4){
-      this.maxRounds = 4
+    if(rounds == 9){
+      this.maxRounds = 9
+      this.cardPos = new Array(350, 400, 500, 600, 650, 700, 750, 800)
     }
     this.currentTimer = this.timerPos[0]
     this.nickSmallPos = new Array(655, 682, 710, 738)
