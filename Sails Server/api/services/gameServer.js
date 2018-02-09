@@ -75,6 +75,7 @@ class Table {
 		this.socketRoom = socketRoom;
 		this.type = type;
 		this.maximumPlayers = maximumPlayers;
+		console.log('MAXIMUN PLAYERS ' + maximumPlayers)
 		this.maximumRounds = maximumRounds;
 		this.initialMoney = initialMoney;
 		this.playTimeoutTime = playTimeoutTime;
@@ -529,7 +530,7 @@ class WaitingRoom {
 
 		function updateCapacity(capacity) {
 			console.log('CAPACIDAD RECIBIDA: ' + capacity);
-			self.capacity = capacity;
+			self.roomCapacity = capacity;
 			io.sockets.to(self.roomName).emit('waitingRoomCapacity', capacity);
 		}
 
