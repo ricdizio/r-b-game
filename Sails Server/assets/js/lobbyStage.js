@@ -81,7 +81,7 @@ var lobbyStage = {
     },
     create: function(){
         this.allRooms = new Array()
-        for(var i=0; i<5; i++){
+        /*for(var i=0; i<5; i++){
             this.allRooms.push(new roomGUI(0,"Nombre_de_Prueba"+i))   
         }
         game.time.events.add(Phaser.Timer.SECOND*2, function(){
@@ -99,7 +99,7 @@ var lobbyStage = {
         // }, this)
         // game.time.events.add(Phaser.Timer.SECOND*6, function(){
         //     this.allRooms[4].create(this.getPos(4))
-        // }, this)
+        // }, this)*/
 
         this.btnC = game.add.button(929, 10, 'btnCreateRoom', this.btnCreate_R, this, 0,0,0)
     },
@@ -114,13 +114,16 @@ var lobbyStage = {
         console.log("Create")
     },
     addRoom: function(wR){
-        this.allRooms.push(new roomGUI(0, wR.roomName, 0, wR.capacity, wR.lock, wR.turnTime, wR.rounds, 0, 0, wR.roomBet*wR.rounds))
-        this.allRooms[0].create(this.getPos(0))
+        this.allRooms = new Array();
+        for(var i = 0; i < wR.length; i++){
+            this.allRooms.push(new roomGUI(0, wR[i].roomName, 0, wR[i].capacity, wR[i].lock, wR[i].turnTime/1000, wR[i].rounds, 0, 0, wR[i].roomBet*wR[i].rounds))
+            this.allRooms[i].create(this.getPos(i));
+        }
+        
     },
     joinRoom: function(){
         game.state.start("waitRoom")
         io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"})
-        console.log("Join in Room1")
     },
     update: function(){
     }

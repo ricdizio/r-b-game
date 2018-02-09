@@ -25,6 +25,7 @@ class WaitingRoom {
         if(this.players.length == 0){
             this.roomCreator = Player;
         }
+        Player.roomIn = this.roomName;
         this.players.push(Player);
     }
 
@@ -39,12 +40,10 @@ class WaitingRoom {
 
     updateType(type) {
         this.properties.type = type;
-        sails.sockets.broadcast(this.properties.roomName, 'waitingRoomType', {type: type} , this.roomCreator.req);
     }
 
     updateLock(lock){
         this.properties.lock = lock;
-        sails.sockets.broadcast(this.properties.roomName, 'waitingRoomLock', {lock: lock} , this.roomCreator.req);
     }
 
     updatePassword(password) {
@@ -53,22 +52,18 @@ class WaitingRoom {
 
     updateBet(bet) {
         this.properties.bet = bet;
-        sails.sockets.broadcast(this.properties.roomName, 'waitingRoomBet', {bet: bet} , this.roomCreator.req);
     }
 
     updateCapacity(capacity) {
         this.properties.capacity = capacity;
-        sails.sockets.broadcast(this.properties.roomName, 'waitingRoomCapacity', {capacity: capacity} , this.roomCreator.req);
     }
 
     updateTurnTime(turnTime) {
         this.properties.turnTime = turnTime;
-        sails.sockets.broadcast(this.properties.roomName, 'waitingRoomTurnTime', {turnTime: turnTime} , this.roomCreator.req);
     }
 
     updateRounds(rounds) {
         this.properties.rounds = rounds;
-        sails.sockets.broadcast(this.properties.roomName, 'waitingRoomRounds', {rounds: rounds} , this.roomCreator.req);
     }
 }
 

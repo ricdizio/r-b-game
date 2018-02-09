@@ -61,5 +61,9 @@ module.exports = {
 			array.splice(array.indexOf(card), 1);
 		}
 		return card;
+	},
+	dealCustomCard: function(array){
+		var random = Math.floor(Math.random() * deck.length);
+		var card = deck[random];
 	}
 }

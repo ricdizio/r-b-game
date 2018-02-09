@@ -134,8 +134,13 @@ module.exports.routes = {
   },
 
   "POST /play/joinLobby": {
-    controller: "GameController",
+    controller: "LobbyController",
     action: 'joinLobby',
+  },
+
+  "POST /play/refreshLobby": {
+    controller: "LobbyController",
+    action: "refreshLobby",
   },
 
   "POST /play/chat": {
@@ -144,13 +149,57 @@ module.exports.routes = {
   },
 
   "POST /play/createWaitingRoom": {
-    controller: "GameController",
+    controller: "LobbyController",
     action: "createWaitingRoom",
   },
 
   "POST /play/joinWaitingRoom": {
-    controller: "GameController",
+    controller: "LobbyController",
     action: "joinWaitingRoom",
+  },
+
+  // UPDATE DE LOS PARAMETROS DE LAS SALAS
+
+  "POST /play/waitingRoom/updateLock": {
+    controller: "WaitingRoomController",
+    action: "updateLock",
+  },
+
+  "POST /play/waitingRoom/updateTurnTime": {
+    controller: "WaitingRoomController",
+    action: "updateTurnTime",
+  },
+
+  "POST /play/waitingRoom/updateCapacity": {
+    controller: "WaitingRoomController",
+    action: "updateCapacity",
+  },
+
+  "POST /play/waitingRoom/updateRounds": {
+    controller: "WaitingRoomController",
+    action: "updateRounds",
+  },
+
+  "POST /play/waitingRoom/updatePassword": {
+    controller: "WaitingRoomController",
+    action: "updatePassword",
+  },
+
+  "POST /play/waitingRoom/updateType": {
+    controller: "WaitingRoomController",
+    action: "updateType",
+  },
+
+  "POST /play/waitingRoom/updateBet": {
+    controller: "WaitingRoomController",
+    action: "updateBet",
+  },
+
+  // FUNCIONES EXTRA DEL WAITING ROOM
+
+  "POST /play/waitingRoom/dealWaitingRoomCard": {
+    controller: "WaitingRoomController",
+    action: "dealWaitingRoomCard",
   },
 
 

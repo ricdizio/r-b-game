@@ -6,6 +6,9 @@ var myNicks = new Array()
 
 io.socket.post('/play/joinLobby');
 
+function refresh(){
+  io.socket.post('/play/refreshLobby');
+}
 class Card {
   constructor(index, number, suit){
     this.index = index;
@@ -184,10 +187,10 @@ io.socket.on('tableStarted', function(type=0, capacity, rounds, time, gender, mo
   game.state.start("playGame",true, false, type, capacity, rounds, time, myNicks, myPos, gender1, money)
 });
 
-io.socket.on('waitingRoomJoin', function(players){
-  console.log(players)
-  for(var i=0; i<players.length; i++){
-    waitRoom.updatePlayer(i, true, players[i].nickName)
+io.socket.on('waitingRoomJoin', function(nicksJSON){
+  console.log(nicksJSON.nicks)
+  for(var i=0; i<nicksJSON.nicks.length; i++){
+    waitRoom.updatePlayer(i, true, nicksJSON.nicks[i])
   }
 });
 
@@ -204,21 +207,22 @@ io.socket.on('waitingRoomDealt', function(card, index, socketId){
 });
 
 // Update btn
-io.socket.on('waitingRoomBet', function(bet){
+io.socket.on('waitingRoomBet', function(betJSON){
+  // betJSON.bet
 });
-io.socket.on('waitingRoomLock', function(lock){
-  waitRoom.btnCheck(lock + 4)
+io.socket.on('waitingRoomLock', function(lockJSON){
+  waitRoom.btnCheck(lockJSON.lock + 4)
 });
-io.socket.on('waitingRoomCapacity', function(capacity){
-  waitRoom.btnCheck(capacity + 5)
+io.socket.on('waitingRoomCapacity', function(capacityJSON){
+  waitRoom.btnCheck(capacityJSON.capacity + 5)
 });
-io.socket.on('waitingRoomTurnTime', function(time){
-  waitRoom.btnCheck(time/15)
+io.socket.on('waitingRoomTurnTime', function(turnTimeJSON){
+  waitRoom.btnCheck(turnTimeJSON.turnTime/15)
 });
-io.socket.on('waitingRoomRounds', function(rounds){
-  if(rounds == 5){
+io.socket.on('waitingRoomRounds', function(roundsJSON){
+  if(roundsJSON.rounds == 5){
     waitRoom.btnCheck(6)
-  } else if(rounds == 9){
+  } else if(roundsJSON.rounds == 9){
     waitRoom.btnCheck(7)
   }
 });
@@ -226,7 +230,7 @@ io.socket.on('waitingRoomRounds', function(rounds){
 io.socket.on('refreshRooms', function(roomsJSON){
   //ROOMJSON ES UN JSON CON PROPIEDAD .waitingRooms, QUE CONTIENE UN ARREGLO CON LAS PROPIEDADES: roomName, type, lock, etc. VER WaitingRoom.js en /services.
   console.log("Refresh room ", roomsJSON);
-  lobbyStage.addRoom(roomsJSON.waitingRooms[0].roomName);
+  lobbyStage.addRoom(roomsJSON.waitingRooms);
 });
 
 io.socket.on('poolRequest', function(){
@@ -245,7 +249,6 @@ io.socket.on('timedOut', function(playerIndex){
 });
 
 io.socket.on('substractConstantBet', function(balance){
-
   playGame.updateBalance(sortArray(balance));
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });

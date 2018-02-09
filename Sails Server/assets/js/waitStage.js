@@ -327,35 +327,33 @@ var waitRoom = {
       i=1; j=4
       var time = new Array(15,30,45)
       waitRoom.gameParams.time = time[button.value-1]
-      socket.emit('updateTurnTime',waitRoom.gameParams.time)
+      io.socket.post('/play/waitingRoom/updateTurnTime', {turnTime: waitRoom.gameParams.time})
     }
     // Type
     if(button.value==4 || button.value==5){
       i=4; j=6
       waitRoom.gameParams.type = button.value - 4
-      socket.emit('updateLock',waitRoom.gameParams.type)
+      io.socket.post('/play/waitingRoom/updateLock', {type: waitRoom.gameParams.type})
     }
     // Rounds
     if(button.value==6 || button.value==7){
       i=6; j=8
       var rounds = new Array(5,9)
       waitRoom.gameParams.rounds = rounds[button.value - 6]
-      socket.emit('updateRounds',waitRoom.gameParams.rounds)
+      io.socket.post('/play/waitingRoom/updateRounds', {rounds: waitRoom.gameParams.rounds})
     }
     // Players
     if(button.value==8 || button.value==9){
       i=8; j=10
       waitRoom.gameParams.players = button.value - 5
-      socket.emit('updateCapacity',waitRoom.gameParams.players)
+      io.socket.post('/play/waitingRoom/updateCapacity', {capacity: waitRoom.gameParams.players})
     }
-
-    console.log(waitRoom.gameParams)
     //waitRoom.btnCheck(i, j, button.value)
   },
   btnNone: function(){
   },
   btnReturn: function(){
-    socket.emit('leaveWaitingRoom')
+    io.socket.post('leaveWaitingRoom')
     game.state.start("lobbyStage")
   },
   btnCreate: function(){
@@ -364,10 +362,10 @@ var waitRoom = {
   btnChange: function(){
   },
   btnStart: function(){
-    //socket.emit('getPlay', true)
+    //io.socket.post('getPlay', true)
     //game.state.start("playGame")
     console.log("Boton start")
-    socket.emit('startTable')
+    io.socket.post('startTable')
   },
   moveRight: function(){
     if(!this.isBusy){
@@ -466,7 +464,7 @@ var waitRoom = {
     }
   },
   pickCardReq: function(){
-    socket.emit('dealWaitingRoomCard', socket.id)
+    io.socket.post('/play/waitingRoom/dealWaitingRoomCard')
   },
   pickCard: function(){
     var flipTween = game.add.tween(this.scrollCards[4].scale).to({
