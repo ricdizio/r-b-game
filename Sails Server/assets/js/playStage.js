@@ -351,15 +351,6 @@ var playGame = {
     this.addSprite(640, 809, 'dupTime')
     this.leaveBtn = game.add.button(928, 800, 'buttonL', this.shutdown, this, 0, 0, 0)   
 
-    this.countDown = this.playTime/ 1000
-    this.timer.loop(1000,function(){
-      this.timerText.text = this.countDown--
-      if(this.countDown<1){
-        this.timer.stop()
-        this.countDown = this.playTime/ 1000
-        this.timerText.text = ''
-      }
-    }, this)
     //this.timerText.text = countDown--
     //this.timer.start()
 
@@ -443,6 +434,9 @@ var playGame = {
     //this.cardArray[index].flip(i,1,1)
     //this.updateRound(++this.nRound)
     socket.emit('getPlay', true)
+    this.timer.stop()
+      this.countDown = this.playTime/ 1000
+      this.timerText.text = ''
   },
   onClickB: function(){
     this.timerBar.stop()
@@ -451,6 +445,9 @@ var playGame = {
     this.btnUpdate(this.btnEnum.PICK, false)
     console.log("BLACK BUTTON")
     socket.emit('getPlay', false)
+    this.timer.stop()
+      this.countDown = this.playTime/ 1000
+      this.timerText.text = ''
   },
   poolRequest: function(req){
     //this.btnUpdate(this.btnEnum.POOL, true)
@@ -464,6 +461,17 @@ var playGame = {
     socket.emit('getPoolAnswer', false, socket.id)
   },
   alertTurn: function(playBool, playerIndex){
+
+    this.countDown = this.playTime/ 1000
+    this.timer.loop(1000,function(){
+      this.timerText.text = this.countDown--
+      if(this.countDown<1){
+        this.timer.stop()
+        this.countDown = this.playTime/ 1000
+        this.timerText.text = ''
+      }
+    }, this)
+
     this.timerCircle.beginFill(0xffffff)
     this.timerCircle.drawCircle(689+23, 646, 46)
     this.timerCircle.endFill()
