@@ -73,7 +73,6 @@ module.exports = {
 	updateRounds: function(req, res) {
 		if (req.isSocket) {
 			var tempRoom = WaitingRoom.getRoomByReq(req);
-			console.log(tempRoom);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateRounds(req.param('rounds'));
@@ -83,6 +82,8 @@ module.exports = {
 	},
 
 	dealWaitingRoomCard: function(req, res){
-		
+		var tempRoom = WaitingRoom.getRoomByReq(req);
+		var socketId = sails.sockets.getId(req);
+		//var card = Deck.dealCustomCard(); PENSAR LOGICA DE CARTAS AGARRADAS.
 	}
 }

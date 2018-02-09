@@ -63,7 +63,13 @@ module.exports = {
 		return card;
 	},
 	dealCustomCard: function(array){
-		var random = Math.floor(Math.random() * deck.length);
-		var card = deck[random];
+		var random;
+		var card;
+		do{
+			random = Math.floor(Math.random() * deck.length);
+			card = deck[random];
+		} while(array.indexOf(card) >= 0);
+
+		return card;
 	}
 }

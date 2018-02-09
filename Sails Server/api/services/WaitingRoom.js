@@ -6,7 +6,6 @@ class WaitingRoom {
 		this.nickNamesArray = new Array();
 		this.pickedCards = new Array();
 		this.players = new Array();
-        this.deck = Deck.shuffle(Deck.shuffle(Deck.get()));
         this.dealtCounter = 0;
         
         this.properties = {

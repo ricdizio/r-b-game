@@ -9,66 +9,11 @@ No mandar el socket id desde el cliente. Usar algun atributo que probablemente t
 Evitar usar self = this. Esto copiara toda la clase y no se utiliza toda, tratar de copiar solo lo necesario.
 */
 
-var io = require('socket.io').listen(3000);
-const HashMap = require('hashmap');
-
-// Variables globales
-var hashMap = new HashMap();
-var waitingRoomVar = 0;
-var globalTable;
-
-var newPlayersArray = new Array();
-var nickNamesArray = new Array();
-var globalDeck = generateDeck();
-
-io.sockets.on('connection', newConnection);
-var table = new Array();
-var numbers = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
-var suits = ['Spades', 'Clubs', 'Diamonds', 'Hearts'];
-var decks = 1;
 
 const playTimeoutTime = 30000;
 const timeBetweenRounds = 5000;
 const poolTimeout = 30000;
 
-class Card {
-	constructor(index, number, suit) {
-		this.index = index;
-		this.number = number;
-		this.suit = suit;
-
-		if (number == 'A') {
-			this.value = 11;
-		}
-		else {
-			this.value = parseInt(number);
-		}
-
-		if (this.suit == "Hearts" || this.suit == "Diamonds") {
-			this.color = true;
-		}
-		else {
-			this.color = false;
-		}
-	}
-}
-
-class Player {
-	constructor(socketId, nickName) {
-		this.socketId = socketId;
-		this.nickName = nickName;
-		this.money;
-		this.playerIndex;
-	}
-
-	add(money) {
-		this.money += money;
-	}
-
-	substract(money) {
-		this.money -= money;
-	}
-}
 
 class Table {
 	constructor(Players, socketRoom, type, maximumPlayers, maximumRounds, initialMoney, playTimeoutTime, constantMoneyBet) {
@@ -569,31 +514,6 @@ class WaitingRoom {
 			this.players[i] = this.pickedCards[i][1];
 		}
 	}
-
-	shuffle(array) {
-		var newArray = array;
-		var arrayLength = array.length;
-		var randomNumber;
-		var temp;
-
-		while (arrayLength) {
-			randomNumber = Math.floor(Math.random() * arrayLength--);
-			temp = newArray[arrayLength];
-			newArray[arrayLength] = newArray[randomNumber];
-			newArray[randomNumber] = temp;
-		}
-
-		return newArray;
-	}
-
-	dealCard(remove) {
-		var random = Math.floor(Math.random() * this.deck.length);
-		var card = this.deck[random];
-		if (remove) {
-			this.deck.splice(this.deck.indexOf(card), 1);
-		}
-		return card;
-	}
 }
 
 function newConnection(socket) {
@@ -657,30 +577,6 @@ function newConnection(socket) {
 	socket.on('disconnect', function () {
 	});
 
-}
-
-function generateDeck() {
-	var temporalArray = new Array();
-	for (var i = 0; i < decks; i++) {
-		for (var j = 0; j < numbers.length; j++) {
-			for (var k = 0; k < suits.length; k++) {
-				temporalArray.push(new Card(j * 4 + k, numbers[j], suits[k]));
-			}
-		}
-	}
-	return temporalArray;
-}
-
-console.log("Se ejecuto");
-
-module.exports = {
-	socket: io.sockets,
-	addNick: function (nickName) {
-		nickNamesArray.push(nickName);
-		console.log('nickNamesArray');
-		console.log(nickNamesArray);
-	},
-	hashMap: hashMap
 }
 
 
