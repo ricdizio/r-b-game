@@ -6,7 +6,9 @@ var myNicks = new Array()
 /////////////// Cosas utilizadas
 ///////////////////////////////////////////////////
 
-io.socket.post('/play/joinLobby');
+io.socket.post('/play/joinLobby', function(resData, jwRes){
+  lobbyStage.addRoom(resData.waitingRooms);
+});
 
 function refresh(){
   io.socket.post('/play/refreshLobby', function(resData, jwRes){

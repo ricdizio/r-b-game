@@ -1,3 +1,6 @@
+// Revisar boton de start table cuando alguien se sale de la sala o se cambia el parametro de jugadores. Por ahora solo se revisa cuando alguien elige
+// una carta, pero si alguien se sale o cambian el parametro no se esta revisando.
+
 module.exports = {
 	updateName: function(req, res) {
 		if (req.isSocket) {
@@ -89,9 +92,11 @@ module.exports = {
 			tempRoom.addPickedCard(card, socketId);
 			sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomDealtCard', {pickedCards: tempRoom.pickedCards});
 
+			//if(!(tempRoom.pickedCards.includes(undefined)) && (tempRoom.pickedCards.length == tempRoom.properties.roomCapacity)){
 			if(!(tempRoom.pickedCards.includes(undefined))){
 				sails.sockets.broadcast(tempRoom.roomCreator.socketId, 'startTableEnabled');
 			}
+			return res.json({card: card});
 		}
 	},
 
@@ -102,7 +107,8 @@ module.exports = {
 			if(tempRoom.roomCreator.socketId == socketId){
 				var players = Player.sortPlayers(tempRoom.players, tempRoom.pickedCards);
 				// Crear mesa y añadirla al hashmap
-				sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: players});
+				//sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: players});
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: players.map(a => a.nickName)})
 			}
 		}
 	}

@@ -38,6 +38,7 @@ class WaitingRoom {
     addPlayer(Player){
         if(this.players.length == 0){
             this.roomCreator = Player;
+            console.log('Room Master: ' + Player.nickName);
         }
         Player.roomIn = this.roomName;
         this.players.push(Player);

@@ -28,10 +28,10 @@ module.exports = {
 				sails.sockets.join(req, roomName);
 
 				var tempRoom = WaitingRoom.create(roomName);
-
 				var tempPlayer = HashMap.userMap.get(socketId);
+				
 				tempRoom.addPlayer(tempPlayer);
-                
+				HashMap.roomMap.set(roomName, tempRoom);
                 //sails.sockets.broadcast('lobby', 'refreshRooms', {waitingRooms: HashMap.lobbyProperties()});
                 sails.sockets.broadcast(roomName, 'waitingRoomJoin', {nicks: tempRoom.nicks()});
 			}

@@ -462,9 +462,11 @@ var waitRoom = {
     }
   },
   pickCardReq: function(){
-    io.socket.post('/play/waitingRoom/dealWaitingRoomCard')
+    io.socket.post('/play/waitingRoom/dealWaitingRoomCard', function(resData, jwRes){
+      waitRoom.pickCard(resData.card.index);
+    });
   },
-  pickCard: function(){
+  pickCard: function(cardIndex){
     var flipTween = game.add.tween(this.scrollCards[4].scale).to({
       x: 0,
       y: 1.1

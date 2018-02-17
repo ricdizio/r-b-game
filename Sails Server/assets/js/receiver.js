@@ -8,7 +8,9 @@ var myNicks = new Array()
 /////////////// Lobby sockets
 ///////////////////////////////////////////////////
 
-io.socket.post('/play/joinLobby');
+io.socket.post('/play/joinLobby', function(resData, jwRes){
+    lobbyStage.addRoom(resData.waitingRooms);
+});
 
 function refresh(){
     io.socket.post('/play/refreshLobby', function(resData, jwRes){
@@ -56,7 +58,7 @@ io.socket.on('waitingRoomRounds', function(roundsJSON){
 
 io.socket.on('waitingRoomDealtCard', function(pickedCardsJSON){
     console.log(pickedCardsJSON.pickedCards)
-    // pickedCardsJSON.pickedCards es un arreglo de las cartas elegidas por los jugadores en su RESPECTIVA POSICION. [undefined, CARD, undefined, CARD]...
+    // pickedCardsJSON.pickedCards es un arreglo de las cartas elegidas por los jugadores en su RESPECTIVA POSICION. [undefined/null, CARD, undefined/null, CARD]...
   });
 
 io.socket.on('startTableEnabled', function(){
