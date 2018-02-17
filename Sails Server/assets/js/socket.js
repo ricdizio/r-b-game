@@ -1,5 +1,5 @@
 var bet = 0;
-var myPos=0;
+var myPos = 0;
 var myNicks = new Array()
 
 ////////////////////////////////////////////////////
@@ -66,11 +66,70 @@ io.socket.on('tableStarted', function(propertiesJSON){
   //                     myNicks, myPos, gender1, money);
 });
 
+io.socket.on('logicalPlayers', function(nickJSON){
+  var nicks = nickJSON.nicks;
+  var myNick = nickJSON.myNick;
+  var n = 0;
+  while(myNick != nicks[0]){
+      nicks.push(nicks.shift());
+      n++;
+  }
+  myNicks = nicks;
+  myPos = n;
+  console.log("Players: "+nicks);
+  console.log("Yo: "+myPos);
+});
 
 
+io.socket.on('play', function(indexJSON){
+  var index = indexJSON.index
+  console.log("index: "+index+ " muPos: "+myPos)
+  if(index == myPos){
 
+    var i = index-myPos
+    if(i<0) i += playGame.maxPlayers
+    var name = myNicks[i]
 
+    console.log("Te toca elegir!"+name);
+    playGame.alertTurn(true, i);
+    // Colocar en pantalla "te toca elegir"
 
+  }
+  else{
+    // var i = index-myPos
+    // if(i<0) i += playGame.maxPlayers
+    // var name = myNicks[i]
+
+    // console.log(name + " is Picking!");
+    // playGame.alertTurn(false, name + " is Picking!");
+    // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
+  }
+//}
+//else{
+//  playGame.checkPlayer(playerIndex);
+//}
+
+});
+
+io.socket.on('substractConstantBet', function(balanceJSON){
+  var balance = balanceJSON.balance;
+  playGame.updateBalance(sortArray(balance));
+  // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
+});
+
+io.socket.on('bettedColor', function(dataJSON){
+  var color = dataJSON.color;
+  var playerIndex = dataJSON.index;
+  if(color){
+    color = "Red";
+  }
+  else{
+    color = "Black";
+  }
+  // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
+  playGame.checkPlayer(playerIndex, color);
+  console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
+});
 
 ////////////////////////////////////////////////////
 /////////////// Cosas nuevas  
@@ -157,47 +216,9 @@ io.socket.on('donePicking', function(card){
   playGame.showFirst(card);
 });
 
-io.socket.on('play', function(index){
-  //if(!lastTurn){
-    console.log("index: "+index+ " muPos: "+myPos)
-    if(index == myPos){
 
-      var i = index-myPos
-      if(i<0) i += playGame.maxPlayers
-      var name = myNicks[i]
 
-      console.log("Te toca elegir!"+name);
-      playGame.alertTurn(true, i);
-      // Colocar en pantalla "te toca elegir"
 
-    }
-    else{
-      // var i = index-myPos
-      // if(i<0) i += playGame.maxPlayers
-      // var name = myNicks[i]
-
-      // console.log(name + " is Picking!");
-      // playGame.alertTurn(false, name + " is Picking!");
-      // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
-    }
-  //}
-  //else{
-  //  playGame.checkPlayer(playerIndex);
-  //}
-  
-});
-
-io.socket.on('bettedColor', function(color, playerIndex){
-  if(color){
-    color = "Red";
-  }
-  else{
-    color = "Black";
-  }
-  // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
-  playGame.checkPlayer(playerIndex, color);
-  console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
-});
 
 io.socket.on('deal', function(card){
   logCard(card);
@@ -207,17 +228,6 @@ io.socket.on('poolAccepted', function(){
   playGame.updateWinners('pool Aceepted!', 0);
 });
 
-io.socket.on('logicalPlayers', function(nicks, myNick){
-  var n=0;
-  while(myNick != nicks[0]){
-    nicks.push(nicks.shift())
-    n++;
-  }
-  myNicks = nicks
-  myPos = n
-  console.log("Players: "+nicks)
-  console.log("Yo: "+myPos)
-});
 
 io.socket.on('reward', function(winningPlayers, prize, balance){
   console.log('premio: ' + prize);
@@ -280,10 +290,6 @@ io.socket.on('timedOut', function(playerIndex){
   console.log('Jugador ' + (playerIndex + 1) + ' ha tardado demasiado');
 });
 
-io.socket.on('substractConstantBet', function(balance){
-  playGame.updateBalance(sortArray(balance));
-  // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
-});
 
 io.socket.on('nickNames', function(nicks){
   playGame.nickName(nicks);

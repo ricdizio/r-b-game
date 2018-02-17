@@ -207,6 +207,12 @@ module.exports.routes = {
     action: "startTable",
   },
 
+  // TABLE
+
+  "POST /play/table/pickedColor": {
+    controller: "TableController",
+    action: "pickedColor",
+  },
 
   /***************************************************************************
   *                                                                          *

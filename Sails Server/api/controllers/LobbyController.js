@@ -23,13 +23,13 @@ module.exports = {
 			var socketId = sails.sockets.getId(req);
 			var roomName = req.param('roomName');
 
-			if(!HashMap.roomMap.has(roomName)){
+			if((!HashMap.roomMap.has(roomName)) && (!HashMap.tableMap.has(roomName))){
 				sails.sockets.leave(req, 'lobby');
 				sails.sockets.join(req, roomName);
 
 				var tempRoom = WaitingRoom.create(roomName);
 				var tempPlayer = HashMap.userMap.get(socketId);
-				
+
 				tempRoom.addPlayer(tempPlayer);
 				HashMap.roomMap.set(roomName, tempRoom);
                 //sails.sockets.broadcast('lobby', 'refreshRooms', {waitingRooms: HashMap.lobbyProperties()});

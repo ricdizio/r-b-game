@@ -1,6 +1,8 @@
 // Revisar boton de start table cuando alguien se sale de la sala o se cambia el parametro de jugadores. Por ahora solo se revisa cuando alguien elige
 // una carta, pero si alguien se sale o cambian el parametro no se esta revisando.
 
+// Eliminar del hashmap la sala cuando los jugadores en ella sean igual a 0.
+// DESCOMENTAR LINEA 97. Comentada para pruebas de 2 jugadores.
 module.exports = {
 	updateName: function(req, res) {
 		if (req.isSocket) {
@@ -92,8 +94,8 @@ module.exports = {
 			tempRoom.addPickedCard(card, socketId);
 			sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomDealtCard', {pickedCards: tempRoom.pickedCards});
 
-			//if(!(tempRoom.pickedCards.includes(undefined)) && (tempRoom.pickedCards.length == tempRoom.properties.roomCapacity)){
-			if(!(tempRoom.pickedCards.includes(undefined))){
+			if(!(tempRoom.pickedCards.includes(undefined)) && (tempRoom.pickedCards.length == tempRoom.properties.roomCapacity)){
+			//if(!(tempRoom.pickedCards.includes(undefined))){
 				sails.sockets.broadcast(tempRoom.roomCreator.socketId, 'startTableEnabled');
 			}
 			return res.json({card: card});
@@ -106,9 +108,16 @@ module.exports = {
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				var players = Player.sortPlayers(tempRoom.players, tempRoom.pickedCards);
-				// Crear mesa y añadirla al hashmap
-				//sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: players});
-				sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: players.map(a => a.nickName)})
+				var nicks = players.map(a => a.nickName);
+
+				for(var i = 0; i < players.length; i++){
+					sails.sockets.broadcast(players[i].socketId, 'logicalPlayers', {nicks: nicks, myNick: players[i].nickName});
+				}
+
+				HashMap.roomMap.delete(tempRoom.properties.roomName);
+				HashMap.tableMap.set(tempRoom.properties.roomName, Table.create(players, tempRoom.properties));
+				
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: nicks})
 			}
 		}
 	}

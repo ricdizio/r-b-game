@@ -62,7 +62,7 @@ module.exports = {
 		}
 		return card;
 	},
-	dealCustomCard: function(array){
+	dealCustomCard: function(array){ // Devuelve una carta que no se encuentre en el parametro array.
 		var random;
 		var card;
 		do{
@@ -71,5 +71,13 @@ module.exports = {
 		} while(array.indexOf(card) >= 0);
 
 		return card;
+	},
+	randomColor: function() {
+		if (Math.random() > 0.5) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 }

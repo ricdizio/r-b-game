@@ -1,5 +1,5 @@
 var bet = 0;
-var myPos=0;
+var myPos = 0;
 var myNicks = new Array()
 
 
@@ -71,14 +71,56 @@ io.socket.on('tableStarted', function(propertiesJSON){
     console.log(propertiesJSON.players);
     var gender1 = [1,1,1]
     var type = 0;
-    //console.log("Players: segundo "+myNicks)
-    //console.log("Yo: "+myPos)
 
     // game.state.start("playGame",true, false, propertiesJSON.type, propertiesJSON.capacity, 
     //                     propertiesJSON.rounds, propertiesJSON.time, 
     //                     myNicks, myPos, gender1, money);
 });
 
+io.socket.on('logicalPlayers', function(nickJSON){
+    var nicks = nickJSON.nicks;
+    var myNick = nickJSON.myNick;
+    var n = 0;
+    while(myNick != nicks[0]){
+        nicks.push(nicks.shift());
+        n++;
+    }
+    myNicks = nicks;
+    myPos = n;
+    console.log("Players: "+nicks);
+    console.log("Yo: "+myPos);
+  });
+
 ////////////////////////////////////////////////////
-/////////////// X sockets
+/////////////// Table sockets
 ///////////////////////////////////////////////////
+
+io.socket.on('play', function(indexJSON){
+    var index = indexJSON.index
+    console.log("index: "+index+ " muPos: "+myPos)
+    if(index == myPos){
+
+      var i = index-myPos
+      if(i<0) i += playGame.maxPlayers
+      var name = myNicks[i]
+
+      console.log("Te toca elegir!"+name);
+      playGame.alertTurn(true, i);
+      // Colocar en pantalla "te toca elegir"
+
+    }
+    else{
+      // var i = index-myPos
+      // if(i<0) i += playGame.maxPlayers
+      // var name = myNicks[i]
+
+      // console.log(name + " is Picking!");
+      // playGame.alertTurn(false, name + " is Picking!");
+      // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
+    }
+  //}
+  //else{
+  //  playGame.checkPlayer(playerIndex);
+  //}
+  
+});

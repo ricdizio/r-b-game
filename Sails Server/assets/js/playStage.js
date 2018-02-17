@@ -432,10 +432,10 @@ var playGame = {
     this.timerCircle.clear()
     this.btnUpdate(this.btnEnum.PICK, false)
     console.log("RED BUTTON")
-    socket.emit('getPlay', true)
+    io.socket.post('/play/table/pickedColor', {color: true})
     //this.cardArray[index].flip(i,1,1)
     //this.updateRound(++this.nRound)
-    socket.emit('getPlay', true)
+    //io.socket.post('getPlay', true)
   },
   onClickB: function(){
     this.timerBar.stop()
@@ -443,18 +443,18 @@ var playGame = {
     this.timerCircle.clear()
     this.btnUpdate(this.btnEnum.PICK, false)
     console.log("BLACK BUTTON")
-    socket.emit('getPlay', false)
+    io.socket.post('/play/table/pickedColor', {color: false})
   },
   poolRequest: function(req){
     //this.btnUpdate(this.btnEnum.POOL, true)
   },
   poolAccept: function(){
     this.btnUpdate(this.btnEnum.POOL, false)
-    socket.emit('getPoolAnswer', true, socket.id)
+    io.socket.post('getPoolAnswer', true, socket.id)
   },
   poolDenied: function(){
     this.btnUpdate(this.btnEnum.POOL, false)
-    socket.emit('getPoolAnswer', false, socket.id)
+    io.socket.post('getPoolAnswer', false, socket.id)
   },
   alertTurn: function(playBool, playerIndex){
     this.timerCircle.beginFill(0xffffff)
