@@ -362,10 +362,8 @@ var waitRoom = {
   btnChange: function(){
   },
   btnStart: function(){
-    //io.socket.post('getPlay', true)
-    //game.state.start("playGame")
     console.log("Boton start")
-    io.socket.post('startTable')
+    io.socket.post('/play/waitingRoom/startTable');
   },
   moveRight: function(){
     if(!this.isBusy){

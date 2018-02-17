@@ -202,6 +202,11 @@ module.exports.routes = {
     action: "dealWaitingRoomCard",
   },
 
+  "POST /play/waitingRoom/startTable": {
+    controller: "WaitingRoomController",
+    action: "startTable",
+  },
+
 
   /***************************************************************************
   *                                                                          *

@@ -1,18 +1,18 @@
 module.exports = {
 	updateName: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateRoomName(req.param('roomName'));
-				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomName', {type: req.param('roomName')});
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomName', {roomName: req.param('roomName')});
 			}
 		}
 	},
 
 	updateType: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateType(req.param('type'));
@@ -22,7 +22,7 @@ module.exports = {
 	},
 	updateLock: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateLock(req.param('lock'));
@@ -32,7 +32,7 @@ module.exports = {
 	},
 	updatePassword: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updatePassword(req.param('password'));
@@ -41,7 +41,7 @@ module.exports = {
 	},
 	updateBet: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateBet(req.param('bet'));
@@ -51,7 +51,7 @@ module.exports = {
 	},
 	updateCapacity: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateCapacity(req.param('capacity'));
@@ -61,7 +61,7 @@ module.exports = {
 	},
 	updateTurnTime: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateTurnTime(req.param('turnTime'));
@@ -72,7 +72,7 @@ module.exports = {
 	},
 	updateRounds: function(req, res) {
 		if (req.isSocket) {
-			var tempRoom = WaitingRoom.getRoomByReq(req);
+			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateRounds(req.param('rounds'));
@@ -82,8 +82,28 @@ module.exports = {
 	},
 
 	dealWaitingRoomCard: function(req, res){
-		var tempRoom = WaitingRoom.getRoomByReq(req);
-		var socketId = sails.sockets.getId(req);
-		//var card = Deck.dealCustomCard(); PENSAR LOGICA DE CARTAS AGARRADAS.
+		if (req.isSocket) {
+			var tempRoom = HashMap.getRoomByReq(req);
+			var socketId = sails.sockets.getId(req);
+			var card = Deck.dealCustomCard(tempRoom.pickedCards);
+			tempRoom.addPickedCard(card, socketId);
+			sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomDealtCard', {pickedCards: tempRoom.pickedCards});
+
+			if(!(tempRoom.pickedCards.includes(undefined))){
+				sails.sockets.broadcast(tempRoom.roomCreator.socketId, 'startTableEnabled');
+			}
+		}
+	},
+
+	startTable: function(req, res){
+		if (req.isSocket) {
+			var tempRoom = HashMap.getRoomByReq(req);
+			var socketId = sails.sockets.getId(req);
+			if(tempRoom.roomCreator.socketId == socketId){
+				var players = Player.sortPlayers(tempRoom.players, tempRoom.pickedCards);
+				// Crear mesa y añadirla al hashmap
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: players});
+			}
+		}
 	}
 }

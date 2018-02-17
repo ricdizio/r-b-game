@@ -1,21 +1,92 @@
-
-//var socket = io.connect('http://190.38.142.244:3000');
 var bet = 0;
 var myPos=0;
 var myNicks = new Array()
 
+////////////////////////////////////////////////////
+/////////////// Cosas utilizadas
+///////////////////////////////////////////////////
+
 io.socket.post('/play/joinLobby');
 
 function refresh(){
-  io.socket.post('/play/refreshLobby');
+  io.socket.post('/play/refreshLobby', function(resData, jwRes){
+    lobbyStage.addRoom(resData.waitingRooms);
+    console.log(resData)
+    console.log(jwRes)
+  });
 }
-class Card {
-  constructor(index, number, suit){
-    this.index = index;
-    this.number = number;
-    this.suit = suit;
+
+io.socket.on('waitingRoomJoin', function(nicksJSON){
+  console.log(nicksJSON.nicks)
+  for(var i=0; i<nicksJSON.nicks.length; i++){
+    waitRoom.updatePlayer(i, true, nicksJSON.nicks[i])
   }
-}
+});
+
+
+
+// Update btn
+io.socket.on('waitingRoomBet', function(betJSON){
+  // betJSON.bet
+});
+io.socket.on('waitingRoomLock', function(lockJSON){
+  waitRoom.btnCheck(lockJSON.lock + 4)
+});
+io.socket.on('waitingRoomCapacity', function(capacityJSON){
+  waitRoom.btnCheck(capacityJSON.capacity + 5)
+});
+io.socket.on('waitingRoomTurnTime', function(turnTimeJSON){
+  waitRoom.btnCheck(turnTimeJSON.turnTime/15)
+});
+io.socket.on('waitingRoomRounds', function(roundsJSON){
+  if(roundsJSON.rounds == 5){
+    waitRoom.btnCheck(6)
+  } else if(roundsJSON.rounds == 9){
+    waitRoom.btnCheck(7)
+  }
+});
+
+io.socket.on('startTableEnabled', function(){
+  // Aparece boton para arrancar la mesa
+    waitRoom.ready2Start()
+});
+
+io.socket.on('tableStarted', function(propertiesJSON){
+  console.log(propertiesJSON.properties);
+  console.log(propertiesJSON.players);
+  var gender1 = [1,1,1]
+  var type = 0;
+  //console.log("Players: segundo "+myNicks)
+  //console.log("Yo: "+myPos)
+
+  // game.state.start("playGame",true, false, propertiesJSON.type, propertiesJSON.capacity, 
+  //                     propertiesJSON.rounds, propertiesJSON.time, 
+  //                     myNicks, myPos, gender1, money);
+});
+
+
+
+
+
+
+
+////////////////////////////////////////////////////
+/////////////// Cosas nuevas  
+///////////////////////////////////////////////////
+
+
+io.socket.on('waitingRoomDealtCard', function(pickedCardsJSON){
+  console.log(pickedCardsJSON.pickedCards)
+  // pickedCardsJSON.pickedCards es un arreglo de las cartas elegidas por los jugadores en su RESPECTIVA POSICION. [undefined, CARD, undefined, CARD]...
+});
+
+
+
+
+
+////////////////////////////////////////////////////
+/////////////// Cosas pendientes
+///////////////////////////////////////////////////
 
 var currentTurn = 0;
 
@@ -27,6 +98,18 @@ function logCard(card){
   playGame.showCard(card);
   console.log("Card: " + card.number + " of " + card.suit);
 }
+
+io.socket.on('waitingRoomLeft', function(index, socketId){
+  if(socketId != socket.id){
+    waitRoom.updatePlayer(index, false)
+  }  
+});
+io.socket.on('waitingRoomDealt', function(card, index, socketId){
+  if(socketId == socket.id){
+    waitRoom.pickCard()
+  } 
+  console.log(card)
+});
 
 io.socket.on('bettedMoney', function(money, playerIndex){
   console.log("Jugador " + (playerIndex + 1) + " aposto " + money);
@@ -175,63 +258,10 @@ io.socket.on('reward', function(winningPlayers, prize, balance){
   
 });
 
-io.socket.on('startTableEnabled', function(){
-// Aparece boton para arrancar la mesa
-  waitRoom.ready2Start()
-});
 
-io.socket.on('tableStarted', function(type=0, capacity, rounds, time, gender, money){
-  var gender1 = [1,1,1]
-  console.log("Players: segundo "+myNicks)
-  console.log("Yo: "+myPos)
-  game.state.start("playGame",true, false, type, capacity, rounds, time, myNicks, myPos, gender1, money)
-});
 
-io.socket.on('waitingRoomJoin', function(nicksJSON){
-  console.log(nicksJSON.nicks)
-  for(var i=0; i<nicksJSON.nicks.length; i++){
-    waitRoom.updatePlayer(i, true, nicksJSON.nicks[i])
-  }
-});
 
-io.socket.on('waitingRoomLeft', function(index, socketId){
-  if(socketId != socket.id){
-    waitRoom.updatePlayer(index, false)
-  }  
-});
-io.socket.on('waitingRoomDealt', function(card, index, socketId){
-  if(socketId == socket.id){
-    waitRoom.pickCard()
-  } 
-  console.log(card)
-});
 
-// Update btn
-io.socket.on('waitingRoomBet', function(betJSON){
-  // betJSON.bet
-});
-io.socket.on('waitingRoomLock', function(lockJSON){
-  waitRoom.btnCheck(lockJSON.lock + 4)
-});
-io.socket.on('waitingRoomCapacity', function(capacityJSON){
-  waitRoom.btnCheck(capacityJSON.capacity + 5)
-});
-io.socket.on('waitingRoomTurnTime', function(turnTimeJSON){
-  waitRoom.btnCheck(turnTimeJSON.turnTime/15)
-});
-io.socket.on('waitingRoomRounds', function(roundsJSON){
-  if(roundsJSON.rounds == 5){
-    waitRoom.btnCheck(6)
-  } else if(roundsJSON.rounds == 9){
-    waitRoom.btnCheck(7)
-  }
-});
-
-io.socket.on('refreshRooms', function(roomsJSON){
-  //ROOMJSON ES UN JSON CON PROPIEDAD .waitingRooms, QUE CONTIENE UN ARREGLO CON LAS PROPIEDADES: roomName, type, lock, etc. VER WaitingRoom.js en /services.
-  console.log("Refresh room ", roomsJSON);
-  lobbyStage.addRoom(roomsJSON.waitingRooms);
-});
 
 io.socket.on('poolRequest', function(){
   playGame.poolRequest(true);
