@@ -117,7 +117,7 @@ module.exports = {
 				HashMap.roomMap.delete(tempRoom.properties.roomName);
 				HashMap.tableMap.set(tempRoom.properties.roomName, Table.create(players, tempRoom.properties));
 				
-				sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties, players: nicks})
+				sails.sockets.broadcast(tempRoom.properties.roomName, 'tableStarted', {properties: tempRoom.properties});
 			}
 		}
 	}

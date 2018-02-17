@@ -2,7 +2,7 @@
 // Esto se hace por si el creado de la sala hace un .post desde consola cuando los jugadores aun no estan listos.
 // Se vuelve true si todos los jugadores han elegido carta. False si no. Si alguien se sale de la sala cuando todos estan listos se vuelve false.
 
-class WaitingRoom {
+class WaitingRoomClass {
 	constructor(roomName) {
         // Room and default settings
         this.roomName = roomName;
@@ -84,6 +84,6 @@ class WaitingRoom {
 
 module.exports = {
     create: function(roomName){
-        return new WaitingRoom(roomName);
+        return new WaitingRoomClass(roomName);
     }
 }

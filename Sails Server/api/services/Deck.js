@@ -11,9 +11,14 @@ class Card {
 		this.suit = suit;
 
 		if (number == 'A') {
+			this.value = 14;
+		} else if (number == 'K'){
+			this.value = 13;
+		} else if (number == 'Q'){
+			this.value = 12;
+		} else if (number == 'J'){
 			this.value = 11;
-		}
-		else {
+		} else {
 			this.value = parseInt(number);
 		}
 

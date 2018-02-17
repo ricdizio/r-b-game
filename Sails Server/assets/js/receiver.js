@@ -124,3 +124,27 @@ io.socket.on('play', function(indexJSON){
   //}
   
 });
+
+io.socket.on('substractConstantBet', function(balanceJSON){
+    var balance = balanceJSON.balance;
+    playGame.updateBalance(sortArray(balance));
+    // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
+});
+
+io.socket.on('bettedColor', function(dataJSON){
+    var color = dataJSON.color;
+    var playerIndex = dataJSON.index;
+    if(color){
+      color = "Red";
+    }
+    else{
+      color = "Black";
+    }
+    // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
+    playGame.checkPlayer(playerIndex, color);
+    console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
+});
+
+io.socket.on('deal', function(cardJSON){
+    logCard(cardJSON.card);
+});

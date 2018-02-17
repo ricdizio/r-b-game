@@ -55,15 +55,14 @@ io.socket.on('startTableEnabled', function(){
 
 io.socket.on('tableStarted', function(propertiesJSON){
   console.log(propertiesJSON.properties);
-  console.log(propertiesJSON.players);
   var gender1 = [1,1,1]
   var type = 0;
   //console.log("Players: segundo "+myNicks)
   //console.log("Yo: "+myPos)
 
-  // game.state.start("playGame",true, false, propertiesJSON.type, propertiesJSON.capacity, 
-  //                     propertiesJSON.rounds, propertiesJSON.time, 
-  //                     myNicks, myPos, gender1, money);
+  game.state.start("playGame", true, false, propertiesJSON.properties.type, propertiesJSON.properties.roomCapacity, 
+                      propertiesJSON.properties.rounds, propertiesJSON.properties.turnTime, 
+                      myNicks, myPos, gender1, propertiesJSON.properties.roomBet * propertiesJSON.properties.rounds);
 });
 
 io.socket.on('logicalPlayers', function(nickJSON){
@@ -76,8 +75,6 @@ io.socket.on('logicalPlayers', function(nickJSON){
   }
   myNicks = nicks;
   myPos = n;
-  console.log("Players: "+nicks);
-  console.log("Yo: "+myPos);
 });
 
 
@@ -129,6 +126,10 @@ io.socket.on('bettedColor', function(dataJSON){
   // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
   playGame.checkPlayer(playerIndex, color);
   console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
+});
+
+io.socket.on('deal', function(cardJSON){
+  logCard(cardJSON.card);
 });
 
 ////////////////////////////////////////////////////
@@ -220,9 +221,7 @@ io.socket.on('donePicking', function(card){
 
 
 
-io.socket.on('deal', function(card){
-  logCard(card);
-});
+
 
 io.socket.on('poolAccepted', function(){
   playGame.updateWinners('pool Aceepted!', 0);

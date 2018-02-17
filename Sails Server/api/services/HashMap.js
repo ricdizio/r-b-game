@@ -16,7 +16,7 @@ module.exports = {
         return this.roomMap.get(this.userMap.get(sails.sockets.getId(req)).roomIn); // WaitingRoom
     },
     getTableByReq: function(req){
-        return this.roomMap.get(this.tableMap.get(sails.sockets.getId(req)).roomIn); // WaitingRoom
+        return this.tableMap.get(this.userMap.get(sails.sockets.getId(req)).roomIn); // Table
     },
     userMap: userMap,
     roomMap: roomMap,

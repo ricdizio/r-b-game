@@ -1,4 +1,12 @@
-class Table {
+// En Table hay demasiadas funciones que se llaman pasando como parametro la clase TableClass. 
+// Esto puede generar lentitud o problemas de stack al volver (al momento de escalar)
+// Discutir. La solucion es no llamar a la funcion y copiar y pegar el codigo en el lugar.
+
+// Optimizacion: Quitar todas las funciones de alert y poner una sola con tag de parametro.
+// Complicaciones: Cambiar el .algo del cliente cuando recibe el socket.
+const timeBetweenRounds = 3000;
+
+class TableClass {
 	constructor(players, propertiesJSON) {
 		// Settings.
 		this.roomName = propertiesJSON.roomName;
@@ -86,7 +94,7 @@ class Table {
 
 module.exports = {
     create: function (Players, properties){
-        return new Table(Players, properties);
+        return new TableClass(Players, properties);
 	},
 
 	alertTurn: function (roomName, player) {
@@ -101,19 +109,77 @@ module.exports = {
 		//sails.sockets.broadcast(roomName, 'bettedColor', {index: player.index, color: color});
 	},
 
+	alertPickedCard: function(roomName, card){
+		sails.sockets.broadcast(roomName, 'deal', {card: card});
+	},
+
+	alertBalance: function(roomName, dataArray){
+		sails.sockets.broadcast(roomName, 'reward', {data: dataArray});
+	},
+
 	pickedColor: function(tempTable, socketId, color){
 		if(tempTable.playingPlayer.socketId == socketId){
 			tempTable.pickedColors[tempTable.playingPlayer.index] = color;
 
 			Table.alertPickedColor(tempTable.roomName, tempTable.playingPlayer, color);
 
-			if(tempTable.checkIfAllPicked()){
-				// HACER TODO
+			if(!tempTable.checkIfAllPicked()){
+				tempTable.changeTurn();
+				Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+			} else {
+				Table.rewardCalculation(tempTable);
+
+				tempTable.pickedColors = new Array();
+				setTimeout(function(){
+					tempTable.changeTurn();
+					Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+				}, timeBetweenRounds);
 				
 			}
-			tempTable.changeTurn();
-			Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+			
 		}
 	},
 
+	rewardCalculation: function(tempTable){
+		var card = Deck.dealCard(tempTable.deck, true)
+		Table.alertPickedCard(tempTable.roomName, card);
+		var winnerNumber = Table.calculateWinners(tempTable, card);
+
+		if(winnerNumber == 0){
+			Table.houseWon(tempTable);
+		} else if(winnerNumer == tempTable.roomCapacity){
+			Table.poolRequest(tempTable);
+		} else{
+			Table.sendReward(tempTable);
+		}
+	},
+
+	houseWon: function(tempTable){
+
+	},
+	poolRequest: function(tempTable){
+
+	},
+	sendReward: function(tempTable){
+		var dataArray = new Array();
+
+		for(var i = 0; i < tempTable.pickedColors; i++){
+			if(tempTable.pickedColors[i] == card.color){
+				tempTable.players[i].add(prize);
+				dataJSON.push({
+					i: i,
+					balance: tempTable.players[i].money
+				});
+			}
+		}
+		Table.alertBalance(tempTable.roomName, dataArray);
+	},
+
+	calculateWinners: function(tempTable, card){
+		var filter = tempTable.pickedColors.filter(function(color){
+			return (color == card.color);
+		});
+		return filter.length;
+		// return tempTable.pickedColors.filter(function(color){return (color == card.color);}).length
+	},
 }
