@@ -132,6 +132,31 @@ io.socket.on('deal', function(cardJSON){
   logCard(cardJSON.card);
 });
 
+io.socket.on('reward', function(dataJSON){
+  var dataArray = dataJSON.data;
+  var winningPlayers = new Array();
+  var balance = new Array();
+  var j = 0;
+
+  // Asignamos winningPlayers como antes.
+  for(var i = 0; i < dataArray.length; i++){
+    if(dataArray[i].won){
+      winningPlayers.push(dataArray[i].index);
+    }
+    balance.push(dataArray[i].balance);
+  }
+
+  // Acomodamos los indexes del array de winningPlayers.
+  for(var i = 0; i < winningPlayers.length; i++){
+    var a = winningPlayers[i]-myPos;
+    if(a < 0) a += playGame.maxPlayers;
+    winningPlayers[i] = a;
+  }
+
+  playGame.updateBalance(sortArray(balance));
+  playGame.updateWinners(sortArray(winningPlayers));
+});
+
 ////////////////////////////////////////////////////
 /////////////// Cosas nuevas  
 ///////////////////////////////////////////////////
@@ -228,46 +253,7 @@ io.socket.on('poolAccepted', function(){
 });
 
 
-io.socket.on('reward', function(winningPlayers, prize, balance){
-  console.log('premio: ' + prize);
-  var winText = "test";
-  if(winningPlayers === 0){
-    // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
-    // balance contiene el dinero de cada jugador (del 0 a N jugadores).
-    /*for(var i = 0; i < winningPlayers.length; i++){
-      if(ids[winningPlayers[i]] == socket.id){
-        winText = 'You Win ';
-        console.log('You win ' + prize +'!');
-        break;
-      }
-      else{
-        winText = 'You Lose';
-        prize = 0;
-        console.log('You Lose ');
-      }
-    }*/
-  }
-  else{
-    // Mostrar en pantalla que gano la casa.
-    console.log("Gana la casa");
-    winText = 'The House Wins';
-    prize = 0;
-  }
-  
-  for(var i = 0; i < winningPlayers.length; i++){
-    var a = winningPlayers[i]-myPos;
-    if(a < 0) a += playGame.maxPlayers;
-    winningPlayers[i] = a;
-  }
-  
-  // Revisar porque winningplayers es 0
-  playGame.updateWinners(sortArray(winningPlayers));
-  console.log("Balance en REWARD: "+balance)
-  if(balance !== 0){
-    playGame.updateBalance(sortArray(balance));
-  }
-  
-});
+
 
 
 
@@ -306,3 +292,44 @@ function sortArray(array){
   return array
 }
 
+
+// io.socket.on('reward', function(winningPlayers, prize, balance){
+//   console.log('premio: ' + prize);
+//   var winText = "test";
+//   if(winningPlayers === 0){
+//     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
+//     // balance contiene el dinero de cada jugador (del 0 a N jugadores).
+//     /*for(var i = 0; i < winningPlayers.length; i++){
+//       if(ids[winningPlayers[i]] == socket.id){
+//         winText = 'You Win ';
+//         console.log('You win ' + prize +'!');
+//         break;
+//       }
+//       else{
+//         winText = 'You Lose';
+//         prize = 0;
+//         console.log('You Lose ');
+//       }
+//     }*/
+//   }
+//   else{
+//     // Mostrar en pantalla que gano la casa.
+//     console.log("Gana la casa");
+//     winText = 'The House Wins';
+//     prize = 0;
+//   }
+  
+//   for(var i = 0; i < winningPlayers.length; i++){
+//     var a = winningPlayers[i]-myPos;
+//     if(a < 0) a += playGame.maxPlayers;
+//     winningPlayers[i] = a;
+//   }
+  
+//   // Revisar por que winningplayers es 0
+//   playGame.updateWinners(sortArray(winningPlayers));
+//   console.log("Balance en REWARD: "+balance)
+//   if(balance !== 0){
+//     playGame.updateBalance(sortArray(balance));
+//   }
+  
+// });

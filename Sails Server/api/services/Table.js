@@ -113,8 +113,14 @@ module.exports = {
 		sails.sockets.broadcast(roomName, 'deal', {card: card});
 	},
 
-	alertBalance: function(roomName, dataArray){
+	alertReward: function(roomName, dataArray){
 		sails.sockets.broadcast(roomName, 'reward', {data: dataArray});
+	},
+
+	end: function(tempTable){
+		// Cosas de base de datos
+		// HashMap.roomMap.delete(tempTable.roomName);
+		sails.sockets.broadcast(tempTable.roomName, 'tableEnd');
 	},
 
 	pickedColor: function(tempTable, socketId, color){
@@ -130,13 +136,16 @@ module.exports = {
 				Table.rewardCalculation(tempTable);
 
 				tempTable.pickedColors = new Array();
-				setTimeout(function(){
-					tempTable.changeTurn();
-					Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
-				}, timeBetweenRounds);
-				
+
+				if(tempTable.deck.length + tempTable.rounds > Deck.deck.length) {
+					setTimeout(function(){
+						tempTable.changeTurn();
+						Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+					}, timeBetweenRounds);	
+				} else {
+					Table.end(tempTable);
+				}
 			}
-			
 		}
 	},
 
@@ -147,7 +156,7 @@ module.exports = {
 
 		if(winnerNumber == 0){
 			Table.houseWon(tempTable);
-		} else if(winnerNumer == tempTable.roomCapacity){
+		} else if(winnerNumber == tempTable.roomCapacity){
 			Table.poolRequest(tempTable);
 		} else{
 			Table.sendReward(tempTable);
@@ -162,17 +171,21 @@ module.exports = {
 	},
 	sendReward: function(tempTable){
 		var dataArray = new Array();
+		var won;
 
 		for(var i = 0; i < tempTable.pickedColors; i++){
+			won = false;
 			if(tempTable.pickedColors[i] == card.color){
 				tempTable.players[i].add(prize);
-				dataJSON.push({
-					i: i,
-					balance: tempTable.players[i].money
-				});
+				won = true;
 			}
+			dataJSON.push({
+				index: i,
+				balance: tempTable.players[i].money,
+				won: won
+			});
 		}
-		Table.alertBalance(tempTable.roomName, dataArray);
+		Table.alertReward(tempTable.roomName, dataArray);
 	},
 
 	calculateWinners: function(tempTable, card){

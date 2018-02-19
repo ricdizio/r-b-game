@@ -41,6 +41,7 @@ for (var i = 0; i < decks; i++) {
 
 
 module.exports = {
+	deck: deck,
     get: function(){
         return deck;
     },
