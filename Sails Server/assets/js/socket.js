@@ -109,7 +109,7 @@ io.socket.on('play', function(indexJSON){
 });
 
 io.socket.on('substractConstantBet', function(balanceJSON){
-  var balance = balanceJSON.balance;
+  var balance = balanceJSON.data;
   playGame.updateBalance(sortArray(balance));
   // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
@@ -137,7 +137,8 @@ io.socket.on('reward', function(dataJSON){
   var winningPlayers = new Array();
   var balance = new Array();
   var j = 0;
-
+  console.log("DENTRO DE REWARD")
+  console.log(dataArray)
   // Asignamos winningPlayers como antes.
   for(var i = 0; i < dataArray.length; i++){
     if(dataArray[i].won){

@@ -60,28 +60,23 @@ class TableClass {
 			arrayItem.substract(money);
 		});*/
 		var temporalArray = new Array();
-		for (var i = 0; i < this.players; i++) {
+		for (var i = 0; i < this.players.length; i++) {
 			this.players[i].substract(this.roomBet);
+			console.log(this.players[i].money);
 			temporalArray.push(this.players[i].money);
 			this.pool += this.roomBet;
 		}
+		console.log(temporalArray)
 		Table.alertConstantBet(temporalArray);
 	}
 
-	chooseCards(){
-
-	}
-
-	reward() {
-
-	}
-
 	changeTurn(){
-		var index = this.playingPlayer.index;
-		if(++index >= this.roomCapacity){
-			index = 0;
+		var index = this.playingPlayer.index + 1;
+		if(index >= this.roomCapacity){
+			index -= this.roomCapacity;
 		}
 		this.playingPlayer = this.players[index];
+		console.log(index)
 		// para los timeouts
 		// sails.controllers.yourControllerName.yourFunction()
 	}
@@ -102,7 +97,7 @@ module.exports = {
 	},
 
 	alertConstantBet: function (roomName, balanceArray) {
-		sails.sockets.broadcast(roomName, 'substractConstantBet', {balanceArray: balanceArray});
+		sails.sockets.broadcast(roomName, 'substractConstantBet', {data: balanceArray});
 	},
 
 	alertPickedColor: function (roomName, player, color) {
@@ -123,28 +118,25 @@ module.exports = {
 		sails.sockets.broadcast(tempTable.roomName, 'tableEnd');
 	},
 
-	pickedColor: function(tempTable, socketId, color){
-		if(tempTable.playingPlayer.socketId == socketId){
-			tempTable.pickedColors[tempTable.playingPlayer.index] = color;
+	pickedColor: function(tempTable, color){
+		tempTable.pickedColors[tempTable.playingPlayer.index] = color;
 
-			Table.alertPickedColor(tempTable.roomName, tempTable.playingPlayer, color);
+		Table.alertPickedColor(tempTable.roomName, tempTable.playingPlayer, color);
 
-			if(!tempTable.checkIfAllPicked()){
-				tempTable.changeTurn();
-				Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+		if(!tempTable.checkIfAllPicked()){
+			tempTable.changeTurn();
+			Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+		} else {
+			Table.rewardCalculation(tempTable);
+			tempTable.changeTurn();
+			if(++tempTable.playTurn <= tempTable.rounds) {
+				setTimeout(function(){
+					tempTable.changeTurn();
+					tempTable.constantBet(tempTable.roomBet);
+					Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+				}, timeBetweenRounds);
 			} else {
-				Table.rewardCalculation(tempTable);
-
-				tempTable.pickedColors = new Array();
-
-				if(tempTable.deck.length + tempTable.rounds > Deck.deck.length) {
-					setTimeout(function(){
-						tempTable.changeTurn();
-						Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
-					}, timeBetweenRounds);	
-				} else {
-					Table.end(tempTable);
-				}
+				Table.end(tempTable);
 			}
 		}
 	},
@@ -154,37 +146,43 @@ module.exports = {
 		Table.alertPickedCard(tempTable.roomName, card);
 		var winnerNumber = Table.calculateWinners(tempTable, card);
 
-		if(winnerNumber == 0){
-			Table.houseWon(tempTable);
-		} else if(winnerNumber == tempTable.roomCapacity){
+		if(winnerNumber == tempTable.roomCapacity){
 			Table.poolRequest(tempTable);
 		} else{
-			Table.sendReward(tempTable);
+			let prize;
+			if(winnerNumber != 0){
+				prize = tempTable.pool / winnerNumber;
+			} else{
+				prize = 0;
+			}
+
+			Table.sendReward(tempTable, prize, card);
+			tempTable.pickedColors = new Array();
 		}
 	},
 
-	houseWon: function(tempTable){
-
-	},
 	poolRequest: function(tempTable){
-
 	},
-	sendReward: function(tempTable){
+
+	sendReward: function(tempTable, prize, card){
 		var dataArray = new Array();
 		var won;
 
-		for(var i = 0; i < tempTable.pickedColors; i++){
+		for(var i = 0; i < tempTable.pickedColors.length; i++){
 			won = false;
 			if(tempTable.pickedColors[i] == card.color){
 				tempTable.players[i].add(prize);
 				won = true;
 			}
-			dataJSON.push({
+			dataArray.push({
 				index: i,
 				balance: tempTable.players[i].money,
 				won: won
 			});
 		}
+
+		tempTable.pool = 0;
+		console.log(dataArray)
 		Table.alertReward(tempTable.roomName, dataArray);
 	},
 
