@@ -89,25 +89,15 @@ class playerGUI {
     // id actual
     // id jugador
     var id = this.nick;
-
-    //Peticion XMLhttp
-    var http = new XMLHttpRequest();
-    var url = "http://201.242.167.11:1337/profile/add";
-    var data = new FormData();
-    data.append('id', id);
-    http.open("POST", url, true);
-
-    http.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    http.onreadystatechange = function() {
-      //Call a function when the state changes.
-      if(http.readyState == 4 && http.status == 200) {
-        alert(http.responseText);
-      }
-    }
-    http.send(data);
-
-    console.log("Friend "+this.nick+" Added");
-    alert("Friend "+this.nick+" Added");
+    io.socket.update('/profile/add', {add: id});
+    io.socket.on('addSucess', function(data){
+      console.log(data);
+      console.log("Friend "+this.nick+" Added");
+    });
+    io.socket.on('addFail', function(data){
+      console.log(data);
+      alert("error");
+    });
     this.buttonF.destroy();
   }
 }

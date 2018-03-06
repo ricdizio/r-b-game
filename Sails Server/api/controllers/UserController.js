@@ -171,40 +171,33 @@ profile: function(req,res){},
 // Metodo para agregar amigos
   addFriend: function(req, res, next) {
 
-    if(!req.session.authenticated){
-       var loginRequiredError = [{
-          name: 'loginRequired',
-          message: 'You must be logged to play.'
-        }];
-    
-        // Remember that err is the object being passed down (a.k.a. flash.err), whose value is another object with
-        // the key of loginRequiredError
-        req.session.flash = {
-        err: loginRequiredError
-       };
-       return res.redirect('/login');
-    }
+    if(req.isSocket){
+      var userObj = req.param('add');
+      var encontrado = null;
+      User.findOne({nickName: userObj}).exec(function(err, user){encontrado = user;})
 
-    var userObj = req.param('id');
+      // Agregamos id del amigo a friends
 
-    // Agregamos id del amigo a friends
-    User.findOne(req.session.User.nickName).populate('friends').exec(function(err,u){
-      console,log("info req enviada: " + req.session.User.nickName);
-      console,log("info u: " + u);
-      u.friends.add(userObj);
-      u.save(function(err){ 
-        if(err) {
-          console.error(err);
-          res.json(500, { error: 'cant not add user' })
-        }
+      User.findOne(req.session.User.nickName).populate('friends').exec(function(err,u){
+        u.friends.add(encontrado.id);
+        u.save(function(err){ 
+          if(err) {
+            console.error(err);
+            res.json('addFail', { error: 'cant not add user' })
+          }
 
+        });
+        var msg = "user with id: "+ userObj + " has been added successfully";
+        console.log(msg);
+
+        res.json('addSucess',{data: msg})
+        console.log(u);
       });
-      var msg = "user with id: "+ userObj + " has been added successfully";
-      console.log(msg);
-
-      res.json({data: msg})
-      console.log(u);
-    });
+      return;
+    }
+    else{
+      return res.forbidden('You are not permitted to perform this action.');
+    }
   },
 
 

@@ -86,7 +86,7 @@ module.exports.routes = {
     action: "update"
   },
 
-  'POST /profile/add': {
+  'UPDATE /profile/add': {
     controller: "User", 
     action: "addFriend"
   },
