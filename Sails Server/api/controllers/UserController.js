@@ -12,7 +12,6 @@ module.exports = {
 
 new: function(req, res) {
 
-    //console.log(req.session);
     if(req.session.authenticated)
     {
       res.redirect("/");
@@ -78,6 +77,8 @@ create: function(req, res, next) {
       });
     });
   },
+
+profile: function(req,res){},
 
 // Method Get User found a User a return it
   getUser: function (req, res) {

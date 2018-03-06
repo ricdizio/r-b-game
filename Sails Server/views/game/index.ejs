@@ -1,4 +1,8 @@
-<script src="/js/dependencies/sails.io.js"></script>
+<script src="/js/dependencies/sails.io.js"
+  autoConnect="true"
+  environment="production"
+  headers='{ "x-csrf-token": "<%= typeof _csrf !== 'undefined' ? _csrf : '' %>" }'
+></script>
 <script src="js/jquery-1.11.1.js"></script>
 
 <!-- -->
@@ -13,7 +17,6 @@
 <!--<script src="js/receiver.js"></script>-->
 
 <!-- -->
-
 
 
 <div class="container">
