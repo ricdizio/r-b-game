@@ -27,6 +27,18 @@ module.exports.policies = {
   ***************************************************************************/
 
    '*': 'flash',
+   game:{
+    '*':'authenticated'
+   },
+   table:{
+    '*':'authenticated'
+   },
+   waitingroom:{
+    '*':'authenticated'
+   },
+   lobby:{
+    '*':'authenticated'
+   },
    user: {
       'new': "flash",
       create: "flash",
@@ -35,7 +47,6 @@ module.exports.policies = {
       update: "userCanSeeProfile",
       destroy: "userCanSeeProfile",
       '*': "admin"
-
     }
 
   /***************************************************************************

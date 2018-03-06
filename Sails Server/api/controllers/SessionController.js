@@ -103,6 +103,7 @@ module.exports = {
 				     validated: user.validated,
 				     createdAt: user.createdAt,
 				     updatedAt: user.updatedAt,
+				     tokens: user.tokens,
 				     id: user.id
 				}
 
