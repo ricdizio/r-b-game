@@ -121,6 +121,9 @@ module.exports.routes = {
     controller: "SessionController",
     action: "new",
     //view: "user/new"
+    locals: {
+      title:"About",
+    },
   },
 
 // Crear Sesion

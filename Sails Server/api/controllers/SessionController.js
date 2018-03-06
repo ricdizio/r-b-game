@@ -15,7 +15,7 @@ module.exports = {
 	    //{
 	    //  return res.redirect("/");
 	    //}
-		return res.view('session/new',{title:"R&B - Sign In"});
+		return res.view('session/new',{title:"Sign In"});
 	},
 
 	create: function(req, res){
@@ -84,7 +84,7 @@ module.exports = {
 					}
 
 					//Return with flash error
-					return res.redirect('login');; 
+					return res.redirect('/login');; 
 
 				}
 

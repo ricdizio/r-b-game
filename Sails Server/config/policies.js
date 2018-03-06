@@ -28,17 +28,20 @@ module.exports.policies = {
 
    '*': 'flash',
    game:{
-    '*':'authenticated'
+    'play':'authenticated'
+    //'chat': 'socketAuth'
    },
+   
    table:{
-    '*':'authenticated'
+    '*':'socketAuth'
    },
    waitingroom:{
-    '*':'authenticated'
+    '*':'socketAuth'
    },
    lobby:{
-    '*':'authenticated'
+    '*':'socketAuth'
    },
+   
    user: {
       'new': "flash",
       create: "flash",

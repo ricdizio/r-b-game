@@ -124,6 +124,7 @@ module.exports.sockets = {
   ***************************************************************************/
   afterDisconnect: function(session, socket, cb) {
     HashMap.userMap.delete(socket.id)
+    session.destroy();
     // By default: do nothing.
     return cb();
   },

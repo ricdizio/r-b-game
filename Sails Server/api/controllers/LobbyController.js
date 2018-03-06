@@ -1,5 +1,6 @@
 module.exports = {
 	joinLobby: function(req, res){
+		console.log(req.session.authenticated)
 		if (req.isSocket) {
 			sails.sockets.join(req, 'lobby');
 			var socketId = sails.sockets.getId(req);

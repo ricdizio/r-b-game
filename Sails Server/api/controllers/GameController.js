@@ -10,7 +10,7 @@
 
 module.exports = {
 	play: function(req, res){
-		return res.view('game/index',{title:"R&B - Play"});
+		return res.view('game/index',{title:"Play"});
 	},
 
 	

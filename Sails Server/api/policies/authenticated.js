@@ -4,7 +4,7 @@
 module.exports = function(req, res, ok) {
 
   // User is allowed, proceed to controller
-  if (req.session.User) {
+  if (req.session.authenticated) {
     return ok();
   }
 
@@ -15,6 +15,6 @@ module.exports = function(req, res, ok) {
     // 	err: requireLoginError
     // }
     return res.redirect('/login');
-    //res.send(403);
+    //return res.send(403);
   }
 };
