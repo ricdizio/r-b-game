@@ -172,26 +172,25 @@ profile: function(req,res){},
   addFriend: function(req, res, next) {
 
     if(req.isSocket){
-      var userObj = req.param('add');
-      var encontrado = null;
-      User.findOne({nickName: userObj}).exec(function(err, user){encontrado = user;})
+      let userObj = req.param('add');
+      let s = null;
+      User.findOne({nickName: userObj}).exec(function(err, user){s = user;});
 
       // Agregamos id del amigo a friends
-
-      User.findOne(req.session.User.nickName).populate('friends').exec(function(err,u){
-        u.friends.add(encontrado.id);
+      console.log('req: '+ req.session.User.nickName);
+      User.findOne(req.session.User).populate('friends').exec(function(err,u){
+        u.friends.add(s.id);
         u.save(function(err){ 
           if(err) {
             console.error(err);
-            res.json('addFail', { error: 'cant not add user' })
+            res.json({ error: 'cant not add user' })
           }
 
         });
         var msg = "user with id: "+ userObj + " has been added successfully";
         console.log(msg);
 
-        res.json('addSucess',{data: msg})
-        console.log(u);
+        res.json({pass: msg})
       });
       return;
     }

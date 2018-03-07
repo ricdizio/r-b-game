@@ -28,8 +28,8 @@ module.exports.policies = {
 
    '*': 'flash',
    game:{
-    'play':'authenticated'
-    //'chat': 'socketAuth'
+    'play':'authenticated',
+    'chat': 'socketAuth'
    },
    
    table:{
@@ -49,6 +49,7 @@ module.exports.policies = {
       edit: "userCanSeeProfile",
       update: "userCanSeeProfile",
       destroy: "userCanSeeProfile",
+      addFriends: "authenticated",
       '*': "admin"
     }
 

@@ -89,7 +89,11 @@ class playerGUI {
     // id actual
     // id jugador
     var id = this.nick;
-    io.socket.update('/profile/add', {add: id});
+    io.socket.post('/profile/add', {add: id}, function(resData, jwres){
+      console.log("resData: " + resData );
+      console.log("jwres: " + jwres );
+    });
+    /*
     io.socket.on('addSucess', function(data){
       console.log(data);
       console.log("Friend "+this.nick+" Added");
@@ -98,6 +102,7 @@ class playerGUI {
       console.log(data);
       alert("error");
     });
+    */
     this.buttonF.destroy();
   }
 }

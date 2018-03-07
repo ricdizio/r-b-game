@@ -123,7 +123,7 @@ var lobbyStage = {
     },
     joinRoom: function(){
         game.state.start("waitRoom")
-        io.socket.update('/profile/add', {roomName: "Room1"})
+        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"})
     },
     update: function(){
     }
