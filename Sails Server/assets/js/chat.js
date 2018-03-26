@@ -1,17 +1,13 @@
-console.log('AFUERA')
 $('#chat-form').submit(function(){
   io.socket.post('/play/chat', { message: $('#m').val() }, function (resData, jwRes) {
     jwRes.statusCode; // => 200
-    console.log(jwRes.statusCode)
   });
-    console.log('ADENTRO')
     $('#m').val('');
     return false;
   });
   io.socket.on('chat', function(obj){
     id = obj.id;
     msg = obj.message;
-  	console.log(id);
   	var dt = new Date();
 	  var time = dt.getHours() + ":" + dt.getMinutes();
   	var h = '<div class="box-messege"> <div class="box-title"> <span class="name-chat">' + id +  '</span>  ';

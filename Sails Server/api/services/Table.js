@@ -4,8 +4,8 @@
 
 // Optimizacion: Quitar todas las funciones de alert y poner una sola con tag de parametro.
 // Complicaciones: Cambiar el .algo del cliente cuando recibe el socket.
-const timeBetweenRounds = 3000;
-const timeAfterTableEnd = 2000;
+const timeBetweenRounds = 4000;
+const timeAfterTableEnd = 10000;
 
 class TableClass {
 	constructor(players, propertiesJSON) {
@@ -33,7 +33,7 @@ class TableClass {
 		this.pickedColors = new Array();
 
 
-		setTimeout(() => this.start(), 5000);
+		setTimeout(() => this.start(), 2000);
 	}
 
 	// Funciones iniciales.
@@ -48,22 +48,20 @@ class TableClass {
 	// Funcionamiento en orden del juego.
 
 	start() {
-		this.constantBet(this.roomBet);
+		this.constantBet();
+		Table.alertBalance(this.roomName, this.players.map(a => a.money));
 		this.playingPlayer = this.players[0];
 		Table.alertTurn(this.roomName, this.playingPlayer);
 	}
 
-	constantBet(money) {
+	constantBet() {
 		/*this.players.forEach( function (arrayItem){
 			arrayItem.substract(money);
 		});*/
-		var temporalArray = new Array();
 		for (var i = 0; i < this.players.length; i++) {
 			this.players[i].substract(this.roomBet);
-			temporalArray.push(this.players[i].money);
 			this.pool += this.roomBet;
 		}
-		Table.alertConstantBet(temporalArray);
 	}
 
 	changeTurn(){
@@ -91,8 +89,8 @@ module.exports = {
 		sails.sockets.broadcast(roomName, 'play', {index: player.index});
 	},
 
-	alertConstantBet: function (roomName, balanceArray) {
-		sails.sockets.broadcast(roomName, 'substractConstantBet', {data: balanceArray});
+	alertBalance: function (roomName, balanceArray) {
+		sails.sockets.broadcast(roomName, 'updateBalance', {data: balanceArray});
 	},
 
 	alertPickedColor: function (roomName, player, color) {
@@ -126,12 +124,16 @@ module.exports = {
 			tempTable.changeTurn();
 			Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
 		} else {
-			Table.rewardCalculation(tempTable);
+			Table.reward(tempTable);
+
+			Table.alertBalance(tempTable.roomName, tempTable.players.map(a => a.money));
 			tempTable.changeTurn();
+
 			if(++tempTable.playTurn < tempTable.rounds) {
 				setTimeout(function(){
 					tempTable.changeTurn();
-					tempTable.constantBet(tempTable.roomBet);
+					tempTable.constantBet();
+					Table.alertBalance(tempTable.roomName, tempTable.players.map(a => a.money));
 					Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
 				}, timeBetweenRounds);
 			} else {
@@ -141,7 +143,7 @@ module.exports = {
 		}
 	},
 
-	rewardCalculation: function(tempTable){
+	reward: function(tempTable){
 		var card = Deck.dealCard(tempTable.deck, true)
 		Table.alertPickedCard(tempTable.roomName, card);
 		var winnerNumber = Table.calculateWinners(tempTable, card);

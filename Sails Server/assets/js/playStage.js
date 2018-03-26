@@ -21,7 +21,6 @@ class cardGUI {
 
     flipTween.onComplete.add(function(){
       this.card.loadTexture('card'+index)
-      console.log(index)
       backFlipTween.start()
     }, this)
 
@@ -90,16 +89,11 @@ class playerGUI {
     // id jugador
     var id = this.nick;
     io.socket.post('/profile/add', {add: id}, function(resData, jwres){
-      console.log("resData: " + resData );
-      console.log("jwres: " + jwres );
     });
     /*
     io.socket.on('addSucess', function(data){
-      console.log(data);
-      console.log("Friend "+this.nick+" Added");
     });
     io.socket.on('addFail', function(data){
-      console.log(data);
       alert("error");
     });
     */
@@ -132,11 +126,6 @@ var playGame = {
   timerOn: true,
   nRound: 0,
   gameParameters: function(type=0, players=3, rounds=5, time=30, nicks, myPos=0, gender=[1,0,1], money=500){
-    console.log("Game parameters:\n")
-    console.log("capacity: "+players)
-    console.log("nicks: "+nicks)
-    console.log("Yo: "+myPos)
-
     if(type == 0)
       this.roomType = 'Normal'
     if(players == 4){
@@ -199,10 +188,6 @@ var playGame = {
     }
   },
   init: function(type, capacity, rounds, time, nicksP, posP, gender1, money){
-    console.log("capacity "+capacity)
-    console.log("time "+time)
-    console.log("Players: en la mesa "+nicksP)
-    console.log("Yo: "+posP)
     this.gameParameters(type, capacity, rounds, time, nicksP, posP, gender1, money)
   },
   preload: function() {
@@ -210,8 +195,6 @@ var playGame = {
   // setPositions: function(nicks, myPos){
   //   this.nicks = nicks
   //   this.myPos = myPos
-  //   console.log("Nicks:"+nicks)
-  //   console.log("Nicks:"+myPos)
   // },
   addSprite: function(posX, posY, spriteID, anchorX = 0, anchorY = 0, scale = false){
     var auxSprite = game.add.sprite(posX, posY, spriteID)
@@ -426,7 +409,6 @@ var playGame = {
     this.timerOn = false
     this.timerCircle.clear()
     this.btnUpdate(this.btnEnum.PICK, false)
-    console.log("RED BUTTON")
     io.socket.post('/play/table/pickedColor', {color: true})
     //this.cardArray[index].flip(i,1,1)
     //this.updateRound(++this.nRound)
@@ -437,7 +419,6 @@ var playGame = {
     this.timerOn = false
     this.timerCircle.clear()
     this.btnUpdate(this.btnEnum.PICK, false)
-    console.log("BLACK BUTTON")
     io.socket.post('/play/table/pickedColor', {color: false})
   },
   poolRequest: function(req){
@@ -480,7 +461,6 @@ var playGame = {
     //this.playerArray[playerIndex].alert(false)
   },
   showCard: function(card, suit) {
-    console.log(card)
     this.cardArray[this.nCards].flip(card.index, 1)
     this.cardArray[this.nCards].move(true, 0,0)
     this.nCards++
@@ -508,17 +488,6 @@ var playGame = {
       this.colorText.text = '¡BLACK!'
     }
   },
-  printWinSuit: function(suit){
-
-    if(suit == 0)
-      console.log('CLUBS')
-    if(suit == 0)
-      console.log('CLUBS')
-    if(suit == 0)
-      console.log('CLUBS')
-    if(suit == 0)
-      console.log('CLUBS')
-  },
   updateWinners: function(winners){
     for(i = 0; i<winners.length; i++){
       this.starsArray[winners[i]*5+this.nRound].update(true)
@@ -526,10 +495,9 @@ var playGame = {
     this.nRound++
   },
   updateBalance: function(balance){
-    for(i = 0; i< balance.length ; i++){
+    for(var i = 0; i < balance.length ; i++){
       this.balanceArray[i].text = balance[i]
     }
-    console.log("BALANCE: "+balance)
   },
   updateRound: function(roundNumber){
     this.currentRound.clear()
@@ -559,6 +527,5 @@ var playGame = {
   },
   shutdown: function(){
     game.world.removeAll()
-    console.log("playGame FINISH")
   }
 }

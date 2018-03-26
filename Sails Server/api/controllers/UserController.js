@@ -34,14 +34,12 @@ create: function(req, res, next) {
       confirmation: req.param('confirmation'),
       checkAdmin: req.param('checkAdmin')
     }
-    //console.log(userObj.checkAdmin)
 
     // Create a User with the params sent from 
     // the sign-up form --> new.ejs
     User.create(userObj, function userCreated(err, user) {
       if(userObj.checkAdmin == "on") {user.admin = true};
       // // If there's an error
-     // console.log(err);
       if (err) 
       {
         // flash.js 
@@ -88,9 +86,6 @@ profile: function(req,res){},
         if (err) return next(err);
         if (!user) return res.serverError('User doesn\'t exist.');
         //return res.json(user);
-        //console.log("elemento encontrado: " + element);
-        //console.log("elemento user: " + user.nickName);
-        //console.log(req.session);
       
         //Send in object response obj user found
         var nameUser = user.nickName;
@@ -119,7 +114,6 @@ profile: function(req,res){},
   update: function(req, res, next) {
 
     var validatedAdmin = false;
-    console.log("Estado admin: " + req.param('checkAdmin'));
     if(req.param('checkAdmin') == "on"){
       validatedAdmin=true;
     }
@@ -145,7 +139,6 @@ profile: function(req,res){},
         console.log(err);
         return res.redirect('/profile/'+ req.param('nickname') + '/edit');
       }
-      console.log(updated);
       res.redirect('/profile/' + req.param('nickname'));
     });
   },
@@ -161,7 +154,6 @@ profile: function(req,res){},
 
       User.destroy(req.param('nickName')).exec(function(err) {
         if (err) return next(err);
-        console.log(user.nickName+" se a eliminado");
       });        
 
       res.redirect('/user');
@@ -177,7 +169,6 @@ profile: function(req,res){},
       User.findOne({nickName: userObj}).exec(function(err, user){s = user;});
 
       // Agregamos id del amigo a friends
-      console.log('req: '+ req.session.User.nickName);
       User.findOne(req.session.User).populate('friends').exec(function(err,u){
         u.friends.add(s.id);
         u.save(function(err){ 
@@ -188,7 +179,6 @@ profile: function(req,res){},
 
         });
         var msg = "user with id: "+ userObj + " has been added successfully";
-        console.log(msg);
 
         res.json({pass: msg})
       });
@@ -208,7 +198,6 @@ profile: function(req,res){},
       if (err) return next(err);
       // pass the array down to the /views/index.ejs page
       res.view("user/index",{users: users,title:"List Users"});
-      //console.log(req.session.User);
     });
   },
 

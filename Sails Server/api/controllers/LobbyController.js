@@ -1,6 +1,6 @@
 module.exports = {
 	joinLobby: function(req, res){
-		console.log(req.session.authenticated)
+		// console.log(req.session.authenticated)
 		if (req.isSocket) {
 			sails.sockets.join(req, 'lobby');
 			var socketId = sails.sockets.getId(req);
@@ -52,12 +52,11 @@ module.exports = {
 			var roomName = req.param('roomName');
 			var tempRoom = HashMap.roomMap.get(roomName);
 
-			sails.sockets.leave(req, 'lobby');
-			sails.sockets.join(req, roomName);
-
-			tempRoom.addPlayer(tempPlayer);
-
-			sails.sockets.broadcast(roomName, 'waitingRoomJoin', {nicks: tempRoom.nicks()});
+			if(tempRoom.addPlayer(tempPlayer)){ // Si se unio correctamente (es decir, que no estas tu mismo dentro por alguna razon)
+				sails.sockets.leave(req, 'lobby');
+				sails.sockets.join(req, roomName);
+				sails.sockets.broadcast(roomName, 'waitingRoomJoin', {nicks: tempRoom.nicks()});
+			}
 		}
 	},
 }

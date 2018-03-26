@@ -70,7 +70,6 @@ module.exports = {
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
 				tempRoom.updateProperty('turnTime', req.param('turnTime'));
-				console.log(req.param('turnTime'))
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomTurnTime', {turnTime: req.param('turnTime')});
 			}
 		}

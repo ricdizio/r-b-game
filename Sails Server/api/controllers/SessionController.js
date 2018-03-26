@@ -10,7 +10,6 @@ var bcrypt = require('bcrypt');
 module.exports = {
 
 	new: function(req, res, next) {
-		//console.log(req.session);
 		//if(req.session.authenticated)
 	    //{
 	    //  return res.redirect("/");
@@ -110,15 +109,11 @@ module.exports = {
 				// Change status to online
 				user.online = true;
 
-				//console.log("Antes de la funcion save");
-				//console.log(req.session.User);
 				if (req.session.User.admin) {
 					//res.redirect('/user');
 					res.redirect('/');
 					return;
 				}
-				//console.log("Antes del redirect");
-				//console.log(req.session.User);
 				//Redirect to their profile page (e.g. /views/user/show.ejs)
 				//res.redirect('/profile/' + user.nickName);
 				res.redirect('/');
@@ -141,8 +136,6 @@ module.exports = {
 						res.redirect('/user');
 						return;
 					}
-					console.log("Antes del redirect");
-					console.log(user);
 					//Redirect to their profile page (e.g. /views/user/show.ejs)
 					res.redirect('/profile/' + user.nickName);
 				});
@@ -162,7 +155,6 @@ module.exports = {
 				User.update({nickName: usernickName},{online:false}).exec(function afterwards(err, updated){
 
 					if (err) return next(err);
-					console.log(updated);
 					
 					// Inform other sockets (e.g. connected sockets that are subscribed) that the session for this user has ended.
 					//User.publishUpdate(userId, {

@@ -2,8 +2,6 @@
 // Esto se hace por si el creado de la sala hace un .post desde consola cuando los jugadores aun no estan listos.
 // Se vuelve true si todos los jugadores han elegido carta. False si no. Si alguien se sale de la sala cuando todos estan listos se vuelve false.
 
-// Quitar tantos update y poner una sola funcion con parametros: propiedad, valor. this.properties[param1] = param2;
-
 // Revisar nickname array.
 // Revisar dealtCounter.
 
@@ -41,12 +39,15 @@ class WaitingRoomClass {
     }
     
     addPlayer(Player){
-        if(this.players.length == 0){
-            this.roomCreator = Player;
-            console.log('Room Master: ' + Player.nickName);
+        if(this.players.indexOf(Player) == -1){ // Si el jugador no esta en la mesa.
+            if(this.players.length == 0){
+                this.roomCreator = Player;
+            }
+            Player.roomIn = this.roomName;
+            this.players.push(Player);
+            return true;
         }
-        Player.roomIn = this.roomName;
-        this.players.push(Player);
+        return false;
     }
 
     kickPlayer(Player){

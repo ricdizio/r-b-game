@@ -1,6 +1,6 @@
 
 class roomGUI {
-    constructor(index,  name, type=0, players=4, lock=0, time=30, hand=5, dTime=true, betType=0, money=500){
+    constructor(index,  name, type=0, players=4, lock=0, time=30, hand=5, dTime=true, betType=0, money=500, currentPlayers = 0){
         this.index = index
         this.type = type
         this.name = name
@@ -11,6 +11,7 @@ class roomGUI {
         this.dTime = dTime
         this.betType = betType
         this.money = money
+        this.currentPlayers = currentPlayers;
     }
     create(pos){
         this.prevPos = pos
@@ -25,7 +26,7 @@ class roomGUI {
         this.graphics.drawRect(pos.x, pos.y+53, 483, 10, 7)
 
         this.paramTexts.push(game.add.text(pos.x+59, pos.y+16,this.name, {fontSize: '18px', fill: '#f5a623',fontWeight: 'normal' }))
-        this.paramTexts.push(game.add.text(pos.x+426, pos.y+22,'0 / '+this.players, {fontSize: '16px', fill: '#9b9b9b',fontWeight: 'normal' }))
+        this.paramTexts.push(game.add.text(pos.x+426, pos.y+22,this.currentPlayers + ' / '+ this.players, {fontSize: '16px', fill: '#9b9b9b',fontWeight: 'normal' }))
         this.paramTexts.push(game.add.text(pos.x+48, pos.y+87,this.time+' seg', {fontSize: '18px', fill: '#bdbdbd',fontWeight: 'normal' }))
         this.paramTexts.push(game.add.text(pos.x+390, pos.y+90,'$ '+this.money, {fontSize: '18px', fill: '#d0021b',fontWeight: 'normal' }))
         this.paramTexts.push(game.add.text(pos.x+18, pos.y+62,'GAME PARAMETERS', {fontSize: '11px', fill: '#9b9b9b',fontWeight: 'normal'}))
@@ -113,10 +114,10 @@ var lobbyStage = {
         // Aqui deberia haber un callback que ejecute el post cuando se haya cambiado de estado.
         io.socket.post('/play/createWaitingRoom', {roomName: "Room1"});
     },
-    addRoom: function(wR){
+    addRoom: function(wR, currentPlayers){
         this.allRooms = new Array();
         for(var i = 0; i < wR.length; i++){
-            this.allRooms.push(new roomGUI(0, wR[i].roomName, 0, wR[i].capacity, wR[i].lock, wR[i].turnTime/1000, wR[i].rounds, 0, 0, wR[i].roomBet*wR[i].rounds))
+            this.allRooms.push(new roomGUI(0, wR[i].roomName, 0, wR[i].roomCapacity, wR[i].lock, wR[i].turnTime/1000, wR[i].rounds, 0, 0, wR[i].roomBet*wR[i].rounds, currentPlayers[i]))
             this.allRooms[i].create(this.getPos(i));
         }
         
@@ -124,8 +125,7 @@ var lobbyStage = {
     joinRoom: function(){
         game.state.start("waitRoom");
         // Aqui deberia haber un callback que ejecute el post cuando se haya cambiado de estado.
-        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"});
-        
+        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"});     
         /*
         io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"}, function(resData, jwRes){
             game.state.start("waitRoom");

@@ -14,25 +14,19 @@ function refresh(){
   io.socket.post('/play/refreshLobby', function(resData, jwRes){
     // resData tiene .properties, es decir, los datos de la sala.
     // resData tiene .players, es decir, la cantidad de jugadores dentro de la sala.
-    lobbyStage.addRoom(resData.waitingRooms.properties);
-    console.log(resData)
+    lobbyStage.addRoom(resData.waitingRooms.properties, resData.waitingRooms.players);
   });
 }
 
 io.socket.on('waitingRoomJoin', function(nicksJSON){
-  console.log('NICKS: ');
-  console.log(nicksJSON.nicks);
   for(var i = 0; i < nicksJSON.nicks.length; i++){
     waitRoom.updatePlayer(i, true, nicksJSON.nicks[i]);
   }
 });
 
 io.socket.on('waitingRoomKick', function(dataJSON){
-  console.log(dataJSON.index);
   waitRoom.updatePlayer(dataJSON.index, false);
 });
-
-
 
 // Update btn
 io.socket.on('waitingRoomBet', function(betJSON){
@@ -45,7 +39,7 @@ io.socket.on('waitingRoomCapacity', function(capacityJSON){
   waitRoom.btnCheck(capacityJSON.capacity + 5)
 });
 io.socket.on('waitingRoomTurnTime', function(turnTimeJSON){
-  waitRoom.btnCheck(turnTimeJSON.turnTime/15)
+  waitRoom.btnCheck(turnTimeJSON.turnTime/15000)
 });
 io.socket.on('waitingRoomRounds', function(roundsJSON){
   if(roundsJSON.rounds == 5){
@@ -61,11 +55,8 @@ io.socket.on('startTableEnabled', function(){
 });
 
 io.socket.on('tableStarted', function(propertiesJSON){
-  console.log(propertiesJSON.properties);
   var gender1 = [1,1,1]
   var type = 0;
-  //console.log("Players: segundo "+myNicks)
-  //console.log("Yo: "+myPos)
 
   game.state.start("playGame", true, false, propertiesJSON.properties.type, propertiesJSON.properties.roomCapacity, 
                       propertiesJSON.properties.rounds, propertiesJSON.properties.turnTime, 
@@ -87,14 +78,12 @@ io.socket.on('logicalPlayers', function(nickJSON){
 
 io.socket.on('play', function(indexJSON){
   var index = indexJSON.index
-  console.log("index: "+index+ " muPos: "+myPos)
   if(index == myPos){
 
     var i = index-myPos
     if(i<0) i += playGame.maxPlayers
     var name = myNicks[i]
 
-    console.log("Te toca elegir!"+name);
     playGame.alertTurn(true, i);
     // Colocar en pantalla "te toca elegir"
 
@@ -104,7 +93,6 @@ io.socket.on('play', function(indexJSON){
     // if(i<0) i += playGame.maxPlayers
     // var name = myNicks[i]
 
-    // console.log(name + " is Picking!");
     // playGame.alertTurn(false, name + " is Picking!");
     // Colocar en pantalla "jugador playerindex+1 esta eligiendo"
   }
@@ -115,10 +103,10 @@ io.socket.on('play', function(indexJSON){
 
 });
 
-io.socket.on('substractConstantBet', function(balanceJSON){
+io.socket.on('updateBalance', function(balanceJSON){
   var balance = balanceJSON.data;
+  console.log('en substractCMoney');
   playGame.updateBalance(sortArray(balance));
-  // Actualizar el dinero de cada jugador, restandole constantBet a cada uno.
 });
 
 io.socket.on('bettedColor', function(dataJSON){
@@ -132,7 +120,6 @@ io.socket.on('bettedColor', function(dataJSON){
   }
   // Aqui podemos poner en pantalla que eligio cada jugador (playerindex y color)
   playGame.checkPlayer(playerIndex, color);
-  console.log("Jugador " + (playerIndex + 1) + " eligio " + color);
 });
 
 io.socket.on('deal', function(cardJSON){
@@ -144,8 +131,6 @@ io.socket.on('reward', function(dataJSON){
   var winningPlayers = new Array();
   var balance = new Array();
   var j = 0;
-  console.log("DENTRO DE REWARD")
-  console.log(dataArray)
   // Asignamos winningPlayers como antes.
   for(var i = 0; i < dataArray.length; i++){
     if(dataArray[i].won){
@@ -171,7 +156,6 @@ io.socket.on('reward', function(dataJSON){
 
 
 io.socket.on('waitingRoomDealtCard', function(pickedCardsJSON){
-  console.log(pickedCardsJSON.pickedCards)
   // pickedCardsJSON.pickedCards es un arreglo de las cartas elegidas por los jugadores en su RESPECTIVA POSICION. [undefined, CARD, undefined, CARD]...
 });
 
@@ -193,7 +177,6 @@ function sendBet(){
 
 function logCard(card){
   playGame.showCard(card);
-  console.log("Card: " + card.number + " of " + card.suit);
 }
 
 io.socket.on('waitingRoomLeft', function(index, socketId){
@@ -205,20 +188,16 @@ io.socket.on('waitingRoomDealt', function(card, index, socketId){
   if(socketId == socket.id){
     waitRoom.pickCard()
   } 
-  console.log(card)
 });
 
 io.socket.on('bettedMoney', function(money, playerIndex){
-  console.log("Jugador " + (playerIndex + 1) + " aposto " + money);
 });
 
 io.socket.on('bet', function(betId, playerIndex){
   if(betId == socket.id){
-    console.log("Te toca apostar");
     // Colocar en pantalla "te toca apostar"
   }
   else{
-    console.log("Jugador " + (playerIndex + 1) + " esta apostando");
     //Colocar en pantalla "jugador playerindex+1 esta apostando"
   }
 });
@@ -248,7 +227,6 @@ io.socket.on('pickedSuit', function(suit, player){
 });
 
 io.socket.on('donePicking', function(card){
-  console.log('Done Picking');
   playGame.showFirst(card);
 });
 
@@ -277,12 +255,10 @@ io.socket.on('poolRequest', function(){
 io.socket.on('round', function(round){
   // Aqui actualiza la ronda abajo a la izq.
   playGame.updateRound(round);
-  console.log("Round " + (round));
 });
 
 io.socket.on('timedOut', function(playerIndex){
   // Aqui indica que el jugador playerIndex tardo demasiado y su turno fue pasado.
-  console.log('Jugador ' + (playerIndex + 1) + ' ha tardado demasiado');
 });
 
 
@@ -291,7 +267,6 @@ io.socket.on('nickNames', function(nicks){
 });
 
 io.socket.on('end', function(){
-  console.log('Table is over');
 });
 
 
@@ -304,7 +279,6 @@ function sortArray(array){
 
 
 // io.socket.on('reward', function(winningPlayers, prize, balance){
-//   console.log('premio: ' + prize);
 //   var winText = "test";
 //   if(winningPlayers === 0){
 //     // winningPlayers es un arreglo con los playerIndex de los ganadores (0, 1, etc).
@@ -312,19 +286,16 @@ function sortArray(array){
 //     /*for(var i = 0; i < winningPlayers.length; i++){
 //       if(ids[winningPlayers[i]] == socket.id){
 //         winText = 'You Win ';
-//         console.log('You win ' + prize +'!');
 //         break;
 //       }
 //       else{
 //         winText = 'You Lose';
 //         prize = 0;
-//         console.log('You Lose ');
 //       }
 //     }*/
 //   }
 //   else{
 //     // Mostrar en pantalla que gano la casa.
-//     console.log("Gana la casa");
 //     winText = 'The House Wins';
 //     prize = 0;
 //   }
@@ -337,7 +308,6 @@ function sortArray(array){
   
 //   // Revisar por que winningplayers es 0
 //   playGame.updateWinners(sortArray(winningPlayers));
-//   console.log("Balance en REWARD: "+balance)
 //   if(balance !== 0){
 //     playGame.updateBalance(sortArray(balance));
 //   }

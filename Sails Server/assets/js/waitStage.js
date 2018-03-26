@@ -219,19 +219,16 @@ var waitRoom = {
     this.checkBtns[4].update(true)
     this.checkBtns[5].update(true)
     this.checkBtns[7].update(true)
-    // console.log(waitRoom.gameParams)
   },
   pruebaDelay: function(){
     var date = {d:3,m:1,y:2018}
     game.time.events.add(Phaser.Timer.SECOND*3, function(){
-      // console.log("PRIMER DELAY ")
       this.updatePlayer(0,true, 'VICTOR GARCIA','m',1,date)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
     date = {d:12,m:12,y:2017}
     game.time.events.add(Phaser.Timer.SECOND*5, function(){
-      console.log("SEGUNDO DELAY ")
       this.updatePlayer(0,true, 'RICARDO DI ZIO','w',1,date)
       this.updatePlayer(0,true, 'GABRIEL NOYA','w',1,date)
       this.updatePlayer(0,true, 'LEO CHUPALO','w',1,date)
@@ -239,13 +236,11 @@ var waitRoom = {
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
     game.time.events.add(Phaser.Timer.SECOND*7, function(){
-      console.log("TERCER DELAY ")
       this.updatePlayer(0,false, 0,0,0,0,2)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
     }, this)
     game.time.events.add(Phaser.Timer.SECOND*9, function(){
-      console.log("CUARTO DELAY ")
       this.updatePlayer(0,true, 'NOYA CHUPALO','w',1,date)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
@@ -254,10 +249,7 @@ var waitRoom = {
   updatePlayer: function(index, join, name, gender='m', chat, date={d:17,m:1,y:2018}){
     var j=0
     if(join){
-      // console.log("index: "+index)
-      // console.log("nPlayers: "+this.nPlayers)
       if(this.nPlayers < index+1){
-        // console.log(name)
         this.nPlayers++
         this.playerInfo.push({name: name, gender:gender, chat:chat, date:date, sprite:undefined, st:this.statusEnum.WAITING})
         this.playerInfo[this.nPlayers-1].sprite = game.add.sprite(60,this.playerPos[this.nPlayers],
@@ -294,7 +286,6 @@ var waitRoom = {
     }
   },
   btnCheck: function(button){
-    // console.log(button)
     var i=0, j=0
     // Time
     if(button==1 || button==2 || button==3){
@@ -547,6 +538,5 @@ var waitRoom = {
   },
   shutdown: function(){
     game.world.removeAll()
-    console.log("waitRoom FINISH")
   }
 }
