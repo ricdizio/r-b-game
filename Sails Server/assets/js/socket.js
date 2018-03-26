@@ -12,17 +12,24 @@ io.socket.post('/play/joinLobby', function(resData, jwRes){
 
 function refresh(){
   io.socket.post('/play/refreshLobby', function(resData, jwRes){
-    lobbyStage.addRoom(resData.waitingRooms);
+    // resData tiene .properties, es decir, los datos de la sala.
+    // resData tiene .players, es decir, la cantidad de jugadores dentro de la sala.
+    lobbyStage.addRoom(resData.waitingRooms.properties);
     console.log(resData)
-    console.log(jwRes)
   });
 }
 
 io.socket.on('waitingRoomJoin', function(nicksJSON){
-  console.log(nicksJSON.nicks)
-  for(var i=0; i<nicksJSON.nicks.length; i++){
-    waitRoom.updatePlayer(i, true, nicksJSON.nicks[i])
+  console.log('NICKS: ');
+  console.log(nicksJSON.nicks);
+  for(var i = 0; i < nicksJSON.nicks.length; i++){
+    waitRoom.updatePlayer(i, true, nicksJSON.nicks[i]);
   }
+});
+
+io.socket.on('waitingRoomKick', function(dataJSON){
+  console.log(dataJSON.index);
+  waitRoom.updatePlayer(dataJSON.index, false);
 });
 
 
@@ -168,7 +175,9 @@ io.socket.on('waitingRoomDealtCard', function(pickedCardsJSON){
   // pickedCardsJSON.pickedCards es un arreglo de las cartas elegidas por los jugadores en su RESPECTIVA POSICION. [undefined, CARD, undefined, CARD]...
 });
 
-
+io.socket.on('tableEnd', function(){
+  game.state.start("lobbyStage");
+});
 
 
 

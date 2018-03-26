@@ -6,7 +6,10 @@ var tableMap = new HashMap(); // key: roomName, data: table
 
 module.exports = {
     lobbyProperties: function(){
-        return this.roomMap.values().map(a => a.properties); // Retorna un arreglo
+        return {
+            properties: this.roomMap.values().map(a => a.properties), // Arreglo con las properties de las salas.
+            players: this.roomMap.values().map(a => a.players.length) // Arreglo con la cantidad de personas dentro de las salas.
+        }
     },
     getRoomByReq: function(req){
         /*var socketId = sails.sockets.getId(req);

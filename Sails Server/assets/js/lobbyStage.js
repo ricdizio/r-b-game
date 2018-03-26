@@ -109,9 +109,9 @@ var lobbyStage = {
         return {x:roomPos[index%2].x,y:roomPos[index%2].y+parseInt(index/2)*roomStep.y}
     },
     btnCreate_R: function(){
-        game.state.start("waitRoom")
+        game.state.start("waitRoom");
+        // Aqui deberia haber un callback que ejecute el post cuando se haya cambiado de estado.
         io.socket.post('/play/createWaitingRoom', {roomName: "Room1"});
-        console.log("Create")
     },
     addRoom: function(wR){
         this.allRooms = new Array();
@@ -122,8 +122,15 @@ var lobbyStage = {
         
     },
     joinRoom: function(){
-        game.state.start("waitRoom")
-        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"})
+        game.state.start("waitRoom");
+        // Aqui deberia haber un callback que ejecute el post cuando se haya cambiado de estado.
+        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"});
+        
+        /*
+        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"}, function(resData, jwRes){
+            game.state.start("waitRoom");
+        });
+        */
     },
     update: function(){
     }

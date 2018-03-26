@@ -219,12 +219,12 @@ var waitRoom = {
     this.checkBtns[4].update(true)
     this.checkBtns[5].update(true)
     this.checkBtns[7].update(true)
-    console.log(waitRoom.gameParams)
+    // console.log(waitRoom.gameParams)
   },
   pruebaDelay: function(){
     var date = {d:3,m:1,y:2018}
     game.time.events.add(Phaser.Timer.SECOND*3, function(){
-      console.log("PRIMER DELAY ")
+      // console.log("PRIMER DELAY ")
       this.updatePlayer(0,true, 'VICTOR GARCIA','m',1,date)
       for(var i=0; i<this.nPlayers; i++)
         this.updateStatus(i,this.playerInfo[i].st)
@@ -254,10 +254,10 @@ var waitRoom = {
   updatePlayer: function(index, join, name, gender='m', chat, date={d:17,m:1,y:2018}){
     var j=0
     if(join){
-      console.log("index: "+index)
-      console.log("nPlayers: "+this.nPlayers)
+      // console.log("index: "+index)
+      // console.log("nPlayers: "+this.nPlayers)
       if(this.nPlayers < index+1){
-        console.log(name)
+        // console.log(name)
         this.nPlayers++
         this.playerInfo.push({name: name, gender:gender, chat:chat, date:date, sprite:undefined, st:this.statusEnum.WAITING})
         this.playerInfo[this.nPlayers-1].sprite = game.add.sprite(60,this.playerPos[this.nPlayers],
@@ -294,7 +294,7 @@ var waitRoom = {
     }
   },
   btnCheck: function(button){
-    console.log(button)
+    // console.log(button)
     var i=0, j=0
     // Time
     if(button==1 || button==2 || button==3){
@@ -325,7 +325,7 @@ var waitRoom = {
     // Time
     if(button.value==1 || button.value==2 || button.value==3){
       i=1; j=4
-      var time = new Array(15,30,45)
+      var time = new Array(15000,30000,45000)
       waitRoom.gameParams.time = time[button.value-1]
       io.socket.post('/play/waitingRoom/updateTurnTime', {turnTime: waitRoom.gameParams.time})
     }
@@ -353,8 +353,8 @@ var waitRoom = {
   btnNone: function(){
   },
   btnReturn: function(){
-    io.socket.post('leaveWaitingRoom')
-    game.state.start("lobbyStage")
+    game.state.start("lobbyStage");
+    io.socket.post('/play/waitingRoom/leaveWaitingRoom');
   },
   btnCreate: function(){
 
@@ -362,7 +362,6 @@ var waitRoom = {
   btnChange: function(){
   },
   btnStart: function(){
-    console.log("Boton start")
     io.socket.post('/play/waitingRoom/startTable');
   },
   moveRight: function(){

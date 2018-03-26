@@ -226,6 +226,10 @@ module.exports.routes = {
     action: "startTable",
   },
 
+  "POST /play/waitingRoom/leaveWaitingRoom": {
+    controller: "WaitingRoomController",
+    action: "leaveWaitingRoom",
+  },
   // TABLE
 
   "POST /play/table/pickedColor": {

@@ -2,6 +2,11 @@
 // Esto se hace por si el creado de la sala hace un .post desde consola cuando los jugadores aun no estan listos.
 // Se vuelve true si todos los jugadores han elegido carta. False si no. Si alguien se sale de la sala cuando todos estan listos se vuelve false.
 
+// Quitar tantos update y poner una sola funcion con parametros: propiedad, valor. this.properties[param1] = param2;
+
+// Revisar nickname array.
+// Revisar dealtCounter.
+
 class WaitingRoomClass {
 	constructor(roomName) {
         // Room and default settings
@@ -49,36 +54,14 @@ class WaitingRoomClass {
             this.roomCreator = this.players[1];
         }
         var index = this.players.indexOf(Player);
-        // sails.sockets.broadcast(this.properties.roomName, 'waitingRoomLeft', {} , this.players.splice(index, 1).req); ESTO NO VA AQUI
-		// this.pickedCards.splice(index, 1); NO HACER SPLICE, REVISAR SI RUEDA EL ARRAY
+        
+        this.pickedCards.splice(index, 1);
+        this.players.splice(index, 1);
+        return index;
     }
 
-    updateType(type) {
-        this.properties.type = type;
-    }
-
-    updateLock(lock){
-        this.properties.lock = lock;
-    }
-
-    updatePassword(password) {
-        this.properties.password = password;
-    }
-
-    updateBet(bet) {
-        this.properties.bet = bet;
-    }
-
-    updateCapacity(capacity) {
-        this.properties.capacity = capacity;
-    }
-
-    updateTurnTime(turnTime) {
-        this.properties.turnTime = turnTime;
-    }
-
-    updateRounds(rounds) {
-        this.properties.rounds = rounds;
+    updateProperty(property, value){
+        this.properties[property] = value;
     }
 }
 

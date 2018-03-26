@@ -5,6 +5,7 @@
 // Optimizacion: Quitar todas las funciones de alert y poner una sola con tag de parametro.
 // Complicaciones: Cambiar el .algo del cliente cuando recibe el socket.
 const timeBetweenRounds = 3000;
+const timeAfterTableEnd = 2000;
 
 class TableClass {
 	constructor(players, propertiesJSON) {
@@ -108,8 +109,12 @@ module.exports = {
 
 	end: function(tempTable){
 		// Cosas de base de datos
-		// HashMap.roomMap.delete(tempTable.roomName);
-		sails.sockets.broadcast(tempTable.roomName, 'tableEnd');
+		setTimeout(() => {
+			sails.sockets.broadcast(tempTable.roomName, 'tableEnd');
+			sails.sockets.addRoomMembersToRooms(tempTable.roomName, 'lobby'); // Movemos a todos los usuarios al lobby.
+			sails.sockets.removeRoomMembersFromRooms(tempTable.roomName, tempTable.roomName); // Removemos a los usuarios de la socket room.
+			HashMap.tableMap.delete(tempTable.roomName);
+		}, timeAfterTableEnd);
 	},
 
 	pickedColor: function(tempTable, color){

@@ -22,19 +22,24 @@ module.exports = {
     createWaitingRoom: function(req, res){
 		if (req.isSocket) {
 			var socketId = sails.sockets.getId(req);
+
 			var roomName = req.param('roomName');
+			// CUIDADO: Se puso temporalmente el socketId como nombre de la sala para poder probar multiples salas.
+			// roomName = socketId;
 
 			if((!HashMap.roomMap.has(roomName)) && (!HashMap.tableMap.has(roomName))){
 				sails.sockets.leave(req, 'lobby');
 				sails.sockets.join(req, roomName);
 
+				
 				var tempRoom = WaitingRoom.create(roomName);
 				var tempPlayer = HashMap.userMap.get(socketId);
 
 				tempRoom.addPlayer(tempPlayer);
 				HashMap.roomMap.set(roomName, tempRoom);
                 //sails.sockets.broadcast('lobby', 'refreshRooms', {waitingRooms: HashMap.lobbyProperties()});
-                sails.sockets.broadcast(roomName, 'waitingRoomJoin', {nicks: tempRoom.nicks()});
+				
+				sails.sockets.broadcast(roomName, 'waitingRoomJoin', {nicks: tempRoom.nicks()});
 			}
 		}
 	},
@@ -52,7 +57,7 @@ module.exports = {
 
 			tempRoom.addPlayer(tempPlayer);
 
-            sails.sockets.broadcast(roomName, 'waitingRoomJoin', {nicks: tempRoom.nicks()});
+			sails.sockets.broadcast(roomName, 'waitingRoomJoin', {nicks: tempRoom.nicks()});
 		}
 	},
 }

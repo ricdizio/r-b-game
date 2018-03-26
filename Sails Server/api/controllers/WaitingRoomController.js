@@ -9,7 +9,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updateRoomName(req.param('roomName'));
+				tempRoom.updateProperty('roomName', req.param('roomName'));
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomName', {roomName: req.param('roomName')});
 			}
 		}
@@ -20,7 +20,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updateType(req.param('type'));
+				tempRoom.updateProperty('type', req.param('type'));
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomRounds', {type: req.param('type')});
 			}
 		}
@@ -30,7 +30,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updateLock(req.param('lock'));
+				tempRoom.updateProperty('lock', req.param('lock'));
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomLock', {lock: req.param('lock')});
 			}
 		}
@@ -40,7 +40,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updatePassword(req.param('password'));
+				tempRoom.updateProperty('roomPassword', req.param('password'));
 			}
 		}
 	},
@@ -49,7 +49,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updateBet(req.param('bet'));
+				tempRoom.updateProperty('roomBet', req.param('bet'));
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomBet', {bet: req.param('bet')});
 			}
 		}
@@ -59,7 +59,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updateCapacity(req.param('capacity'));
+				tempRoom.updateProperty('roomCapacity', req.param('capacity'));
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomCapacity', {capacity: req.param('capacity')});
 			}
 		}
@@ -69,7 +69,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updateTurnTime(req.param('turnTime'));
+				tempRoom.updateProperty('turnTime', req.param('turnTime'));
 				console.log(req.param('turnTime'))
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomTurnTime', {turnTime: req.param('turnTime')});
 			}
@@ -80,7 +80,7 @@ module.exports = {
 			var tempRoom = HashMap.getRoomByReq(req);
 			var socketId = sails.sockets.getId(req);
 			if(tempRoom.roomCreator.socketId == socketId){
-				tempRoom.updateRounds(req.param('rounds'));
+				tempRoom.updateProperty('rounds', req.param('rounds'));
 				sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomRounds', {rounds: req.param('rounds')});
 			}
 		}
@@ -99,6 +99,19 @@ module.exports = {
 				sails.sockets.broadcast(tempRoom.roomCreator.socketId, 'startTableEnabled');
 			}
 			return res.json({card: card});
+		}
+	},
+
+	leaveWaitingRoom: function(req, res){
+		if (req.isSocket) {
+			var tempRoom = HashMap.getRoomByReq(req);
+			var socketId = sails.sockets.getId(req);
+			var tempPlayer = HashMap.userMap.get(socketId);
+			var index = tempRoom.kickPlayer(tempPlayer);
+			sails.sockets.leave(req, tempRoom.roomName);
+			sails.sockets.join(req, 'lobby');
+			sails.sockets.broadcast(tempRoom.roomName, 'waitingRoomKick', {index: index});
+			return res.json({});
 		}
 	},
 
