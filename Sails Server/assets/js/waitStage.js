@@ -468,7 +468,7 @@ var waitRoom = {
     }, 250, Phaser.Easing.Linear.None)
 
     flipTween.onComplete.add(function(){
-      this.scrollCards[4].loadTexture('card1')
+      this.scrollCards[4].loadTexture('card' + cardIndex);
       backFlipTween.start()
     }, this)
     
