@@ -31,11 +31,8 @@ class TableClass {
 		this.playingPlayer;
 		this.pickedColors = new Array();
 
-		var self = this;
 
-		setTimeout(function () {
-			self.start();
-		}, 5000);
+		setTimeout(() => this.start(), 5000);
 	}
 
 	// Funciones iniciales.
@@ -62,11 +59,9 @@ class TableClass {
 		var temporalArray = new Array();
 		for (var i = 0; i < this.players.length; i++) {
 			this.players[i].substract(this.roomBet);
-			console.log(this.players[i].money);
 			temporalArray.push(this.players[i].money);
 			this.pool += this.roomBet;
 		}
-		console.log(temporalArray)
 		Table.alertConstantBet(temporalArray);
 	}
 
@@ -76,7 +71,6 @@ class TableClass {
 			index -= this.roomCapacity;
 		}
 		this.playingPlayer = this.players[index];
-		console.log(index)
 		// para los timeouts
 		// sails.controllers.yourControllerName.yourFunction()
 	}
@@ -129,13 +123,14 @@ module.exports = {
 		} else {
 			Table.rewardCalculation(tempTable);
 			tempTable.changeTurn();
-			if(++tempTable.playTurn <= tempTable.rounds) {
+			if(++tempTable.playTurn < tempTable.rounds) {
 				setTimeout(function(){
 					tempTable.changeTurn();
 					tempTable.constantBet(tempTable.roomBet);
 					Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
 				}, timeBetweenRounds);
 			} else {
+				console.log('Mesa terminada');
 				Table.end(tempTable);
 			}
 		}
@@ -146,19 +141,29 @@ module.exports = {
 		Table.alertPickedCard(tempTable.roomName, card);
 		var winnerNumber = Table.calculateWinners(tempTable, card);
 
-		if(winnerNumber == tempTable.roomCapacity){
-			Table.poolRequest(tempTable);
-		} else{
-			let prize;
-			if(winnerNumber != 0){
-				prize = tempTable.pool / winnerNumber;
-			} else{
-				prize = 0;
-			}
+		// if(winnerNumber == tempTable.roomCapacity){
+		// 	Table.poolRequest(tempTable);
+		// } else{
+		// 	let prize;
+		// 	if(winnerNumber != 0){
+		// 		prize = tempTable.pool / winnerNumber;
+		// 	} else{
+		// 		prize = 0;
+		// 	}
 
-			Table.sendReward(tempTable, prize, card);
-			tempTable.pickedColors = new Array();
+		// 	Table.sendReward(tempTable, prize, card);
+		// 	tempTable.pickedColors = new Array();
+		// }
+
+		let prize;
+		if(winnerNumber != 0){
+			prize = tempTable.pool / winnerNumber;
+		} else{
+			prize = 0;
 		}
+
+		Table.sendReward(tempTable, prize, card);
+		tempTable.pickedColors = new Array();
 	},
 
 	poolRequest: function(tempTable){
@@ -182,7 +187,6 @@ module.exports = {
 		}
 
 		tempTable.pool = 0;
-		console.log(dataArray)
 		Table.alertReward(tempTable.roomName, dataArray);
 	},
 
