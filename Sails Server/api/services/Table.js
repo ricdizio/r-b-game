@@ -31,9 +31,9 @@ class TableClass {
 		this.pool = 0;
 		this.playingPlayer;
 		this.pickedColors = new Array();
+		this.timeout;
 
-
-		setTimeout(() => this.start(), 2000);
+		setTimeout(() => this.start(), 3000);
 	}
 
 	// Funciones iniciales.
@@ -52,6 +52,7 @@ class TableClass {
 		Table.alertBalance(this.roomName, this.players.map(a => a.money));
 		this.playingPlayer = this.players[0];
 		Table.alertTurn(this.roomName, this.playingPlayer);
+		this.putTimeout();
 	}
 
 	constantBet() {
@@ -77,6 +78,18 @@ class TableClass {
 	checkIfAllPicked(){
 		// Si el arreglo no tiene undefined (todos eligieron) y tiene el tamaño correcto retorna true
 		return (!(this.pickedColors.includes(undefined)) && (this.pickedColors.length == this.roomCapacity)); 
+	}
+
+	putTimeout(){
+		this.timeout = setTimeout(() => {
+			Table.pickedColor(this, Deck.randomColor());
+			Table.alertTimeout(this.playingPlayer.socketId);
+			console.log('timedout')
+		}, this.turnTime);
+	}
+
+	eraseTimeout(){
+		clearTimeout(this.timeout);
 	}
 }
 
@@ -105,6 +118,10 @@ module.exports = {
 		sails.sockets.broadcast(roomName, 'reward', {data: dataArray});
 	},
 
+	alertTimeout: function(socketId){
+		sails.sockets.broadcast(socketId, 'timedOut');
+	},
+
 	end: function(tempTable){
 		// Cosas de base de datos
 		setTimeout(() => {
@@ -116,6 +133,7 @@ module.exports = {
 	},
 
 	pickedColor: function(tempTable, color){
+		tempTable.eraseTimeout();
 		tempTable.pickedColors[tempTable.playingPlayer.index] = color;
 
 		Table.alertPickedColor(tempTable.roomName, tempTable.playingPlayer, color);
@@ -123,18 +141,18 @@ module.exports = {
 		if(!tempTable.checkIfAllPicked()){
 			tempTable.changeTurn();
 			Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+			tempTable.putTimeout();
 		} else {
 			Table.reward(tempTable);
-
 			Table.alertBalance(tempTable.roomName, tempTable.players.map(a => a.money));
 			tempTable.changeTurn();
-
 			if(++tempTable.playTurn < tempTable.rounds) {
-				setTimeout(function(){
+				setTimeout(() => {
 					tempTable.changeTurn();
 					tempTable.constantBet();
 					Table.alertBalance(tempTable.roomName, tempTable.players.map(a => a.money));
 					Table.alertTurn(tempTable.roomName, tempTable.playingPlayer);
+					tempTable.putTimeout();
 				}, timeBetweenRounds);
 			} else {
 				console.log('Mesa terminada');

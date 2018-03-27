@@ -150,6 +150,16 @@ io.socket.on('reward', function(dataJSON){
   playGame.updateWinners(sortArray(winningPlayers));
 });
 
+io.socket.on('timedOut', function(){
+  console.log('timedout');
+  playGame.timerBar.stop();
+  playGame.timerOn = false;
+  playGame.timerCircle.clear();
+  playGame.btnUpdate(playGame.btnEnum.PICK, false);
+  // Aqui indica que el jugador playerIndex tardo demasiado y su turno fue pasado.
+});
+
+
 ////////////////////////////////////////////////////
 /////////////// Cosas nuevas  
 ///////////////////////////////////////////////////
@@ -257,9 +267,7 @@ io.socket.on('round', function(round){
   playGame.updateRound(round);
 });
 
-io.socket.on('timedOut', function(playerIndex){
-  // Aqui indica que el jugador playerIndex tardo demasiado y su turno fue pasado.
-});
+
 
 
 io.socket.on('nickNames', function(nicks){
