@@ -82,9 +82,8 @@ class TableClass {
 
 	putTimeout(){
 		this.timeout = setTimeout(() => {
-			Table.pickedColor(this, Deck.randomColor());
 			Table.alertTimeout(this.playingPlayer.socketId);
-			console.log('timedout')
+			Table.pickedColor(this, Deck.randomColor());
 		}, this.turnTime);
 	}
 

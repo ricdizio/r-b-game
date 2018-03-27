@@ -105,7 +105,6 @@ io.socket.on('play', function(indexJSON){
 
 io.socket.on('updateBalance', function(balanceJSON){
   var balance = balanceJSON.data;
-  console.log('en substractCMoney');
   playGame.updateBalance(sortArray(balance));
 });
 
@@ -151,7 +150,6 @@ io.socket.on('reward', function(dataJSON){
 });
 
 io.socket.on('timedOut', function(){
-  console.log('timedout');
   playGame.timerBar.stop();
   playGame.timerOn = false;
   playGame.timerCircle.clear();
