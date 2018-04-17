@@ -13,6 +13,7 @@ module.exports = {
               return false;
             }
             console.log("ok");
+            console.log(updated);
             return true;
         });  
         
