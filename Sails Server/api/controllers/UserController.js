@@ -25,7 +25,7 @@ new: function(req, res) {
 // Metho POST
 create: function(req, res, next) {
 
-    var userObj = {
+    let userObj = {
       name: req.param('name'),
       lastName: req.param('lastName'),
       nickName: req.param('nickName'),
@@ -67,7 +67,7 @@ create: function(req, res, next) {
       
       // Change status to online
       user.online = true;
-      var usertoSave = user;
+      let usertoSave = user;
       user.save(function(err, user) 
       {
         if (err) return next(err);
@@ -76,7 +76,7 @@ create: function(req, res, next) {
     });
   },
 
-profile: function(req,res){},
+  profile: function(req,res){},
 
 // Method Get User found a User a return it
   getUser: function (req, res) {
@@ -113,13 +113,15 @@ profile: function(req,res){},
   // process the info from edit view
   update: function(req, res, next) {
 
-    var validatedAdmin = false;
+    let validatedAdmin = false;
+
     if(req.param('checkAdmin') == "on"){
       validatedAdmin=true;
     }
+    let userObj;
 
     if (req.session.User.admin) {
-      var userObj = {
+      userObj = {
         name: req.param('name'),
         lastName: req.param('lastName'),
         email: req.param('email'),
@@ -127,7 +129,7 @@ profile: function(req,res){},
         admin: validatedAdmin
       }
     } else {
-      var userObj = {
+      userObj = {
         name: req.param('name'),
         title: req.param('lastName'),
         email: req.param('email')
@@ -146,7 +148,7 @@ profile: function(req,res){},
   //Delete the user by nickname
 
   destroy: function(req, res, next) {
-    var element = req.param("nickname");
+    let element = req.param("nickname");
     User.findOne({nickName: element}).exec(function(err, user) {
       if (err) return next(err);
 
@@ -164,8 +166,11 @@ profile: function(req,res){},
   addFriend: function(req, res, next) {
 
     if(req.isSocket){
+
       let userObj = req.param('add');
+
       let s = null;
+
       User.findOne({nickName: userObj}).exec(function(err, user){s = user;});
 
       // Agregamos id del amigo a friends
@@ -178,7 +183,7 @@ profile: function(req,res){},
           }
 
         });
-        var msg = "user with id: "+ userObj + " has been added successfully";
+        let msg = "user with id: "+ userObj + " has been added successfully";
 
         res.json({pass: msg})
       });
