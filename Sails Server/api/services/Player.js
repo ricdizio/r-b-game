@@ -1,10 +1,13 @@
+// Cuidado con el reinicio de estas propiedades al salir de una sala.
+
 class Player {
-	constructor(socketId, nickName, req, roomIn) {
+	constructor(socketId, nickName, id, req, roomIn) {
 		this.socketId = socketId;
-        this.nickName = nickName;
-        this.req = req;
-        this.roomIn = 'lobby';
-		this.money;
+    this.nickName = nickName;
+    this.id = id;
+    this.req = req;
+    this.roomIn = 'lobby';
+		this.money = 0;
 		this.playerIndex;
 	}
 
@@ -18,8 +21,8 @@ class Player {
 }
 
 module.exports = {
-    create: function(socketId, nickName, req){
-        return new Player(socketId, nickName, req);
+  create: function(socketId, nickName, req){
+      return new Player(socketId, nickName, req);
 	},
 	sortPlayers: function(players, cards){
 		var result = new Array();

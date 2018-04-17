@@ -2,7 +2,7 @@
 // una carta, pero si alguien se sale o cambian el parametro no se esta revisando.
 
 // Eliminar del hashmap la sala cuando los jugadores en ella sean igual a 0.
-// DESCOMENTAR LINEA 97. Comentada para pruebas de 2 jugadores.
+
 module.exports = {
 	updateName: function(req, res) {
 		if (req.isSocket) {
@@ -94,7 +94,6 @@ module.exports = {
 			sails.sockets.broadcast(tempRoom.properties.roomName, 'waitingRoomDealtCard', {pickedCards: tempRoom.pickedCards});
 
 			if(!(tempRoom.pickedCards.includes(undefined)) && (tempRoom.pickedCards.length == tempRoom.properties.roomCapacity)){
-			//if(!(tempRoom.pickedCards.includes(undefined))){
 				sails.sockets.broadcast(tempRoom.roomCreator.socketId, 'startTableEnabled');
 			}
 			return res.json({card: card});
@@ -121,9 +120,12 @@ module.exports = {
 			if(tempRoom.roomCreator.socketId == socketId){
 				var players = Player.sortPlayers(tempRoom.players, tempRoom.pickedCards);
 				var nicks = players.map(a => a.nickName);
+        let totalMoney = tempRoom.properties.roomBet * tempRoom.properties.rounds;
 
-				for(var i = 0; i < players.length; i++){
-					sails.sockets.broadcast(players[i].socketId, 'logicalPlayers', {nicks: nicks, myNick: players[i].nickName});
+				for(let i = 0; i < players.length; i++){
+          sails.sockets.broadcast(players[i].socketId, 'logicalPlayers', {nicks: nicks, myNick: players[i].nickName});
+          Database.substractMoney(players[i].id, totalMoney);
+          players[i].add(totalMoney);
 				}
 
 				HashMap.roomMap.delete(tempRoom.properties.roomName);

@@ -122,7 +122,10 @@ module.exports = {
 	},
 
 	end: function(tempTable){
-		// Cosas de base de datos
+    for(let i = 0; i < tempTable.roomCapacity; i++){
+      Database.addMoney(tempTable.players[i].id, tempTable.players[i].money);
+    }
+    
 		setTimeout(() => {
 			sails.sockets.broadcast(tempTable.roomName, 'tableEnd');
 			sails.sockets.addRoomMembersToRooms(tempTable.roomName, 'lobby'); // Movemos a todos los usuarios al lobby.
