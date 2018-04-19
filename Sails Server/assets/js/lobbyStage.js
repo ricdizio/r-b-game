@@ -125,7 +125,10 @@ var lobbyStage = {
     joinRoom: function(){
         game.state.start("waitRoom");
         // Aqui deberia haber un callback que ejecute el post cuando se haya cambiado de estado.
-        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"});     
+        io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"}, function(resData, jwRes){
+          // 
+          alert(resData.message);
+        });
         /*
         io.socket.post('/play/joinWaitingRoom', {roomName: "Room1"}, function(resData, jwRes){
             game.state.start("waitRoom");

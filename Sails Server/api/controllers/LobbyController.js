@@ -60,7 +60,6 @@ module.exports = {
         let tempPlayer = HashMap.userMap.get(socketId);
 
         if (tempRoom.addPlayer(tempPlayer)) { // Si se unio correctamente (es decir, que no estas tu mismo dentro por alguna razon)
-          
           sails.sockets.leave(req, 'lobby');
           sails.sockets.join(req, roomName);
           sails.sockets.broadcast(roomName, 'waitingRoomJoin', { nicks: tempRoom.nicks() });
